@@ -7,12 +7,7 @@ version 1.0
 # The CRAM output is optional and disabled by default at the moment, until production switches to CRAM
 
 # Subworkflows
-import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/AnnotationPipeline.wdl" as Annotation
-import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Conifer.wdl" as Conifer
-import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Qualimap.wdl" as Qualimap
-import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ROH.wdl" as ROH
-import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/CreateInterpretationTable.wdl" as CreateInterpretationTable
-import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/MitoMap.wdl" as MitoMap
+# Remove subworkflows because they are not needed for FASTQ -> GVCF hg38, will add them later once all the data resources are updated
 
 # WORKFLOW DEFINITION 
 workflow FastqToVCF {
@@ -305,6 +300,7 @@ workflow FastqToVCF {
       preemptible_tries = 3
   }
 
+  # Consider generating CRAMS by default in the updated hg38 pipeline
   if ( GenerateCRAM ) {
   call ConvertToCram {
       input:
@@ -315,6 +311,7 @@ workflow FastqToVCF {
     }
   }
 
+  # Haplotype caller TASK has to be updated to emit GVCF
   scatter (chromosome in chromosomes) {
     call HaplotypeCaller {
       input:
@@ -344,6 +341,8 @@ workflow FastqToVCF {
       docker = gatk_docker,
       gatk_path = gatk_path
   }
+
+  # The calls downstream depend on VCF rather than GVCF files, test if they work with GVCFs or make a conversion step
 
   call SplitSNPindel {
   input:
@@ -421,172 +420,6 @@ workflow FastqToVCF {
     gatk_path=gatk_path,
     docker=gatk_docker
   }
-
-  call Annotation.AnnotateVCF as AnnotateVCF{
-    input:
-      input_vcf = SelectFinalVariants.output_vcf,
-      chromosome_list = chromosome_list,
-      
-      gnomAD_vcf = gnomAD_vcf,
-      gnomAD_vcf_index = gnomAD_vcf_index,
-
-      gnomADexomes_vcf = gnomADexomes_vcf,
-      gnomADexomes_vcf_index = gnomADexomes_vcf_index,
-
-      SLOpopulation_vcf = SLOpopulation_vcf,
-      SLOpopulation_vcf_index = SLOpopulation_vcf_index,
-
-      ClinVar_vcf = ClinVar_vcf,
-      ClinVar_vcf_index = ClinVar_vcf_index,
-
-      SpliceAI = SpliceAI,
-      SpliceAI_index = SpliceAI_index,
-
-      dbscSNV = dbscSNV,
-      dbscSNV_index = dbscSNV_index,
-
-      HPO = HPO,
-      HPO_index = HPO_index,
-      OMIM = OMIM,
-      OMIM_index = OMIM_index,
-      gnomadConstraints = gnomadConstraints,
-      gnomadConstraints_index = gnomadConstraints_index,
-      CGD = CGD,
-      CGD_index = CGD_index,
-      bcftools_annotation_header = bcftools_annotation_header,
-
-      fasta_reference = reference_fa,
-      fasta_reference_index = reference_fai,
-      fasta_reference_dict = reference_dict,
-
-      dbNSFP = dbNSFP,
-      dbNSFP_index = dbNSFP_index,
-
-      bcftools_docker = bcftools_docker,
-      SnpEff_docker = SnpEff_docker,
-      gatk_docker = gatk_docker,
-      gatk_path = gatk_path,
-      vcfanno_docker = vcfanno_docker
-  }
-
-  call MitoMap.CreateMitoFasta as CreateMitoFasta {
-    input:
-    input_vcf = SelectFinalVariants.output_vcf,
-    sample_basename = sample_basename,
-
-    reference_fa = reference_fa,
-    reference_fai = reference_fai,
-    reference_dict = reference_dict,
-
-    docker = "broadinstitute/gatk3:3.8-1"
-  }
-
-  call MitoMap.MitoMap as MitoMap {
-    input:
-    mtDNA_fasta = CreateMitoFasta.mtDNA_fasta,
-    sample_basename = sample_basename
-  }
-
-  call CreateInterpretationTable.CreateInterpretationTable as CreateInterpretationTable {
-    input:
-      input_vcf = AnnotateVCF.output_vcf,
-      input_vcf_index = AnnotateVCF.output_vcf_index,
-      relative_vcfs = relative_vcfs,
-      relative_vcf_indexes = relative_vcf_indexes,
-      panel_gene_list = panel_gene_list,
-      mitoResults_txt = MitoMap.mitoResults_txt
-  }
-
-  if( defined(input_reference_rpkms) ){
-    call Conifer.Conifer as Conifer{
-    input:
-      input_bam = SortSam.output_bam,
-      input_bam_index = SortSam.output_bam_index,
-
-      input_reference_rpkms = input_reference_rpkms,
-      CONIFER_svd = CONIFER_svd,
-      CONIFER_threshold = CONIFER_threshold,
-
-      enrichment = enrichment,
-      enrichment_bed = enrichment_bed
-    }
-  }
-
-  if( defined(enrichment_bed) ){
-    call Qualimap.bamqc as Qualimap {
-    input:
-      bam = SortSam.output_bam,
-      sample_basename=sample_basename,
-
-      enrichment_bed = enrichment_bed,
-
-      ncpu = 8
-    }
-  }
-
-  # Merge per-interval GVCFs
-  if( defined(enrichment_bed) ){
-    call Qualimap.DepthOfCoverage34 as DepthOfCoverage {
-      input:
-        input_bam = SortSam.output_bam,
-        input_bam_index = SortSam.output_bam_index,
-        sample_basename = sample_basename,
-
-        reference_fa=reference_fa,
-        reference_fai=reference_fai,
-        reference_dict=reference_dict,
-
-        enrichment_bed = enrichment_bed,
-
-        refSeqFile = refSeqFile,
-
-        threads = threads,
-        docker = "broadinstitute/gatk3:3.8-1",
-        gatk_path = "/usr/GenomeAnalysisTK.jar"
-    }
-  }
-
-  call ROH.calculateBAF as calculateBAF {
-  input:
-    input_bam = SortSam.output_bam,
-    input_bam_index = SortSam.output_bam_index,
-    sample_basename=sample_basename,
-
-    reference_fa=reference_fa,
-
-    dbSNPcommon_bed = dbSNPcommon_bed,
-    dbSNPcommon_bed_index = dbSNPcommon_bed_index,
-
-    docker = "alesmaver/bwa_samtools_picard"
-  }
-
-  call ROH.CallROH as CallROH {
-  input:
-    input_bam = SortSam.output_bam,
-    input_bam_index = SortSam.output_bam_index,
-    sample_basename=sample_basename,
-  
-    reference_fa=reference_fa,
-  
-    dbSNPcommon_bed = dbSNPcommon_bed,
-    dbSNPcommon_bed_index = dbSNPcommon_bed_index,
-  
-    gnomAD_maf01_vcf = gnomAD_maf01_vcf,
-    gnomAD_maf01_vcf_index = gnomAD_maf01_vcf_index,
-
-    gnomAD_maf01_tab = gnomAD_maf01_tab,
-    gnomAD_maf01_tab_index = gnomAD_maf01_tab_index,
-  
-    docker = bcftools_docker
-  }
-
-  #call ROH.CallPlink as CallPlink {
-  #input:
-  #  input_vcf = CallROH.BAF_vcf,
-  #  sample_basename=sample_basename,
-  #
-  #  docker = "asherkhb/plink"
-  #}
 
   output {
     File output_bam = SortSam.output_bam
