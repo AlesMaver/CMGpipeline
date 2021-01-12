@@ -26,6 +26,7 @@ workflow FastqToVCF {
     
     File illuminaAdapters
 
+    # We may need to update this list depending on the reference contig names used, either chr1 or 1
     File chromosome_list
 
     Int bwa_threads
@@ -48,8 +49,6 @@ workflow FastqToVCF {
     File dbsnp_vcf_index
     Array[File] known_indels_sites_vcfs
     Array[File] known_indels_sites_indices
-
-    File refSeqFile
 
     Boolean GenerateCRAM = false
 
@@ -386,6 +385,8 @@ workflow FastqToVCF {
 
     File output_vcf = SelectFinalVariants.output_vcf
     File output_vcf_index = SelectFinalVariants.output_vcf_index
+
+    # Add GVCF here as an output with hg38 in the name
   }
 }
 
