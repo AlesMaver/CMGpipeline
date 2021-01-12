@@ -1,23 +1,34 @@
 version 1.0
 ## Copyright CMG@KIGM, Ales Maver
-# This is the backbone of the pipeline used for NGS data processing and annotation 
-# It performs a conversion from input FASTQ fiels to output VCF and annotated tables
 
-# Import subworkflows - these are not essential for population based calling and we may remove them
+## Usage
+# This workflow accepts three types of inputs: Illumina FASTQ files, a BAM file, or CRAM files
+# Currently, the input CRAM files should be aligned to the hg19 reference genome assembly, we will implement support for other genome formats in the future
+# The CRAM output is optional and disabled by default at the moment, until production switches to CRAM
+
+# Subworkflows
 import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/AnnotationPipeline.wdl" as Annotation
 import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Conifer.wdl" as Conifer
 import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Qualimap.wdl" as Qualimap
 import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ROH.wdl" as ROH
+import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/CreateInterpretationTable.wdl" as CreateInterpretationTable
+import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/MitoMap.wdl" as MitoMap
 
 # WORKFLOW DEFINITION 
 workflow FastqToVCF {
   input {
-    File input_fq1
-    File input_fq2
+    File? input_fq1
+    File? input_fq2
+
+    File? input_bam
+
+    File? input_cram
+
+    String sample_basename
     
     File illuminaAdapters
 
-    File chromosome_list # Fix to match the hg38 reference
+    File chromosome_list
 
     Int bwa_threads
     Int threads
@@ -81,36 +92,54 @@ workflow FastqToVCF {
 
     File refSeqFile
 
-    String enrichment
-    File enrichment_bed
+    String? enrichment
+    File? enrichment_bed
 
-    Array[File] input_reference_rpkms 
-    Int CONIFER_svd
-    Float CONIFER_threshold
+    Array[File]? input_reference_rpkms 
+    Int? CONIFER_svd
+    Float? CONIFER_threshold
 
+    Boolean GenerateCRAM = false
+
+    Boolean GVCFmode = false
+
+    String? panel_gene_list
+    Array[File]? relative_vcfs
+    Array[File]? relative_vcf_indexes
+
+    # Here are the global docker environment variables for tools used in this workflow
+    # TO DO: Move the other task-specific docker definitions here for clarity, unless necessary
     String cutadapt_docker = "kfdrc/cutadapt:latest"
     String gatk_docker = "broadinstitute/gatk:latest"
     String gatk_path = "/gatk/gatk"
+    String gitc_docker = "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817"
+    String samtools_path = "samtools" # Path to samtools command within GITC docker
     String vcfanno_docker = "clinicalgenomics/vcfanno:0.3.2"
     String bcftools_docker = "biocontainers/bcftools:v1.9-1-deb_cv1"
     String SnpEff_docker = "alesmaver/snpeff_v43:latest"
   }  
 
-  String sample_basename = sub(basename(input_fq1), "[\_,\.].*", "" )
+  # Terminate workflow in case neither input_fq1 or input_bam or input_cram is provided
+  Float fileSize = size(select_first([input_cram, input_bam, input_fq1, ""]))
 
+  # Get sample name from either an input FASTQ R1 file or from the input BAM file - this causes problems with optional inputs, so it is left disabled and the input variable sample_basename is now a workflow input
+  # String sample_basename = select_first([sub(basename(input_fq1), "[\_,\.].*", "" ), sub(basename(input_bam), "[\_,\.].*", "" )])
+
+  # Get a list of chromosome contig names, containing one contig per line 
   Array[String] chromosomes = read_lines(chromosome_list)
 
+  # Run adaptor trimming and create uBAM, but only when input FASTQ is provided
+  if ( defined(input_fq1) ) {
+    call CutAdapters as CutAdapters_fq1 {
+      input:
+        input_fq=input_fq1,
+        sample_basename=sample_basename,
+        illuminaAdapters=illuminaAdapters,
 
-  call CutAdapters as CutAdapters_fq1 {
-    input:
-      input_fq=input_fq1,
-      sample_basename=sample_basename,
-      illuminaAdapters=illuminaAdapters,
+        # Runtime 
+        docker = cutadapt_docker
+    }
 
-      # Runtime 
-      docker = cutadapt_docker
-  }
-  
   call CutAdapters as CutAdapters_fq2 {
     input:
       input_fq=input_fq2,
@@ -128,17 +157,31 @@ workflow FastqToVCF {
         fastq_2 = CutAdapters_fq2.output_fq_trimmed,
         readgroup_name = sample_basename,
         library_name = sample_basename,
-        platform_unit = "NovaSeq6000",
+        platform_unit = "NextSeq550",
         run_date = "2020-01-01",
         platform_name = "illumina",
         sequencing_center = "KIGM",
         gatk_path = gatk_path,
         docker = gatk_docker
     }
+  }
+
+  if ( defined(input_cram) ) {
+    call CramToBam {
+      input:
+        input_cram = input_cram,
+        sample_name = sample_basename,
+        ref_dict = reference_dict,
+        ref_fasta = reference_fa,
+        ref_fasta_index = reference_fai,
+        docker = gitc_docker,
+        samtools_path = samtools_path
+    }
+  }
 
   call SamSplitter {
     input :
-      input_bam = PairedFastQsToUnmappedBAM.output_unmapped_bam,
+      input_bam = select_first([CramToBam.output_bam, input_bam, PairedFastQsToUnmappedBAM.output_unmapped_bam]),
       n_reads = split_reads_num,
       preemptible_tries = 3,
       compression_level = 2
@@ -262,6 +305,16 @@ workflow FastqToVCF {
       preemptible_tries = 3
   }
 
+  if ( GenerateCRAM ) {
+  call ConvertToCram {
+      input:
+        input_bam = SortSam.output_bam,
+        ref_fasta = reference_fa,
+        ref_fasta_index = reference_fai,
+        sample_basename = sample_basename
+    }
+  }
+
   scatter (chromosome in chromosomes) {
     call HaplotypeCaller {
       input:
@@ -369,35 +422,30 @@ workflow FastqToVCF {
     docker=gatk_docker
   }
 
-  # The section not essential for population based calling
-  # The section below and only necessary for annotation of the VCFs
-  # optional in the reprocessing steps but may be beneficial to have VCFs with prepared effect predictions
-  # It may take a lot of effort to get all the reference files so we may leave updating this section for later
   call Annotation.AnnotateVCF as AnnotateVCF{
     input:
       input_vcf = SelectFinalVariants.output_vcf,
       chromosome_list = chromosome_list,
-     
-      gnomAD_vcf = gnomAD_vcf, # needs the hg38 version
-      gnomAD_vcf_index = gnomAD_vcf_index, # needs the hg38 version
+      
+      gnomAD_vcf = gnomAD_vcf,
+      gnomAD_vcf_index = gnomAD_vcf_index,
 
-      gnomADexomes_vcf = gnomADexomes_vcf, # needs the hg38 version
-      gnomADexomes_vcf_index = gnomADexomes_vcf_index, # needs the hg38 version
+      gnomADexomes_vcf = gnomADexomes_vcf,
+      gnomADexomes_vcf_index = gnomADexomes_vcf_index,
 
-      SLOpopulation_vcf = SLOpopulation_vcf, # needs the hg38 version
-      SLOpopulation_vcf_index = SLOpopulation_vcf_index, # needs the hg38 version
+      SLOpopulation_vcf = SLOpopulation_vcf,
+      SLOpopulation_vcf_index = SLOpopulation_vcf_index,
 
-      ClinVar_vcf = ClinVar_vcf, # needs the hg38 version
-      ClinVar_vcf_index = ClinVar_vcf_index, # needs the hg38 version
+      ClinVar_vcf = ClinVar_vcf,
+      ClinVar_vcf_index = ClinVar_vcf_index,
 
-      SpliceAI = SpliceAI, # needs the hg38 version
-      SpliceAI_index = SpliceAI_index, # needs the hg38 version
+      SpliceAI = SpliceAI,
+      SpliceAI_index = SpliceAI_index,
 
-      dbscSNV = dbscSNV, # needs the hg38 version
-      dbscSNV_index = dbscSNV_index, # needs the hg38 version
+      dbscSNV = dbscSNV,
+      dbscSNV_index = dbscSNV_index,
 
-      # All of these require a hg38 version, but it is not hard to generate
-      HPO = HPO, 
+      HPO = HPO,
       HPO_index = HPO_index,
       OMIM = OMIM,
       OMIM_index = OMIM_index,
@@ -407,65 +455,95 @@ workflow FastqToVCF {
       CGD_index = CGD_index,
       bcftools_annotation_header = bcftools_annotation_header,
 
-      # Easy to obtain from Broad's Google Cloud
       fasta_reference = reference_fa,
       fasta_reference_index = reference_fai,
       fasta_reference_dict = reference_dict,
 
-      # Check if there is a version available for download
       dbNSFP = dbNSFP,
       dbNSFP_index = dbNSFP_index,
 
       bcftools_docker = bcftools_docker,
-      SnpEff_docker = SnpEff_docker, # snpEff docker has a preconfigured database included and will require updating !
+      SnpEff_docker = SnpEff_docker,
       gatk_docker = gatk_docker,
       gatk_path = gatk_path,
       vcfanno_docker = vcfanno_docker
   }
 
-  # The section not essential for population based calling
-  # Will require updated BED files for input
-  call Conifer.Conifer as Conifer{
-  input:
-    input_bam = SortSam.output_bam,
-    input_bam_index = SortSam.output_bam_index,
+  call MitoMap.CreateMitoFasta as CreateMitoFasta {
+    input:
+    input_vcf = SelectFinalVariants.output_vcf,
+    sample_basename = sample_basename,
 
-    input_reference_rpkms = input_reference_rpkms,
-    CONIFER_svd = CONIFER_svd,
-    CONIFER_threshold = CONIFER_threshold,
+    reference_fa = reference_fa,
+    reference_fai = reference_fai,
+    reference_dict = reference_dict,
 
-    enrichment = enrichment,
-    enrichment_bed = enrichment_bed
+    docker = "broadinstitute/gatk3:3.8-1"
   }
 
-  call Qualimap.bamqc as Qualimap {
-  input:
-    bam = SortSam.output_bam,
-    sample_basename=sample_basename,
-
-    enrichment_bed = enrichment_bed,
-
-    ncpu = 8
+  call MitoMap.MitoMap as MitoMap {
+    input:
+    mtDNA_fasta = CreateMitoFasta.mtDNA_fasta,
+    sample_basename = sample_basename
   }
 
-  # Merge per-interval GVCFs
-  call Qualimap.DepthOfCoverage34 as DepthOfCoverage {
+  call CreateInterpretationTable.CreateInterpretationTable as CreateInterpretationTable {
+    input:
+      input_vcf = AnnotateVCF.output_vcf,
+      input_vcf_index = AnnotateVCF.output_vcf_index,
+      relative_vcfs = relative_vcfs,
+      relative_vcf_indexes = relative_vcf_indexes,
+      panel_gene_list = panel_gene_list,
+      mitoResults_txt = MitoMap.mitoResults_txt
+  }
+
+  if( defined(input_reference_rpkms) ){
+    call Conifer.Conifer as Conifer{
     input:
       input_bam = SortSam.output_bam,
       input_bam_index = SortSam.output_bam_index,
-      sample_basename = sample_basename,
 
-      reference_fa=reference_fa,
-      reference_fai=reference_fai,
-      reference_dict=reference_dict,
+      input_reference_rpkms = input_reference_rpkms,
+      CONIFER_svd = CONIFER_svd,
+      CONIFER_threshold = CONIFER_threshold,
+
+      enrichment = enrichment,
+      enrichment_bed = enrichment_bed
+    }
+  }
+
+  if( defined(enrichment_bed) ){
+    call Qualimap.bamqc as Qualimap {
+    input:
+      bam = SortSam.output_bam,
+      sample_basename=sample_basename,
 
       enrichment_bed = enrichment_bed,
 
-      refSeqFile = refSeqFile,
+      ncpu = 8
+    }
+  }
 
-      threads = threads,
-      docker = "broadinstitute/gatk3:3.8-1",
-      gatk_path = "/usr/GenomeAnalysisTK.jar"
+  # Merge per-interval GVCFs
+  if( defined(enrichment_bed) ){
+    call Qualimap.DepthOfCoverage34 as DepthOfCoverage {
+      input:
+        input_bam = SortSam.output_bam,
+        input_bam_index = SortSam.output_bam_index,
+        sample_basename = sample_basename,
+
+        reference_fa=reference_fa,
+        reference_fai=reference_fai,
+        reference_dict=reference_dict,
+
+        enrichment_bed = enrichment_bed,
+
+        refSeqFile = refSeqFile,
+
+        threads = threads,
+        docker = "broadinstitute/gatk3:3.8-1",
+        gatk_path = "/usr/GenomeAnalysisTK.jar"
+    }
   }
 
   call ROH.calculateBAF as calculateBAF {
@@ -514,6 +592,9 @@ workflow FastqToVCF {
     File output_bam = SortSam.output_bam
     File output_bam_index = SortSam.output_bam_index
 
+    File? output_cram = ConvertToCram.output_cram
+    File? output_cram_index = ConvertToCram.output_cram_index
+
     File output_vcf_raw = MergeVCFs.output_vcf
     File output_vcf_raw_index = MergeVCFs.output_vcf_index
 
@@ -522,40 +603,40 @@ workflow FastqToVCF {
 
     File output_annotated_vcf = AnnotateVCF.output_vcf
     File output_annotated_vcf_index = AnnotateVCF.output_vcf_index
-    File output_table = AnnotateVCF.output_table
+    File? XLSX_OUTPUT = CreateInterpretationTable.XLSX_OUTPUT
 
-    File output_conifer_calls = Conifer.output_conifer_calls
-    Array[File] output_plotcalls = Conifer.output_plotcalls
-    File output_conifer_calls_wig = Conifer.output_conifer_calls_wig
+    File? output_rpkm = Conifer.output_rpkm 
+    File? output_conifer_calls = Conifer.output_conifer_calls
+    Array[File]? output_plotcalls = Conifer.output_plotcalls
+    File? output_conifer_calls_wig = Conifer.output_conifer_calls_wig
     #File CNV_bed = Conifer.CNV_bed
-    File CNV_wig = Conifer.CNV_wig
+    File? CNV_wig = Conifer.CNV_wig
 
-    File Qualimap_results = Qualimap.results
+    File? Qualimap_results = Qualimap.results
+
+    File? DepthOfCoverage_output = DepthOfCoverage.DepthOfCoverage_output
 
     File output_BAF = calculateBAF.output_BAF
     File ROH_calls_qual = CallROH.ROH_calls_qual
     File ROH_calls_size = CallROH.ROH_calls_size
     File ROH_intervals_state = CallROH.ROH_intervals_state
     File ROH_intervals_qual = CallROH.ROH_intervals_qual
-
-    File DepthOfCoverage_output = DepthOfCoverage.DepthOfCoverage_output
-
     #File ROHplink_calls = CallPlink.ROHplink_calls
+
+    File? mitoResults_xls = MitoMap.mitoResults_xls
+    File? mitoResults_txt = MitoMap.mitoResults_txt
   }
 }
 
 
-
-
-
 ##################
-# TASK DEFINITIONS - The tasks below are not dependent on hg38 so they do not need updating 
+# TASK DEFINITIONS
 ##################
 
 task CutAdapters {
   input {
     # Command parameters
-    File input_fq
+    File? input_fq # The fastq file is given the optional flag to correspond to optional fastq input in the workflow
     String sample_basename
     
     File illuminaAdapters
@@ -566,13 +647,13 @@ task CutAdapters {
   
   command {
   set -e
-     cutadapt -j 20 -a file:~{illuminaAdapters} --mask-adapter -o ~{sample_basename}.trimmed.fq.gz ~{input_fq}
+     cutadapt -j 4 -a file:~{illuminaAdapters} --mask-adapter -o ~{sample_basename}.trimmed.fq.gz ~{input_fq}
   }
   runtime {
     docker: docker
     requested_memory_mb_per_core: 1000
-    cpu: 7
-    runtime_minutes: 120
+    cpu: 4
+    runtime_minutes: 420
   }
   output {
     File output_fq_trimmed = "~{sample_basename}.trimmed.fq.gz"
@@ -970,7 +1051,7 @@ task HaplotypeCaller {
     maxRetries: 3
     requested_memory_mb_per_core: 6000
     cpu: 1
-    runtime_minutes: 180
+    runtime_minutes: 1200
   }
 }
 
@@ -1373,5 +1454,82 @@ task SortSam {
     File output_bam = "~{output_bam_basename}.bam"
     File output_bam_index = "~{output_bam_basename}.bai"
     File output_bam_md5 = "~{output_bam_basename}.bam.md5"
+  }
+}
+
+# Convert CRAM to BAM file
+# Obtained from Broad workflows, here: https://github.com/gatk-workflows/gatk4-germline-snps-indels/blob/master/haplotypecaller-gvcf-gatk4.wdl
+task CramToBam {
+  input {
+    # Command parameters
+    File ref_fasta
+    File ref_fasta_index
+    File ref_dict
+    File? input_cram # Declared this as an optional input because the input of workflow is also optional
+    String sample_name
+
+    # Runtime parameters
+    String docker
+    String samtools_path
+  }
+  
+  command {
+    set -e
+    set -o pipefail
+
+    ~{samtools_path} view -h -T ~{ref_fasta} ~{input_cram} |
+    ~{samtools_path} view -b -o ~{sample_name}.bam -
+    ~{samtools_path} index -b ~{sample_name}.bam
+    mv ~{sample_name}.bam.bai ~{sample_name}.bai
+  }
+  runtime {
+    docker: docker
+    maxRetries: 3
+    requested_memory_mb_per_core: 5000
+    cpu: 1
+    runtime_minutes: 180
+ }
+  output {
+    File output_bam = "~{sample_name}.bam"
+    File output_bai = "~{sample_name}.bai"
+  }
+}
+
+# Convert BAM to CRAM
+# Obtained from Broad workflows, here: https://github.com/gatk-workflows/gatk4-genome-processing-pipeline/blob/master/tasks/Utilities.wdl
+task ConvertToCram {
+  input {
+    File input_bam
+    File ref_fasta
+    File ref_fasta_index
+    String sample_basename
+  }
+
+  command <<<
+    set -e
+    set -o pipefail
+
+    samtools view -C -T ~{ref_fasta} ~{input_bam} | \
+    tee ~{sample_basename}.cram | \
+    md5sum | awk '{print $1}' > ~{sample_basename}.cram.md5
+
+    # Create REF_CACHE. Used when indexing a CRAM
+    seq_cache_populate.pl -root ./ref/cache ~{ref_fasta}
+    export REF_PATH=:
+    export REF_CACHE=./ref/cache/%2s/%2s/%s
+
+    samtools index ~{sample_basename}.cram
+  >>>
+  runtime {
+    docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.3-1564508330"
+    maxRetries: 3
+    requested_memory_mb_per_core: 5000
+    cpu: 1
+    runtime_minutes: 180
+  }
+  output {
+    File output_cram = "~{sample_basename}.cram"
+    File output_cram_index = "~{sample_basename}.cram.crai"
+    File output_cram_md5 = "~{sample_basename}.cram.md5"
   }
 }
