@@ -415,7 +415,7 @@ task CutAdapters {
     docker: docker
     requested_memory_mb_per_core: 1000
     cpu: 4
-    runtime_minutes: 420
+    runtime_minutes: 800
   }
   output {
     File output_fq_trimmed = "~{sample_basename}.trimmed.fq.gz"
@@ -462,7 +462,7 @@ task Align {
     maxRetries: 3
     requested_memory_mb_per_core: 2000
     cpu: 8
-    runtime_minutes: 180
+    runtime_minutes: 300
   }
 }
 
@@ -1099,7 +1099,7 @@ task PairedFastQsToUnmappedBAM {
     maxRetries: 3
     requested_memory_mb_per_core: 6000
     cpu: 1
-    runtime_minutes: 180
+    runtime_minutes: 700
   }
   output {
     File output_unmapped_bam = "~{readgroup_name}.unmapped.bam"
@@ -1142,7 +1142,7 @@ task SamSplitter {
     disks: "local-disk " + disk_size + " HDD"
     requested_memory_mb_per_core: 6000
     cpu: 1
-    runtime_minutes: 180
+    runtime_minutes: 600
   }
 }
 
@@ -1170,7 +1170,7 @@ task GatherUnsortedBamFiles {
     maxRetries: 3
     requested_memory_mb_per_core: 6000
     cpu: 1
-    runtime_minutes: 120
+    runtime_minutes: 400
   }
   output {
     File output_bam = "~{output_bam_basename}.bam"
@@ -1210,7 +1210,7 @@ task SortSam {
     maxRetries: 3
     requested_memory_mb_per_core: 6000
     cpu: 1
-    runtime_minutes: 180
+    runtime_minutes: 900
   }
   output {
     File output_bam = "~{output_bam_basename}.bam"
