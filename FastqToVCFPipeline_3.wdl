@@ -3,16 +3,14 @@ version 1.0
 
 ## Usage
 # This workflow accepts three types of inputs: Illumina FASTQ files, a BAM file, or CRAM files
-# Currently, the input CRAM files should be aligned to the hg19 reference genome assembly, we will implement support for other genome formats in the future
+# Currently, the input CRAM files should be aligned to the hg19 reference genome assembly (because this is all we have), we will implement support for other genome formats in the future
 # The CRAM output is optional and disabled by default at the moment, until production switches to CRAM
 
+# TO DOs
+# All output files should have hg38 in the name to separate them from hg19
+
 # Subworkflows
-import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/AnnotationPipeline.wdl" as Annotation
-import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Conifer.wdl" as Conifer
-import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Qualimap.wdl" as Qualimap
-import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ROH.wdl" as ROH
-import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/CreateInterpretationTable.wdl" as CreateInterpretationTable
-import "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/MitoMap.wdl" as MitoMap
+# Remove subworkflows because they are not needed for FASTQ -> GVCF hg38, will add them later once all the data resources are updated
 
 # WORKFLOW DEFINITION 
 workflow FastqToVCF {
@@ -28,6 +26,7 @@ workflow FastqToVCF {
     
     File illuminaAdapters
 
+    # We may need to update this list depending on the reference contig names used, either chr1 or 1
     File chromosome_list
 
     Int bwa_threads
@@ -46,66 +45,14 @@ workflow FastqToVCF {
     File reference_fai
     File reference_dict
     
-    File gnomAD_vcf
-    File gnomAD_vcf_index
-
-    File gnomADexomes_vcf
-    File gnomADexomes_vcf_index
-
-    File SLOpopulation_vcf
-    File SLOpopulation_vcf_index
-
-    File ClinVar_vcf
-    File ClinVar_vcf_index
-
-    File SpliceAI
-    File SpliceAI_index
-
-    File dbscSNV
-    File dbscSNV_index
-
-    File HPO
-    File HPO_index
-    File OMIM
-    File OMIM_index
-    File gnomadConstraints
-    File gnomadConstraints_index
-    File CGD
-    File CGD_index
-    File bcftools_annotation_header
-
-    File dbNSFP
-    File dbNSFP_index
-
-    # Files containing frequency information for common SNPs used for ROH calculation
-    File dbSNPcommon_bed
-    File dbSNPcommon_bed_index
-    File gnomAD_maf01_vcf
-    File gnomAD_maf01_vcf_index
-    File gnomAD_maf01_tab
-    File gnomAD_maf01_tab_index
-
     File dbsnp_vcf
     File dbsnp_vcf_index
     Array[File] known_indels_sites_vcfs
     Array[File] known_indels_sites_indices
 
-    File refSeqFile
-
-    String? enrichment
-    File? enrichment_bed
-
-    Array[File]? input_reference_rpkms 
-    Int? CONIFER_svd
-    Float? CONIFER_threshold
-
     Boolean GenerateCRAM = false
 
     Boolean GVCFmode = false
-
-    String? panel_gene_list
-    Array[File]? relative_vcfs
-    Array[File]? relative_vcf_indexes
 
     # Here are the global docker environment variables for tools used in this workflow
     # TO DO: Move the other task-specific docker definitions here for clarity, unless necessary
@@ -305,6 +252,7 @@ workflow FastqToVCF {
       preemptible_tries = 3
   }
 
+  # Consider generating CRAMS by default in the updated hg38 pipeline
   if ( GenerateCRAM ) {
   call ConvertToCram {
       input:
@@ -315,6 +263,7 @@ workflow FastqToVCF {
     }
   }
 
+  # Haplotype caller TASK has to be updated to emit GVCF
   scatter (chromosome in chromosomes) {
     call HaplotypeCaller {
       input:
@@ -344,6 +293,8 @@ workflow FastqToVCF {
       docker = gatk_docker,
       gatk_path = gatk_path
   }
+
+  # The calls downstream depend on VCF rather than GVCF files, test if they work with GVCFs or make a conversion step
 
   call SplitSNPindel {
   input:
@@ -422,172 +373,6 @@ workflow FastqToVCF {
     docker=gatk_docker
   }
 
-  call Annotation.AnnotateVCF as AnnotateVCF{
-    input:
-      input_vcf = SelectFinalVariants.output_vcf,
-      chromosome_list = chromosome_list,
-      
-      gnomAD_vcf = gnomAD_vcf,
-      gnomAD_vcf_index = gnomAD_vcf_index,
-
-      gnomADexomes_vcf = gnomADexomes_vcf,
-      gnomADexomes_vcf_index = gnomADexomes_vcf_index,
-
-      SLOpopulation_vcf = SLOpopulation_vcf,
-      SLOpopulation_vcf_index = SLOpopulation_vcf_index,
-
-      ClinVar_vcf = ClinVar_vcf,
-      ClinVar_vcf_index = ClinVar_vcf_index,
-
-      SpliceAI = SpliceAI,
-      SpliceAI_index = SpliceAI_index,
-
-      dbscSNV = dbscSNV,
-      dbscSNV_index = dbscSNV_index,
-
-      HPO = HPO,
-      HPO_index = HPO_index,
-      OMIM = OMIM,
-      OMIM_index = OMIM_index,
-      gnomadConstraints = gnomadConstraints,
-      gnomadConstraints_index = gnomadConstraints_index,
-      CGD = CGD,
-      CGD_index = CGD_index,
-      bcftools_annotation_header = bcftools_annotation_header,
-
-      fasta_reference = reference_fa,
-      fasta_reference_index = reference_fai,
-      fasta_reference_dict = reference_dict,
-
-      dbNSFP = dbNSFP,
-      dbNSFP_index = dbNSFP_index,
-
-      bcftools_docker = bcftools_docker,
-      SnpEff_docker = SnpEff_docker,
-      gatk_docker = gatk_docker,
-      gatk_path = gatk_path,
-      vcfanno_docker = vcfanno_docker
-  }
-
-  call MitoMap.CreateMitoFasta as CreateMitoFasta {
-    input:
-    input_vcf = SelectFinalVariants.output_vcf,
-    sample_basename = sample_basename,
-
-    reference_fa = reference_fa,
-    reference_fai = reference_fai,
-    reference_dict = reference_dict,
-
-    docker = "broadinstitute/gatk3:3.8-1"
-  }
-
-  call MitoMap.MitoMap as MitoMap {
-    input:
-    mtDNA_fasta = CreateMitoFasta.mtDNA_fasta,
-    sample_basename = sample_basename
-  }
-
-  call CreateInterpretationTable.CreateInterpretationTable as CreateInterpretationTable {
-    input:
-      input_vcf = AnnotateVCF.output_vcf,
-      input_vcf_index = AnnotateVCF.output_vcf_index,
-      relative_vcfs = relative_vcfs,
-      relative_vcf_indexes = relative_vcf_indexes,
-      panel_gene_list = panel_gene_list,
-      mitoResults_txt = MitoMap.mitoResults_txt
-  }
-
-  if( defined(input_reference_rpkms) ){
-    call Conifer.Conifer as Conifer{
-    input:
-      input_bam = SortSam.output_bam,
-      input_bam_index = SortSam.output_bam_index,
-
-      input_reference_rpkms = input_reference_rpkms,
-      CONIFER_svd = CONIFER_svd,
-      CONIFER_threshold = CONIFER_threshold,
-
-      enrichment = enrichment,
-      enrichment_bed = enrichment_bed
-    }
-  }
-
-  if( defined(enrichment_bed) ){
-    call Qualimap.bamqc as Qualimap {
-    input:
-      bam = SortSam.output_bam,
-      sample_basename=sample_basename,
-
-      enrichment_bed = enrichment_bed,
-
-      ncpu = 8
-    }
-  }
-
-  # Merge per-interval GVCFs
-  if( defined(enrichment_bed) ){
-    call Qualimap.DepthOfCoverage34 as DepthOfCoverage {
-      input:
-        input_bam = SortSam.output_bam,
-        input_bam_index = SortSam.output_bam_index,
-        sample_basename = sample_basename,
-
-        reference_fa=reference_fa,
-        reference_fai=reference_fai,
-        reference_dict=reference_dict,
-
-        enrichment_bed = enrichment_bed,
-
-        refSeqFile = refSeqFile,
-
-        threads = threads,
-        docker = "broadinstitute/gatk3:3.8-1",
-        gatk_path = "/usr/GenomeAnalysisTK.jar"
-    }
-  }
-
-  call ROH.calculateBAF as calculateBAF {
-  input:
-    input_bam = SortSam.output_bam,
-    input_bam_index = SortSam.output_bam_index,
-    sample_basename=sample_basename,
-
-    reference_fa=reference_fa,
-
-    dbSNPcommon_bed = dbSNPcommon_bed,
-    dbSNPcommon_bed_index = dbSNPcommon_bed_index,
-
-    docker = "alesmaver/bwa_samtools_picard"
-  }
-
-  call ROH.CallROH as CallROH {
-  input:
-    input_bam = SortSam.output_bam,
-    input_bam_index = SortSam.output_bam_index,
-    sample_basename=sample_basename,
-  
-    reference_fa=reference_fa,
-  
-    dbSNPcommon_bed = dbSNPcommon_bed,
-    dbSNPcommon_bed_index = dbSNPcommon_bed_index,
-  
-    gnomAD_maf01_vcf = gnomAD_maf01_vcf,
-    gnomAD_maf01_vcf_index = gnomAD_maf01_vcf_index,
-
-    gnomAD_maf01_tab = gnomAD_maf01_tab,
-    gnomAD_maf01_tab_index = gnomAD_maf01_tab_index,
-  
-    docker = bcftools_docker
-  }
-
-  #call ROH.CallPlink as CallPlink {
-  #input:
-  #  input_vcf = CallROH.BAF_vcf,
-  #  sample_basename=sample_basename,
-  #
-  #  docker = "asherkhb/plink"
-  #}
-
   output {
     File output_bam = SortSam.output_bam
     File output_bam_index = SortSam.output_bam_index
@@ -601,30 +386,7 @@ workflow FastqToVCF {
     File output_vcf = SelectFinalVariants.output_vcf
     File output_vcf_index = SelectFinalVariants.output_vcf_index
 
-    File output_annotated_vcf = AnnotateVCF.output_vcf
-    File output_annotated_vcf_index = AnnotateVCF.output_vcf_index
-    File? XLSX_OUTPUT = CreateInterpretationTable.XLSX_OUTPUT
-
-    File? output_rpkm = Conifer.output_rpkm 
-    File? output_conifer_calls = Conifer.output_conifer_calls
-    Array[File]? output_plotcalls = Conifer.output_plotcalls
-    File? output_conifer_calls_wig = Conifer.output_conifer_calls_wig
-    #File CNV_bed = Conifer.CNV_bed
-    File? CNV_wig = Conifer.CNV_wig
-
-    File? Qualimap_results = Qualimap.results
-
-    File? DepthOfCoverage_output = DepthOfCoverage.DepthOfCoverage_output
-
-    File output_BAF = calculateBAF.output_BAF
-    File ROH_calls_qual = CallROH.ROH_calls_qual
-    File ROH_calls_size = CallROH.ROH_calls_size
-    File ROH_intervals_state = CallROH.ROH_intervals_state
-    File ROH_intervals_qual = CallROH.ROH_intervals_qual
-    #File ROHplink_calls = CallPlink.ROHplink_calls
-
-    File? mitoResults_xls = MitoMap.mitoResults_xls
-    File? mitoResults_txt = MitoMap.mitoResults_txt
+    # Add GVCF here as an output with hg38 in the name
   }
 }
 
@@ -1533,7 +1295,3 @@ task ConvertToCram {
     File output_cram_md5 = "~{sample_basename}.cram.md5"
   }
 }
-
-
-
-
