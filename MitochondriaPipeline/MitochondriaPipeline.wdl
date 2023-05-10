@@ -78,6 +78,8 @@ workflow MitochondriaPipeline {
     f_score_beta: "F-Score beta balances the filtering strategy between recall and precision. The relative weight of recall to precision."
     contig_name: "Name of mitochondria contig in reference that wgs_aligned_input_bam_or_cram is aligned to"
   }
+  
+  
 
   call SubsetBamToChrM {
     input:
@@ -99,7 +101,8 @@ workflow MitochondriaPipeline {
       preemptible_tries = preemptible_tries
   }
 
-  String base_name = basename(SubsetBamToChrM.output_bam, ".bam")
+  ##### String base_name = basename(SubsetBamToChrM.output_bam, ".bam")
+  String base_name = sub(basename(wgs_aligned_input_bam_or_cram), "[\_,\.].*", "" )
 
 
   call AlignAndCall.AlignAndCall as AlignAndCall {
