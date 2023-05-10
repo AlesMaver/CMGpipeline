@@ -115,6 +115,8 @@ workflow FastqToVCF {
     Array[File] known_indels_sites_indices
 
     File refSeqFile
+    
+    Boolean make_bamout = false
 
     String? enrichment
     File? enrichment_bed
@@ -493,6 +495,8 @@ workflow FastqToVCF {
         reference_dict=reference_dict,
 
         chromosome=chromosome,
+	
+	make_bamout = make_bamout,
 
         threads=threads,
 
@@ -509,6 +513,19 @@ workflow FastqToVCF {
       sample_basename = sample_basename,
       docker = gatk_docker,
       gatk_path = gatk_path
+  }
+  
+  if (make_bamout) {
+    call MergeBamOuts {
+      input:
+	ref_fasta = reference_fa,
+	ref_fai = reference_fai,
+	ref_dict = reference_dict,
+	bam_outs = HaplotypeCaller.output_bamout,
+	sample_basename = sample_basename,
+        docker = gatk_docker,
+        gatk_path = gatk_path
+    }
   }
 
   call SplitSNPindel {
@@ -998,7 +1015,8 @@ workflow FastqToVCF {
     File? expansion_hunter_vcf_annotated = ExpansionHunter.expansion_hunter_vcf_annotated
     
     # merged haplotype caller bamout:
-    #File? haplotypecaller_bamout_file = HaplotypeCaller.bamout_file
+    File? bamout = MergeBamOuts.merged_bam_out
+    File? bamout_index = MergeBamOuts.merged_bam_out_index
     
     ## Array[File] bigWig_files = BigWig.bigWig_files
     File? bigWig_tar_file = BigWig.bigWig_tar_file
@@ -1522,6 +1540,8 @@ task HaplotypeCaller {
 
   String chromosome
 
+  Boolean? make_bamout
+
   # Runtime params
   String gatk_path
   Int threads
@@ -1531,7 +1551,10 @@ task HaplotypeCaller {
   String chromosome_intervals = sub(chromosome, ",", " -L ")
   
   command {
-  set -e
+    set -e   
+    # We need to create this file, even if it stays empty
+    touch bamout.bam
+    
     ~{gatk_path} --java-options "-Xmx8g -XX:ParallelGCThreads=~{threads}" \
       HaplotypeCaller \
       -R ~{reference_fa} \
@@ -1539,13 +1562,13 @@ task HaplotypeCaller {
       -L ~{chromosome_intervals} \
       -I ~{input_bam} \
       -O ~{sample_basename}.raw.vcf.gz \
-      -bamout ~{sample_basename}.bamout.bam
+      ~{true='-bamout bamout.bam' false='' make_bamout}
   }
 
   output {
     File output_vcf = "~{sample_basename}.raw.vcf.gz"
     File output_vcf_index = "~{sample_basename}.raw.vcf.gz.tbi"
-    File? bamout_file = "~{sample_basename}.bamout.bam"
+    File output_bamout = "bamout.bam"
   }
 
   runtime {
@@ -1590,6 +1613,47 @@ task MergeVCFs {
     File output_vcf_index = "~{sample_basename}.raw.vcf.gz.tbi"
   }
 }
+
+task MergeBamOuts {
+  input {
+    File ref_fasta
+    File ref_fai
+    File ref_dict
+    # Array[File]+ bam_outs
+    Array[File] bam_outs
+    String sample_basename
+    String gatk_path
+    String docker
+  }
+
+  command <<<
+	set -e
+	# This command block assumes that there is at least one file in bam_outs.
+	#  Do not call this task if len(bam_outs) == 0  
+	~{gatk_path} --java-options -Xmx4G GatherBamFiles -I ~{sep=" -I " bam_outs} -O unsorted.out.bam -R ~{ref_fasta}
+
+	# We must sort because adjacent scatters may have overlapping (padded) assembly regions, hence overlapping bamouts
+	~{gatk_path} --java-options -Xmx4G SortSam -I unsorted.out.bam -O bamout.bam --SORT_ORDER coordinate -VALIDATION_STRINGENCY LENIENT
+	~{gatk_path} --java-options -Xmx4G BuildBamIndex -I bamout.bam -VALIDATION_STRINGENCY LENIENT
+
+	mv bamout.bam  ~{sample_basename}.bamout.bam
+	mv bamout.bai  ~{sample_basename}.bamout.bai
+  >>>
+
+
+  runtime {
+	    docker: docker
+	    maxRetries: 3
+	    requested_memory_mb_per_core: 4000
+	    cpu: 1
+	    runtime_minutes: 60 
+  }
+  output {
+        File merged_bam_out = "~{sample_basename}.bamout.bam"
+        File merged_bam_out_index = "~{sample_basename}.bamout.bai"
+  }
+}
+
 
 task SplitSNPindel {
   input {
@@ -1984,5 +2048,3 @@ task StringToArray {
     File intervals_list = "intervals.list"
   }
 }
-
-
