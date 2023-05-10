@@ -117,6 +117,7 @@ workflow FastqToVCF {
     File refSeqFile
     
     Boolean make_bamout = false
+    Boolean do_SoftSearch = true
 
     String? enrichment
     File? enrichment_bed
@@ -443,8 +444,7 @@ workflow FastqToVCF {
   
   
   # Calculate Softsearch only if targetRegions are not present
-  Boolean do_it = true
-  if (do_it) {
+  if (do_SoftSearch) {
     if( !defined(targetRegions) ) {
       call Softsearch.SoftSearchWF as SoftsearchWF {
         input:
