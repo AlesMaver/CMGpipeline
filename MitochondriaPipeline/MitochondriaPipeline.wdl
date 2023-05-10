@@ -436,12 +436,13 @@ task FilterVCF {
   }
 
   String output_vcf = base_name + ".final.filtered.vcf"
+  String mito_table = base_name + ".mito_table.txt"
   
   command {
     bcftools view -i 'FILTER!~"weak_evidence"' ~{input_vcf} > ~{output_vcf}
     bcftools +fill-tags ~{output_vcf} -Oz -o variantEP.vaf.vcf.gz -- -t 'FORMAT/VAF,FORMAT/VAF1'
-    echo CHR POS REF ALT FILTER AF DP AD VAF $(bcftools +split-vep variantEP.vaf.vcf.gz -l | cut -f2 | paste -s) | tr ' ' '\t' > mito_table.txt
-    bcftools +split-vep variantEP.vaf.vcf.gz -f '%CHROM\t%POS\t%REF\t%ALT\t%FILTER\t%AF\t[ %DP]\t[ %AD]\t[ %VAF]\t%CSQ\n' -A "tab" -s worst >> mito_table.txt
+    echo CHR POS REF ALT FILTER AF DP AD VAF $(bcftools +split-vep variantEP.vaf.vcf.gz -l | cut -f2 | paste -s) | tr ' ' '\t' > ~{mito_table}
+    bcftools +split-vep variantEP.vaf.vcf.gz -f '%CHROM\t%POS\t%REF\t%ALT\t%FILTER\t%AF\t[ %DP]\t[ %AD]\t[ %VAF]\t%CSQ\n' -A "tab" -s worst >> ~{mito_table}
   }
 
   runtime {
@@ -452,6 +453,7 @@ task FilterVCF {
   }
   output {
     File output_vcf = "~{output_vcf}" 
+    File mito_table = "~{mito_table}"
   }
 }
 
