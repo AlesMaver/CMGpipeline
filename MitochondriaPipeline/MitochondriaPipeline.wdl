@@ -422,7 +422,7 @@ task SplitMultiAllelicSites {
   }
   output {
     File split_vcf = "~{output_vcf}"
-    File split_vcf_index = "~{output_vcf}"
+    File split_vcf_index = "~{output_vcf_index}"
   }
   runtime {
       docker: select_first([gatk_docker_override, "us.gcr.io/broad-gatk/gatk:4.1.7.0"])
