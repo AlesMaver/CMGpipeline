@@ -1,9 +1,6 @@
 version 1.0
 
 import "AlignAndCall.wdl" as AlignAndCall
-import "https://raw.githubusercontent.com/AlesMaver/bravo-pipeline/e79726c9b745cb13e9bb70a99f25cd414ca5658d/vcfPercentilesPreparation.wdl" as Bravo
-
-#import "https://api.firecloud.org/ga4gh/v1/tools/mitochondria:AlignAndCall/versions/23/plain-WDL/descriptor" as AlignAndCall
 
 workflow MitochondriaPipeline {
 
@@ -192,24 +189,29 @@ workflow MitochondriaPipeline {
 
 
   output {
-    File subset_bam = SubsetBamToChrM.output_bam
-    File subset_bai = SubsetBamToChrM.output_bai
+    # unnecessary: File subset_bam = SubsetBamToChrM.output_bam
+    # unnecessary: File subset_bai = SubsetBamToChrM.output_bai
     File mt_aligned_bam = AlignAndCall.mt_aligned_bam
     File mt_aligned_bai = AlignAndCall.mt_aligned_bai
-    File out_vcf = AlignAndCall.out_vcf
-    File out_vcf_index = AlignAndCall.out_vcf_index
+    # unnecessary: File out_vcf = AlignAndCall.out_vcf
+    # unnecessary: File out_vcf_index = AlignAndCall.out_vcf_index
     File split_vcf = SplitMultiAllelicSites.split_vcf
     File split_vcf_index = SplitMultiAllelicSites.split_vcf_index
     File input_vcf_for_haplochecker = AlignAndCall.input_vcf_for_haplochecker
     File duplicate_metrics = AlignAndCall.duplicate_metrics
     File coverage_metrics = AlignAndCall.coverage_metrics
-    File theoretical_sensitivity_metrics = AlignAndCall.theoretical_sensitivity_metrics
-    File contamination_metrics = AlignAndCall.contamination_metrics
+    # unnecessary: File theoretical_sensitivity_metrics = AlignAndCall.theoretical_sensitivity_metrics
+    # unnecessary: File contamination_metrics = AlignAndCall.contamination_metrics
     File base_level_coverage_metrics = CoverageAtEveryBase.table
+    
+    File filterVCF_output_vcf = FilterVCF.output_vcf
+    File filterVCF_mito_table = FilterVCF.mito_table
+    
+    # data not in files:
     Int mean_coverage = AlignAndCall.mean_coverage
     Float median_coverage = AlignAndCall.median_coverage
     String major_haplogroup = AlignAndCall.major_haplogroup
-    Float contamination = AlignAndCall.contamination
+    # unnecessary: Float contamination = AlignAndCall.contamination
   }
 }
 
