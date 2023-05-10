@@ -101,8 +101,8 @@ workflow MitochondriaPipeline {
       preemptible_tries = preemptible_tries
   }
 
-  ##### String base_name = basename(SubsetBamToChrM.output_bam, ".bam")
-  String base_name = sub(basename(wgs_aligned_input_bam_or_cram), "[\_,\.].*", "" )
+  String base_name = basename(SubsetBamToChrM.output_bam, ".bam")
+  ### naša običajna koda za sample_basename: String base_name = sub(basename(wgs_aligned_input_bam_or_cram), "[\_,\.].*", "" )
 
 
   call AlignAndCall.AlignAndCall as AlignAndCall {
