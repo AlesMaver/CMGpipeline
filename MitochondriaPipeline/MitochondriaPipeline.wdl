@@ -80,6 +80,8 @@ workflow MitochondriaPipeline {
   }
   
   
+  ### naša običajna koda za sample_basename: 
+  String sample_basename = sub(basename(wgs_aligned_input_bam_or_cram), "[\_,\.].*", "" )
 
   call SubsetBamToChrM {
     input:
@@ -92,19 +94,19 @@ workflow MitochondriaPipeline {
       requester_pays_project = requester_pays_project,
       gatk_override = gatk_override,
       gatk_docker_override = gatk_docker_override,
-      preemptible_tries = preemptible_tries
+      preemptible_tries = preemptible_tries,
+      basename = sample_basename
   }
 
   call RevertSam {
     input:
       input_bam = SubsetBamToChrM.output_bam,
-      preemptible_tries = preemptible_tries
+      preemptible_tries = preemptible_tries,
+      basename = sample_basename
   }
 
   String base_name = basename(SubsetBamToChrM.output_bam, ".bam")
-  ### naša običajna koda za sample_basename: String base_name = sub(basename(wgs_aligned_input_bam_or_cram), "[\_,\.].*", "" )
-
-
+  
   call AlignAndCall.AlignAndCall as AlignAndCall {
     input:
       unmapped_bam = RevertSam.unmapped_bam,
@@ -330,6 +332,7 @@ task CoverageAtEveryBase {
     File shifted_ref_fasta
     File shifted_ref_fasta_index
     File shifted_ref_dict
+    String sample_basename
 
     Int? preemptible_tries
   }
@@ -379,7 +382,7 @@ task CoverageAtEveryBase {
 
       non_control_region = read.table("non_control_region.tsv", header=T)
       combined_table = rbind(beginning, non_control_region, end)
-      write.table(combined_table, "per_base_coverage.tsv", row.names=F, col.names=T, quote=F, sep="\t")
+      write.table(combined_table, "~{sample_basename}.per_base_coverage.tsv", row.names=F, col.names=T, quote=F, sep="\t")
 
     CODE
   >>>
@@ -390,7 +393,7 @@ task CoverageAtEveryBase {
     preemptible: select_first([preemptible_tries, 5])
   }
   output {
-    File table = "per_base_coverage.tsv"
+    File table = ~{sample_basename} + ".per_base_coverage.tsv"
   }
 }
 
