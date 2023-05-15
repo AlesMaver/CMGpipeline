@@ -10,6 +10,7 @@ workflow MitochondriaPipeline {
   }
 
   input {
+    String sample_basename
     File wgs_aligned_input_bam_or_cram
     File wgs_aligned_input_bam_or_cram_index
     String contig_name = "chrM"
@@ -81,7 +82,7 @@ workflow MitochondriaPipeline {
   
   
   ### naša običajna koda za sample_basename: 
-  String sample_basename = sub(basename(wgs_aligned_input_bam_or_cram), "[\_,\.].*", "" )
+  ### String sample_basename = sub(basename(wgs_aligned_input_bam_or_cram), "[\_,\.].*", "" )
 
   call SubsetBamToChrM {
     input:
