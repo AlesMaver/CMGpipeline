@@ -111,7 +111,8 @@ workflow MitochondriaPipeline {
     input:
       unmapped_bam = RevertSam.unmapped_bam,
       autosomal_coverage = autosomal_coverage,
-      base_name = base_name,
+      # base_name = base_name,
+      base_name = sample_basename,
       mt_dict = mt_dict,
       mt_fasta = mt_fasta,
       mt_fasta_index = mt_fasta_index,
