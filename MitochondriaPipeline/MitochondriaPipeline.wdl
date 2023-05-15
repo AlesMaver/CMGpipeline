@@ -208,6 +208,8 @@ workflow MitochondriaPipeline {
     File input_vcf_for_haplochecker = AlignAndCall.input_vcf_for_haplochecker
     File duplicate_metrics = AlignAndCall.duplicate_metrics
     File coverage_metrics = AlignAndCall.coverage_metrics
+    File coverage_mean_metrics = AlignAndCall.metrics_mean_coverage
+    File coverage_median_metrics = AlignAndCall.metrics_median_coverage
     # unnecessary: File theoretical_sensitivity_metrics = AlignAndCall.theoretical_sensitivity_metrics
     # unnecessary: File contamination_metrics = AlignAndCall.contamination_metrics
     File base_level_coverage_metrics = CoverageAtEveryBase.table
