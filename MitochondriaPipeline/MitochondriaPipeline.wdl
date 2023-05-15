@@ -150,6 +150,7 @@ workflow MitochondriaPipeline {
   # This proivdes coverage at each base so low coverage sites can be considered ./. rather than 0/0.
   call CoverageAtEveryBase {
     input:
+      sample_basename = sample_basename,
       input_bam_regular_ref = AlignAndCall.mt_aligned_bam,
       input_bam_regular_ref_index = AlignAndCall.mt_aligned_bai,
       input_bam_shifted_ref = AlignAndCall.mt_aligned_shifted_bam,
@@ -334,7 +335,7 @@ task CoverageAtEveryBase {
     File shifted_ref_fasta
     File shifted_ref_fasta_index
     File shifted_ref_dict
-    #String sample_basename
+    String sample_basename
 
     Int? preemptible_tries
   }
@@ -387,6 +388,8 @@ task CoverageAtEveryBase {
       write.table(combined_table, "per_base_coverage.tsv", row.names=F, col.names=T, quote=F, sep="\t")
 
     CODE
+    mv  per_base_coverage.tsv ~{sample_basename}.per_base_coverage.tsv
+    
   >>>
   runtime {
     disks: "local-disk " + disk_size + " HDD"
@@ -395,7 +398,7 @@ task CoverageAtEveryBase {
     preemptible: select_first([preemptible_tries, 5])
   }
   output {
-    File table = "per_base_coverage.tsv"
+    File table = "~{sample_basename}.per_base_coverage.tsv"
   }
 }
 
