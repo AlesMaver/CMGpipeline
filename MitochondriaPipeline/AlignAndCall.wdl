@@ -190,6 +190,7 @@ workflow AlignAndCall {
 
   call GetContamination {
     input:
+      base_name = base_name,
       input_vcf = SplitMultiAllelicsAndRemoveNonPassSites.vcf_for_haplochecker,
       preemptible_tries = preemptible_tries
   }
@@ -266,6 +267,7 @@ workflow AlignAndCall {
     File coverage_median_metrics = CollectWgsMetrics.metrics_median_coverage
     File theoretical_sensitivity_metrics = CollectWgsMetrics.theoretical_sensitivity
     File contamination_metrics = GetContamination.contamination_file
+    File major_haplogroup_file = GetContamination.major_haplogroup_file
     Int mean_coverage = CollectWgsMetrics.mean_coverage
     Float median_coverage = CollectWgsMetrics.median_coverage
     String major_haplogroup = GetContamination.major_hg
@@ -276,6 +278,7 @@ workflow AlignAndCall {
 
 task GetContamination {
   input {
+    String base_name
     File input_vcf
     # runtime
     Int? preemptible_tries
@@ -320,6 +323,9 @@ task GetContamination {
   awk -F "\t" '{print $8}' output-data > minor_hg.txt
   awk -F "\t" '{print $14}' output-data > mean_het_major.txt
   awk -F "\t" '{print $15}' output-data > mean_het_minor.txt
+  
+  cp -p major_hg.txt ~{base_name}.major_hg.txt 
+  
   >>>
   runtime {
     preemptible: select_first([preemptible_tries, 5])
@@ -328,6 +334,7 @@ task GetContamination {
     docker: "us.gcr.io/broad-dsde-methods/haplochecker:haplochecker-0124"
   }
   output {
+    File major_haplogroup_file = "~{base_name}.major_hg.txt"
     File contamination_file = "output-noquotes"
     String hasContamination = read_string("contamination.txt") 
     String major_hg = read_string("major_hg.txt")
