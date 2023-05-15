@@ -10,7 +10,6 @@ workflow MitochondriaPipeline {
   }
 
   input {
-    String sample_basename
     File wgs_aligned_input_bam_or_cram
     File wgs_aligned_input_bam_or_cram_index
     String contig_name = "chrM"
@@ -95,15 +94,13 @@ workflow MitochondriaPipeline {
       requester_pays_project = requester_pays_project,
       gatk_override = gatk_override,
       gatk_docker_override = gatk_docker_override,
-      preemptible_tries = preemptible_tries,
-      basename = sample_basename
+      preemptible_tries = preemptible_tries
   }
 
   call RevertSam {
     input:
       input_bam = SubsetBamToChrM.output_bam,
-      preemptible_tries = preemptible_tries,
-      basename = sample_basename
+      preemptible_tries = preemptible_tries
   }
 
   String base_name = basename(SubsetBamToChrM.output_bam, ".bam")
@@ -112,8 +109,7 @@ workflow MitochondriaPipeline {
     input:
       unmapped_bam = RevertSam.unmapped_bam,
       autosomal_coverage = autosomal_coverage,
-      # base_name = base_name,
-      base_name = sample_basename,
+      base_name = base_name,
       mt_dict = mt_dict,
       mt_fasta = mt_fasta,
       mt_fasta_index = mt_fasta_index,
@@ -334,7 +330,7 @@ task CoverageAtEveryBase {
     File shifted_ref_fasta
     File shifted_ref_fasta_index
     File shifted_ref_dict
-    String sample_basename
+    #String sample_basename
 
     Int? preemptible_tries
   }
@@ -384,7 +380,7 @@ task CoverageAtEveryBase {
 
       non_control_region = read.table("non_control_region.tsv", header=T)
       combined_table = rbind(beginning, non_control_region, end)
-      write.table(combined_table, "~{sample_basename}.per_base_coverage.tsv", row.names=F, col.names=T, quote=F, sep="\t")
+      write.table(combined_table, "per_base_coverage.tsv", row.names=F, col.names=T, quote=F, sep="\t")
 
     CODE
   >>>
@@ -395,7 +391,7 @@ task CoverageAtEveryBase {
     preemptible: select_first([preemptible_tries, 5])
   }
   output {
-    File table = ~{sample_basename} + ".per_base_coverage.tsv"
+    File table = "per_base_coverage.tsv"
   }
 }
 
