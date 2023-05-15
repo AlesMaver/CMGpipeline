@@ -90,6 +90,7 @@ workflow AlignAndCall {
 
   call CollectWgsMetrics {
     input:
+      base_name = base_name,
       input_bam = AlignToMt.mt_aligned_bam,
       input_bam_index = AlignToMt.mt_aligned_bai,
       ref_fasta = mt_fasta,
@@ -335,6 +336,7 @@ task GetContamination {
 
 task CollectWgsMetrics {
   input {
+    String base_name
     File input_bam
     File input_bam_index
     File ref_fasta
@@ -372,10 +374,12 @@ task CollectWgsMetrics {
       THEORETICAL_SENSITIVITY_OUTPUT=theoretical_sensitivity.txt
 
     R --vanilla <<CODE
-      df = read.table("metrics.txt",skip=6,header=TRUE,stringsAsFactors=FALSE,sep='\t',nrows=1)
+      df = read.table("WgsMetrics.txt",skip=6,header=TRUE,stringsAsFactors=FALSE,sep='\t',nrows=1)
       write.table(floor(df[,"MEAN_COVERAGE"]), "mean_coverage.txt", quote=F, col.names=F, row.names=F)
       write.table(df[,"MEDIAN_COVERAGE"], "median_coverage.txt", quote=F, col.names=F, row.names=F)
     CODE
+    mv WgsMetrics.txt ~{base_name}.WgsMetrics.txt
+    
   >>>
   runtime {
     preemptible: select_first([preemptible_tries, 5])
@@ -384,7 +388,7 @@ task CollectWgsMetrics {
     docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.2-1552931386"
   }
   output {
-    File metrics = "metrics.txt"
+    File metrics = "~{base_name}.WgsMetrics.txt"
     File theoretical_sensitivity = "theoretical_sensitivity.txt"
     Int mean_coverage = read_int("mean_coverage.txt")
     Float median_coverage = read_float("median_coverage.txt")
