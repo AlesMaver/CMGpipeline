@@ -179,6 +179,7 @@ workflow AlignAndCall {
  
   call SplitMultiAllelicsAndRemoveNonPassSites {
     input:
+      base_name = base_name,
       ref_fasta = mt_fasta,
       ref_fai = mt_fasta_index,
       ref_dict = mt_dict,
@@ -637,6 +638,7 @@ task MergeStats {
 
 task SplitMultiAllelicsAndRemoveNonPassSites {
   input {
+    String base_name
     File ref_fasta
     File ref_fai
     File ref_dict
@@ -659,12 +661,12 @@ task SplitMultiAllelicsAndRemoveNonPassSites {
 
       gatk SelectVariants \
         -V split.vcf \
-        -O splitAndPassOnly.vcf \
+        -O ~{base_name}.splitAndPassOnly.vcf \
         --exclude-filtered
   
   }
   output {
-    File vcf_for_haplochecker = "splitAndPassOnly.vcf"
+    File vcf_for_haplochecker = "~{base_name}.splitAndPassOnly.vcf"
   }
   runtime {
       docker: select_first([gatk_docker_override, "us.gcr.io/broad-gatk/gatk:4.1.7.0"])
