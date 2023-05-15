@@ -262,6 +262,8 @@ workflow AlignAndCall {
     File input_vcf_for_haplochecker = SplitMultiAllelicsAndRemoveNonPassSites.vcf_for_haplochecker
     File duplicate_metrics = AlignToMt.duplicate_metrics
     File coverage_metrics = CollectWgsMetrics.metrics
+    File coverage_mean_metrics = CollectWgsMetrics.metrics_mean_coverage
+    File coverage_median_metrics = CollectWgsMetrics.metrics_median_coverage
     File theoretical_sensitivity_metrics = CollectWgsMetrics.theoretical_sensitivity
     File contamination_metrics = GetContamination.contamination_file
     Int mean_coverage = CollectWgsMetrics.mean_coverage
@@ -379,7 +381,9 @@ task CollectWgsMetrics {
       write.table(floor(df[,"MEAN_COVERAGE"]), "mean_coverage.txt", quote=F, col.names=F, row.names=F)
       write.table(df[,"MEDIAN_COVERAGE"], "median_coverage.txt", quote=F, col.names=F, row.names=F)
     CODE
-    mv metrics.txt ~{base_name}.WgsMetrics.txt
+    mv metrics.txt ~{base_name}.coverage_metrics.txt
+    mv mean_coverage.txt ~{base_name}.coverage_metrics.mean.txt
+    mv median_coverage.txt ~{base_name}.coverage_metrics.median.txt
     
   >>>
   runtime {
@@ -389,7 +393,10 @@ task CollectWgsMetrics {
     docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.2-1552931386"
   }
   output {
-    File metrics = "~{base_name}.WgsMetrics.txt"
+    File metrics = "~{base_name}.coverage_metrics.txt"
+    File metrics_mean_coverage = "~{base_name}.coverage_metrics.mean.txt"
+    File metrics_median_coverage = "~{base_name}.coverage_metrics.median.txt"
+    
     File theoretical_sensitivity = "theoretical_sensitivity.txt"
     Int mean_coverage = read_int("mean_coverage.txt")
     Float median_coverage = read_float("median_coverage.txt")
