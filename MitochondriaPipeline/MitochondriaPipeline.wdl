@@ -10,6 +10,7 @@ workflow MitochondriaPipeline {
   }
 
   input {
+    String sample_basename
     File wgs_aligned_input_bam_or_cram
     File wgs_aligned_input_bam_or_cram_index
     String contig_name = "chrM"
