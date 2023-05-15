@@ -80,10 +80,6 @@ workflow MitochondriaPipeline {
     contig_name: "Name of mitochondria contig in reference that wgs_aligned_input_bam_or_cram is aligned to"
   }
   
-  
-  ### naša običajna koda za sample_basename: 
-  ### String sample_basename = sub(basename(wgs_aligned_input_bam_or_cram), "[\_,\.].*", "" )
-
   call SubsetBamToChrM {
     input:
       basename = sample_basename,
