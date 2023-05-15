@@ -375,11 +375,11 @@ task CollectWgsMetrics {
       THEORETICAL_SENSITIVITY_OUTPUT=theoretical_sensitivity.txt
 
     R --vanilla <<CODE
-      df = read.table("WgsMetrics.txt",skip=6,header=TRUE,stringsAsFactors=FALSE,sep='\t',nrows=1)
+      df = read.table("metrics.txt",skip=6,header=TRUE,stringsAsFactors=FALSE,sep='\t',nrows=1)
       write.table(floor(df[,"MEAN_COVERAGE"]), "mean_coverage.txt", quote=F, col.names=F, row.names=F)
       write.table(df[,"MEDIAN_COVERAGE"], "median_coverage.txt", quote=F, col.names=F, row.names=F)
     CODE
-    mv WgsMetrics.txt ~{base_name}.WgsMetrics.txt
+    mv metrics.txt ~{base_name}.WgsMetrics.txt
     
   >>>
   runtime {
