@@ -381,9 +381,9 @@ task CollectWgsMetrics {
       write.table(floor(df[,"MEAN_COVERAGE"]), "mean_coverage.txt", quote=F, col.names=F, row.names=F)
       write.table(df[,"MEDIAN_COVERAGE"], "median_coverage.txt", quote=F, col.names=F, row.names=F)
     CODE
-    mv metrics.txt ~{base_name}.coverage_metrics.txt
-    mv mean_coverage.txt ~{base_name}.coverage_metrics.mean.txt
-    mv median_coverage.txt ~{base_name}.coverage_metrics.median.txt
+    cp -p metrics.txt ~{base_name}.coverage_metrics.txt
+    cp -p mean_coverage.txt ~{base_name}.coverage_metrics.mean.txt
+    cp -p median_coverage.txt ~{base_name}.coverage_metrics.median.txt
     
   >>>
   runtime {
