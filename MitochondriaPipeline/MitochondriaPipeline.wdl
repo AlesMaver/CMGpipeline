@@ -86,6 +86,7 @@ workflow MitochondriaPipeline {
 
   call SubsetBamToChrM {
     input:
+      basename = sample_basename,
       input_bam = wgs_aligned_input_bam_or_cram,
       input_bai = wgs_aligned_input_bam_or_cram_index,
       contig_name = contig_name,
@@ -100,6 +101,7 @@ workflow MitochondriaPipeline {
 
   call RevertSam {
     input:
+      basename = sample_basename,
       input_bam = SubsetBamToChrM.output_bam,
       preemptible_tries = preemptible_tries
   }
@@ -110,7 +112,8 @@ workflow MitochondriaPipeline {
     input:
       unmapped_bam = RevertSam.unmapped_bam,
       autosomal_coverage = autosomal_coverage,
-      base_name = base_name,
+      # base_name = base_name,
+      base name = sample_basename,
       mt_dict = mt_dict,
       mt_fasta = mt_fasta,
       mt_fasta_index = mt_fasta_index,
