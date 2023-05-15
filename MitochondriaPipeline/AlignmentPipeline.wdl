@@ -34,7 +34,7 @@ workflow AlignmentPipeline {
     input:
       input_bam = input_bam,
       bwa_version = GetBwaVersion.version,
-      output_bam_basename = basename + ".realigned",
+      output_bam_basename = basename + ".mito.hg38",
       ref_fasta = mt_fasta,
       ref_fasta_index = mt_fasta_index,
       ref_dict = mt_dict,
