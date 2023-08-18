@@ -102,6 +102,12 @@
     "VariantType": "Repeat"
   },
   {
+    "LocusId": "CSTB",
+    "LocusStructure": "(CGCGGGGCGGGG)*",
+    "ReferenceRegion": "chr21:45196324-45196360",
+    "VariantType": "Repeat"
+  },
+  {
     "LocusId": "DAB1",
     "LocusStructure": "(GAAAT)*",
     "ReferenceRegion": "chr1:57832715-57832790",
