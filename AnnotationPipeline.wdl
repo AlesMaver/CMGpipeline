@@ -19,6 +19,9 @@ workflow AnnotateVCF {
     File ClinVar_vcf
     File ClinVar_vcf_index
 
+    File? TopMed_vcf
+    File? TopMed_vcf_index
+
     File SpliceAI
     File SpliceAI_index
 
