@@ -13,14 +13,14 @@ workflow AnnotateVCF {
     File gnomADexomes_vcf
     File gnomADexomes_vcf_index
 
+    File TopMed_vcf
+    File TopMed_vcf_index
+
     File SLOpopulation_vcf
     File SLOpopulation_vcf_index
 
     File ClinVar_vcf
     File ClinVar_vcf_index
-
-    File? TopMed_vcf
-    File? TopMed_vcf_index
 
     File SpliceAI
     File SpliceAI_index
@@ -133,6 +133,9 @@ workflow AnnotateVCF {
 
         gnomADexomes_vcf = gnomADexomes_vcf,
         gnomADexomes_vcf_index = gnomADexomes_vcf_index,
+
+        TopMed_vcf = TopMed_vcf,
+        TopMed_vcf_index = TopMed_vcf_index,
 
         SLOpopulation_vcf = SLOpopulation_vcf,
         SLOpopulation_vcf_index = SLOpopulation_vcf_index, 
@@ -352,6 +355,9 @@ task VCFANNO {
     File gnomAD_vcf
     File gnomAD_vcf_index
 
+    File TopMed_vcf
+    File TopMed_vcf_index
+
     File SLOpopulation_vcf
     File SLOpopulation_vcf_index
 
@@ -381,6 +387,12 @@ task VCFANNO {
   echo fields = [\"AC\",\"AF\",\"nhomalt\",\"AC_male\",\"nhomalt_male\",\"AC_female\",\"nhomalt_female\",\"AC_nfe_seu\",\"AC_raw\",\"AF_raw\"] >> conf.toml
   echo ops=[\"self\",\"self\",\"self\",\"self\",\"self\",\"self\",\"self\",\"self\",\"self\",\"self\"] >> conf.toml
   echo names=[\"gnomADexomes.AC\",\"gnomADexomes.AF\",\"gnomADexomes.nhomalt\",\"gnomADexomes.AC_male\",\"gnomADexomes.nhomalt_male\",\"gnomADexomes.AC_female\",\"gnomADexomes.nhomalt_female\",\"gnomADexomes.AC_nfe_seu\",\"gnomADexomes.AC_raw\",\"gnomADexomes.AF_raw\"] >> conf.toml
+
+  echo [[annotation]] >> conf.toml
+  echo file=\"~{TopMed_vcf}\" >> conf.toml
+  echo fields = [\"AC\",\"AF\",\"AN\",\"Het\",\"Hom\"] >> conf.toml
+  echo ops=[\"self\",\"self\",\"self\",\"self\",\"self\"] >> conf.toml
+  echo names=[\"TopMed_AC\",\"TopMed_AF\",\"TopMed_AN\",\"TopMed_Het\",\"TopMed_Hom\"] >> conf.toml
 
   echo [[annotation]] >> conf.toml
   echo file=\"~{SLOpopulation_vcf}\" >> conf.toml
