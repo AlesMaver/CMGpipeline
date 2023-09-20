@@ -144,6 +144,12 @@ workflow FastqToVCF {
     Array[File]? relative_vcfs
     Array[File]? relative_vcf_indexes
 
+    # TopMed
+    File TopMed_vcf
+    File TopMed_vcf_index
+    File pext_bed
+    File pext_bed_index
+
     # Here are the global docker environment variables for tools used in this workflow
     # TO DO: Move the other task-specific docker definitions here for clarity, unless necessary
     String cutadapt_docker = "kfdrc/cutadapt:latest"
@@ -617,6 +623,9 @@ workflow FastqToVCF {
       gnomADexomes_vcf = gnomADexomes_vcf,
       gnomADexomes_vcf_index = gnomADexomes_vcf_index,
 
+      TopMed_vcf = TopMed_vcf,
+      TopMed_vcf_index = TopMed_vcf_index,
+
       SLOpopulation_vcf = SLOpopulation_vcf,
       SLOpopulation_vcf_index = SLOpopulation_vcf_index,
 
@@ -638,6 +647,9 @@ workflow FastqToVCF {
       CGD = CGD,
       CGD_index = CGD_index,
       bcftools_annotation_header = bcftools_annotation_header,
+
+      pext_bed = pext_bed,
+      pext_bed_index = pext_bed_index,
 
       fasta_reference = reference_fa,
       fasta_reference_index = reference_fai,
