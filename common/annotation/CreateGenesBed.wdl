@@ -5,8 +5,12 @@ workflow CreateGenesBed {
 }
 
 task DownloadAndPrepareBed {
+    input {
+        File gencode_gff3
+    }
+
     command <<<
-        curl -s ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/gencode.v44.annotation.gff3.gz \
+        cat ~{gencode_gff3} \
             | gunzip --stdout - \
             | awk '$3 == "gene"' \
             | convert2bed -i gff --attribute-key="gene_name" - \
