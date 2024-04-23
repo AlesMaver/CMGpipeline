@@ -82,13 +82,18 @@ workflow AnnotateVCF {
     String gatk_docker = "broadinstitute/gatk:latest"
     String gatk_path = "/gatk/gatk"
     String vcfanno_docker = "clinicalgenomics/vcfanno:0.3.2"
+
+    String sample_basename
+    String output_filename = sample_basename + ".annotated.vcf"
+
   }  
 
   Array[String] chromosomes = read_lines(chromosome_list)
 
-  String sample_basename = basename(input_vcf, ".vcf")
-  String output_filename = sample_basename + ".annotated.vcf"
-  String output_filename_gz = sample_basename + ".annotated.vcf.gz"
+  #String sample_basename = basename(input_vcf, ".vcf")
+  #String output_filename = sample_basename + ".annotated.vcf"
+  #String output_filename_gz = sample_basename + ".annotated.vcf.gz"
+  String output_filename_gz = output_filename + ".gz"
 
   # Workflow calls begin here
   #call LeftAlignAndTrimVariants {
