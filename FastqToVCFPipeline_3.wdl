@@ -712,6 +712,7 @@ workflow FastqToVCF {
 
   call Annotation.AnnotateVCF as AnnotateVCF{
     input:
+      sample_basename = sample_basename,
       input_vcf = select_first([Mutect2.filtered_vcf, SelectFinalVariants.output_vcf]),
       chromosome_list = chromosome_list,
       
@@ -941,6 +942,8 @@ workflow FastqToVCF {
 
     call Annotation.AnnotateVCF as AnnotateVCF_DeepVariant{
       input:
+	sample_basename = sample_basename,
+	output_filename = sample_basename + ".DeepVariant.annotated.vcf",
         input_vcf = DeepVariant.outputVCF,
         chromosome_list = chromosome_list,
       
@@ -1235,6 +1238,8 @@ workflow FastqToVCF {
     File? outputVCFStatsReport = DeepVariant.outputVCFStatsReport
     File? outputGVCF = DeepVariant.outputGVCF
     File? outputGVCFIndex = DeepVariant.outputGVCFIndex
+    File? output_annotated_deepvariant_vcf = AnnotateVCF_DeepVariant.output_vcf
+    File? output_annotated_deepvariant_vcf_index = AnnotateVCF_DeepVariant.output_vcf_index
 
     File? Qualimap_results = Qualimap.results
     File? QualimapWGS_results = QualimapWGS.results
