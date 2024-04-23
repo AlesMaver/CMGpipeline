@@ -59,8 +59,8 @@ workflow DeepVariant {
     }
 
   output {
-      File? outputVCF = RunDeepVariant.outputVCF
-      File? outputVCFIndex = RunDeepVariant.outputVCFIndex
+      File outputVCF = RunDeepVariant.outputVCF
+      File outputVCFIndex = RunDeepVariant.outputVCFIndex
       File? outputVCFStatsReport = RunDeepVariant.outputVCFStatsReport
       File? outputGVCF = RunDeepVariant.outputGVCF
       File? outputGVCFIndex = RunDeepVariant.outputGVCFIndex
@@ -117,8 +117,8 @@ task RunDeepVariant {
     }
 
     output {
-        File? outputVCF = outputVcf
-        File? outputVCFIndex = outputVcf + ".tbi"
+        File outputVCF = outputVcf
+        File outputVCFIndex = outputVcf + ".tbi"
         ## Array[File] outputVCFStatsReport = glob("*.visual_report.html")
         File? outputVCFStatsReport = sampleName + ".DeepVariant.visual_report.html"
         File? outputGVCF = outputGVcf
