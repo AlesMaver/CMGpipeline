@@ -236,7 +236,7 @@ workflow AnnotateVCF {
       input_vcfs = CompressAndIndexVCF2.output_vcfgz,
       input_vcfs_indexes = CompressAndIndexVCF2.output_vcfgz_index,
       sample_basename = sample_basename,
-      output_filename_gz = output_filename_gz
+      output_filename_gz = output_filename_gz,
       docker = gatk_docker,
       gatk_path = gatk_path
   }
