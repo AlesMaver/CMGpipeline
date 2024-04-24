@@ -642,7 +642,7 @@ task MergeVCFs {
     # Command parameters
     Array[File] input_vcfs
     Array[File] input_vcfs_indexes
-    String sample_basename
+    String output_filename_gz
 
     String gatk_path
 
@@ -656,7 +656,7 @@ task MergeVCFs {
     ~{gatk_path} --java-options -Xmx4G  \
       MergeVcfs \
       --INPUT ~{sep=' --INPUT ' input_vcfs} \
-      --OUTPUT ~{sample_basename}.annotated.vcf.gz
+      --OUTPUT ~{output_filename_gz}
   }
   runtime {
     docker: docker
@@ -669,8 +669,8 @@ task MergeVCFs {
     runtime_minutes: 120
   }
   output {
-    File output_vcfgz = "~{sample_basename}.annotated.vcf.gz"
-    File output_vcfgz_index = "~{sample_basename}.annotated.vcf.gz.tbi"
+    File output_vcfgz = "~{output_filename_gz}"
+    File output_vcfgz_index = "~{output_filename_gz}.tbi"
   }
 }
 
