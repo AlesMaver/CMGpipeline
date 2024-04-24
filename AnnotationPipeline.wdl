@@ -642,6 +642,7 @@ task MergeVCFs {
     # Command parameters
     Array[File] input_vcfs
     Array[File] input_vcfs_indexes
+    String sample_basename
     String output_filename_gz
 
     String gatk_path
