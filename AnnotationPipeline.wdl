@@ -254,7 +254,7 @@ workflow AnnotateVCF {
   output {
     File output_vcf = MergeVCFs.output_vcfgz
     File output_vcf_index = MergeVCFs.output_vcfgz_index
-    File output_table = GenerateVariantTable.output_table
+    #File output_table = GenerateVariantTable.output_table
   }
 }
 
