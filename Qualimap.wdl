@@ -47,8 +47,8 @@ task bamqc {
         disk: disk_size + " GB"
         docker: 'stjudecloud/qualimap:1.0.0'
         maxRetries: max_retries
-        requested_memory_mb_per_core: 15000   ## 5000
-        cpu: 5
+        requested_memory_mb_per_core: 1000   ## 5000
+        cpu: 64
         ## runtime_minutes: 180
         runtime_minutes: 900
     }
@@ -280,8 +280,8 @@ task DownsampleBED {
 
   runtime {
     docker: docker
-    requested_memory_mb_per_core: 2000
-    cpu: 1
+    requested_memory_mb_per_core: 1000
+    cpu: 2
     runtime_minutes: 60
   }
   output {

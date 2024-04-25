@@ -113,8 +113,8 @@ task MakeRPKM {
   }
   runtime {
     docker: docker
-    requested_memory_mb_per_core: 3000
-    cpu: 2
+    requested_memory_mb_per_core: 1000
+    cpu: 7
     runtime_minutes: 500
   }
   output {
@@ -354,8 +354,8 @@ task GenerateAnnotatedIntervalFile {
   }
   runtime {
     docker: "alesmaver/r-base"
-    requested_memory_mb_per_core: 3000
-    cpu: 1
+    requested_memory_mb_per_core: 1000
+    cpu: 4
     runtime_minutes: 30
     continueOnReturnCode: true
   }

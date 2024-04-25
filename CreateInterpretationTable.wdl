@@ -266,8 +266,8 @@ task GetGenerateXLSXscript {
 
   runtime {
     docker: docker
-    requested_memory_mb_per_core: 2000
-    cpu: 1
+    requested_memory_mb_per_core: 1000
+    cpu: 2
     runtime_minutes: 20
   }
 
@@ -307,8 +307,8 @@ task GenerateXLSX {
   }
   runtime {
     docker: docker
-    requested_memory_mb_per_core: 6000
-    cpu: 1
+    requested_memory_mb_per_core: 1000
+    cpu: 7
     runtime_minutes: 60
   }
   output {
@@ -339,8 +339,8 @@ task GenerateSimulConsultInputs {
   }
   runtime {
     docker: docker
-    requested_memory_mb_per_core: 3000
-    cpu: 1
+    requested_memory_mb_per_core: 1000
+    cpu: 4
     runtime_minutes: 30
   }
   output {

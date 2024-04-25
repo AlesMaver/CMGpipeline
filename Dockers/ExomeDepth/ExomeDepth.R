@@ -11,19 +11,6 @@ library(tidyverse)
 library(rtracklayer)
 
 # Function Definitions -----------------------------------------------------
-
-targets = '/cmg1scratch/cromwell/FastqToVCFPipelineDatasets/ENRICHMENTS//nexteraExome_nochrYM.bed'
-test_sample = '/mnt/dataSeq/DATA_REPOSITORY/BAMS_HG19/PX14316.marked.bam'
-baseline_samples = c('/mnt/dataSeq/DATA_REPOSITORY/BAMS_HG19/PX13871.marked.bam', 
-                     '/mnt/dataSeq/DATA_REPOSITORY/BAMS_HG19/PX13872.marked.bam', 
-                     '/mnt/dataSeq/DATA_REPOSITORY/BAMS_HG19/PX14310.marked.bam')
-annotation = NULL
-
-opt=c()
-opt$targets = targets
-opt$test_samples = test_sample
-opt$baseline_sample_path = baseline_samples
-
 createReferenceSet <- function(targets, baseline_samples) {
   output_name <- gsub("([0-z]*).(.*)", "\\1", basename(targets))
   # Check if targets are provided; if not, generate exons.hg19 object
@@ -192,3 +179,16 @@ if(create_reference_set){
 
 # Close the sink to restore the standard output
 sink()
+
+#
+targets = '/cmg1scratch/cromwell/FastqToVCFPipelineDatasets/ENRICHMENTS//nexteraExome_nochrYM.bed'
+test_sample = '/mnt/dataSeq/DATA_REPOSITORY/BAMS_HG19/PX13069.marked.bam'
+baseline_samples = c('/mnt/dataSeq/DATA_REPOSITORY/BAMS_HG19/PX13871.marked.bam', 
+                     '/mnt/dataSeq/DATA_REPOSITORY/BAMS_HG19/PX13872.marked.bam', 
+                     '/mnt/dataSeq/DATA_REPOSITORY/BAMS_HG19/PX14310.marked.bam')
+annotation = NULL
+
+opt=c()
+opt$targets = targets
+opt$test_samples = test_sample
+opt$baseline_sample_path = baseline_samples
