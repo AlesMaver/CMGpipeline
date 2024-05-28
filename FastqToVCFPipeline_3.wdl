@@ -30,6 +30,8 @@ import "./bigWig/wigToBigWig_conversion" as BigWig
 import "https://raw.githubusercontent.com/AlesMaver/gatk/master/scripts/mutect2_wdl/mutect2.wdl" as Mutect2
 import "./MitochondriaPipeline/MitochondriaPipeline.wdl" as MitochondriaPipeline
 ### import "./Exomiser.wdl" as Exomiser
+import "./ExomeDepth.wdl" as ExomeDepth
+
 
 # WORKFLOW DEFINITION 
 workflow FastqToVCF {
@@ -149,6 +151,9 @@ workflow FastqToVCF {
     # DELLY
     File population_bcf
     File population_bcf_index
+
+    # ExomeDepth
+    Array[File]? reference_counts_files
 
     ## Boolean GenerateCRAM = false
     Boolean? GenerateCRAM
@@ -930,6 +935,18 @@ workflow FastqToVCF {
     }
   }
 
+  # Exome depth
+  if( defined(enrichment_bed) ){
+    call ExomeDepth.ExomeDepth as ExomeDepth {
+    input:
+      sample_name = sample_name,
+      target_bed = enrichment_bed,
+      input_bam = SortSam.output_bam,
+      input_bam_index = SortSam.output_bam_index,
+      reference_counts_files = reference_counts_files
+    }
+  }
+
   # Deep Variant 
   if (do_DeepVariant) {
     if (defined(enrichment)) {
@@ -1305,6 +1322,20 @@ workflow FastqToVCF {
     File? base_level_coverage_metrics = MitochondriaPipeline.base_level_coverage_metrics
     File? filterVCF_output_vcf = MitochondriaPipeline.filterVCF_output_vcf
     File? filterVCF_mito_table = MitochondriaPipeline.filterVCF_mito_table
+
+    # Exome depth
+    File? exome_depth_counts = ExomeDepth.exome_depth_counts
+    File? exome_depth_cnv_calls_bed = ExomeDepth.exome_depth_cnv_calls_bed
+    File? exome_depth_cnv_calls_csv = ExomeDepth.exome_depth_cnv_calls_csv
+    File? exome_depth_ratios_all_wig_gz = ExomeDepth.exome_depth_ratios_all_wig_gz
+    File? exome_depth_ratios_all_wig_gz_tbi = ExomeDepth.exome_depth_ratios_all_wig_gz_tbi
+    File? exome_depth_rolling_ratios_wig = ExomeDepth.exome_depth_rolling_ratios_wig
+    File? exome_depth_rolling_ratios_wig_gz_tbi = ExomeDepth.exome_depth_rolling_ratios_wig_gz_tbi
+    File? exome_depth_ratios_clean_wig_gz = ExomeDepth.exome_depth_ratios_clean_wig_gz
+    File? exome_depth_ratios_clean_wig_gz_tbi = ExomeDepth.exome_depth_ratios_clean_wig_gz_tbi
+    File? exome_depth_ratios_nomissing_wig_gz = ExomeDepth.exome_depth_ratios_nomissing_wig_gz
+    File? exome_depth_ratios_nomissing_wig_gz_tbi = ExomeDepth.exome_depth_ratios_nomissing_wig_gz_tbi
+    File? exome_depth_annotSV_tsv = ExomeDepth.exome_depth_annotSV_tsv
 
   }
 }
