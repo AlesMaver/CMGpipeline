@@ -5,7 +5,7 @@ import "./manta/manta_workflow.wdl" as Manta
 workflow ExomeDepth {
   input {
     String sample_name
-    File target_bed
+    File? target_bed
     File? input_bam
     File? input_bam_index
     File? exome_depth_counts_input
