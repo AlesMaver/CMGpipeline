@@ -59,7 +59,7 @@ workflow ExomeDepth {
 task GetCounts {
   input {
     String sample_name
-    File target_bed
+    File? target_bed
     File input_bam
     File input_bam_index
   }
@@ -88,7 +88,7 @@ task GetCounts {
 task ExomeDepth {
   input {
     String sample_name
-    File target_bed
+    File? target_bed
     File test_counts_file
     Array[File] reference_counts_files
   }
