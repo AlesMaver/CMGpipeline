@@ -2,6 +2,7 @@ version 1.0
 # version 1.0
 
 ## Copyright CMG@KIGM, Ales Maver and Tanja Majnik
+# Aleksander adding VEP annotation to the primary pipeline
 
 ## Usage
 # This workflow accepts three types of inputs: Illumina FASTQ files, a BAM file, or CRAM files
