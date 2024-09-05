@@ -1,0 +1,86 @@
+FROM alpine/git as intermediate
+RUN git clone https://github.com/konradjk/loftee.git /loftee
+
+FROM alpine as download_loftee
+RUN wget https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/human_ancestor.fa.gz -Y off
+RUN wget https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/human_ancestor.fa.gz.fai -Y off
+RUN wget https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/human_ancestor.fa.gz.gzi -Y off
+#For hg19 GERP scores are not in BigWig (.bw) format, so the workflow may need to be adjusted accordingly
+RUN wget https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/GERP_scores.final.sorted.txt.gz -Y off
+RUN wget https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/GERP_scores.final.sorted.txt.gz.tbi -Y off
+RUN wget https://personal.broadinstitute.org/konradk/loftee_data/GRCh38/loftee.sql.gz -Y off
+RUN wget https://personal.broadinstitute.org/konradk/loftee_data/GRCh37/phylocsf_gerp.sql.gz -Y off
+
+FROM alpine as download_AlphaMissense
+
+#Download tabix so we can index the AM dataset
+#Installs dependencies (and removes some unnecessary tar files later)
+RUN apk add --no-cache \
+    gcc \
+    g++ \
+    make \
+    zlib-dev \
+    curl \
+    curl-dev \
+    tar \
+    bzip2 \
+    bzip2-dev \
+    xz \
+    xz-dev
+
+# Download and extract HTSlib (version 1.20, newest as of 28.8.2024)
+RUN curl -L https://github.com/samtools/htslib/releases/download/1.20/htslib-1.20.tar.bz2 -o htslib.tar.bz2 \
+    && tar -xjf htslib.tar.bz2
+# Check installation
+RUN ls -la htslib-1.20
+# Build and install HTSlib
+RUN cd htslib-1.20 \
+    && make install
+
+# Clean up unnecessary dependencies to save space
+RUN rm -rf htslib-1.20 htslib.tar.bz2 \
+    && apk del \
+    gcc \
+    g++ \
+    make 
+
+# Add the PATH environmental variable
+ENV PATH="/usr/local/bin:${PATH}"
+
+# Verify installation
+RUN tabix --version
+#Download the Alpha Missense hg19 data file and index it
+RUN wget https://storage.googleapis.com/dm_alphamissense/AlphaMissense_hg19.tsv.gz -Y off
+RUN tabix -s 1 -b 2 -e 2 -f -S 1 AlphaMissense_hg19.tsv.gz
+
+#Updated to VEP release 112 to support AlphaMissense
+FROM ensemblorg/ensembl-vep:release_112.0
+# Change user to root
+USER root
+
+RUN apt-get update && apt-get install -y samtools
+
+# Change user to vep
+USER vep
+
+RUN perl /opt/vep/src/ensembl-vep/INSTALL.pl \
+        --AUTO fcp \
+        --NO_UPDATE \
+        --ASSEMBLY GRCh37 \
+        --PLUGINSDIR /opt/vep/.vep/Plugins/ \
+        --CACHEDIR /opt/vep/.vep/ \
+        --PLUGINS all \
+        --SPECIES homo_sapiens_merged
+
+#RUN vep -id rs699 \
+#      --cache --assembly GRCh37 --merged \
+#      --nearest symbol \
+#      -o 'STDOUT' \
+#      --no_stats \
+#      > /dev/null
+
+COPY --from=intermediate /loftee /opt/vep/.vep/Plugins/loftee
+COPY --from=download_loftee /human_ancestor.fa* /opt/vep/.vep/Plugins/loftee/data/
+COPY --from=download_loftee /gerp* /opt/vep/.vep/Plugins/loftee/data/
+COPY --from=download_loftee /loftee* /opt/vep/.vep/Plugins/loftee/data/
+COPY --from=download_AlphaMissense /AlphaMissense* /opt/vep/.vep/Plugins/AlphaMissense/

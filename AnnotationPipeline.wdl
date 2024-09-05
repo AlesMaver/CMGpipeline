@@ -222,9 +222,17 @@ workflow AnnotateVCF {
         docker = SnpEff_docker
     }
 
+    call AlphaMissense_docker {
+      #Please check input_dir, I don't know where this pipeline does all its processing and I could not find it 
+        input:
+            input_vcf = runSnpEff.output_vcf,
+            input_dir = input_dir
+    }
+
     call CompressAndIndexVCF as CompressAndIndexVCF2 {
     input:
-      input_vcf = runSnpEff.output_vcf,
+      input_vcf = AlphaMissense_docker.AM_annotated_vcf,
+      #input_vcf = runSnpEff.output_vcf,
       sample_basename = sample_basename,
       docker = bcftools_docker
   }
@@ -637,6 +645,44 @@ task runSnpEff {
   }
 }
 
+task AlphaMissense_docker {
+    input {
+        File input_vcf
+        String input_dir
+    }
+
+    command <<<
+    /bin/bash -c "
+    vep -i /input_data/~{input_vcf} \
+        -o /input_data/~{annotated_vcf} \
+        --fork 48 --offline --format vcf --vcf --force_overwrite --compress_output bgzip -v \
+        --merged \
+        --cache --dir_cache /opt/vep/.vep \
+        --plugin AlphaMissense,file=/opt/vep/.vep/Plugins/AlphaMissense/AlphaMissense_hg19.tsv.gz \
+        --nearest symbol \
+        --shift_hgvs 0 \
+        --allele_number \
+        --assembly GRCh37 \
+        --no_stats && \
+    tabix -p vcf /input_data/~{annotated_vcf}"
+    >>>
+    
+
+    output {
+        #These still need to have their names defined better - currently they're placeholders
+        File AM_annotated_vcf = "~{input_dir}/~{basename(input_vcf)}_DockerVEP.vcf.gz"
+        File AM_annotated_vcf_index =  "~{input_dir}/~{basename(input_vcf)}_DockerVEP.vcf.gz.tbi"
+    }
+
+    runtime {
+        #Note: never mount to /data, it's a reserved directory by Docker
+        docker: "alesmaver/vep_grch37"
+        volumes: "${input_dir}:/input_data"
+        #Given that the VEP AM plugin is fairly resource-hungry, we could increase this
+        memory: "4 GB"
+        cpu: 2
+    }
+}
 # Merge GVCFs generated per-interval for the same sample
 task MergeVCFs {
   input {
