@@ -226,7 +226,8 @@ workflow AnnotateVCF {
       #Please check input_dir, I don't know where this pipeline does all its processing and I could not find it 
         input:
             input_vcf = runSnpEff.output_vcf,
-            input_dir = input_dir
+            sample_basename = sample_basename
+            #input_dir = input_dir
     }
 
     call CompressAndIndexVCF as CompressAndIndexVCF2 {
@@ -648,13 +649,17 @@ task runSnpEff {
 task AlphaMissense_docker {
     input {
         File input_vcf
-        String input_dir
+        #String input_dir
+        String sample_basename
     }
 
     command <<<
+
+    String annotated_vcf = "~{sample_basename}_DockerVEP.vcf.gz"
+    
     /bin/bash -c "
-    vep -i /input_data/~{input_vcf} \
-        -o /input_data/~{annotated_vcf} \
+    vep -i ~{input_vcf} \
+        -o ~{annotated_vcf} \
         --fork 48 --offline --format vcf --vcf --force_overwrite --compress_output bgzip -v \
         --merged \
         --cache --dir_cache /opt/vep/.vep \
@@ -664,20 +669,20 @@ task AlphaMissense_docker {
         --allele_number \
         --assembly GRCh37 \
         --no_stats && \
-    tabix -p vcf /input_data/~{annotated_vcf}"
+    tabix -p vcf ~{annotated_vcf}"
     >>>
     
 
     output {
         #These still need to have their names defined better - currently they're placeholders
-        File AM_annotated_vcf = "~{input_dir}/~{basename(input_vcf)}_DockerVEP.vcf.gz"
-        File AM_annotated_vcf_index =  "~{input_dir}/~{basename(input_vcf)}_DockerVEP.vcf.gz.tbi"
+        File AM_annotated_vcf = "~{annotated_vcf}"
+        File AM_annotated_vcf_index =  "~{annotated_vcf}.tbi"
     }
 
     runtime {
         #Note: never mount to /data, it's a reserved directory by Docker
         docker: "alesmaver/vep_grch37"
-        volumes: "${input_dir}:/input_data"
+        #volumes: "${input_dir}:/input_data"
         #Given that the VEP AM plugin is fairly resource-hungry, we could increase this
         memory: "4 GB"
         cpu: 2
