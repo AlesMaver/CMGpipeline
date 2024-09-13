@@ -221,12 +221,13 @@ workflow AnnotateVCF {
         dbNSFP_index = dbNSFP_index,
         docker = SnpEff_docker
     }
-
+    #String annotated_vcf = "~{input_dir}/~{sample_basename}_DockerVEP.vcf.gz"
     call AlphaMissense_docker {
       #Please check input_dir, I don't know where this pipeline does all its processing and I could not find it 
         input:
             input_vcf = runSnpEff.output_vcf,
-            sample_basename = sample_basename
+            sample_basename = sample_basename,
+            annotated_vcf = "~{input_dir}/~{sample_basename}_DockerVEP.vcf.gz"
             #input_dir = input_dir
     }
 
@@ -651,11 +652,11 @@ task AlphaMissense_docker {
         File input_vcf
         #String input_dir
         String sample_basename
+        String annotated_vcf
+        #String annotated_vcf = "~{sample_basename}_DockerVEP.vcf.gz"
     }
 
     command <<<
-
-    String annotated_vcf = "~{sample_basename}_DockerVEP.vcf.gz"
     
     /bin/bash -c "
     vep -i ~{input_vcf} \
