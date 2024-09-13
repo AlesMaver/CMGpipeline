@@ -227,7 +227,7 @@ workflow AnnotateVCF {
         input:
             input_vcf = runSnpEff.output_vcf,
             sample_basename = sample_basename,
-            annotated_vcf = "~{input_dir}/~{sample_basename}_DockerVEP.vcf.gz"
+            annotated_vcf = "~{sample_basename}_DockerVEP.vcf.gz"
             #input_dir = input_dir
     }
 
