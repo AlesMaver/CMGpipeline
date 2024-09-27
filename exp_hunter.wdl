@@ -7,6 +7,7 @@ workflow ExpansionHunter {
     File bai_file
     File reference_fasta
     String expansion_hunter_docker
+    String? patient_sex  # Optional input for patient sex
   }
 
   parameter_meta {
@@ -27,7 +28,8 @@ workflow ExpansionHunter {
         bam_file = bam_file,
         bai_file = bai_file,
         reference_fasta = reference_fasta,
-        expansion_hunter_docker = expansion_hunter_docker
+        expansion_hunter_docker = expansion_hunter_docker,
+        patient_sex = patient_sex  # Pass the optional input to the task
     }
 
   call AnnotateExpansionHunter {
@@ -50,6 +52,7 @@ task RunExpansionHunter {
     File bai_file
     File reference_fasta
     String expansion_hunter_docker
+    String? patient_sex  # Optional input for patient sex
   }
 
   output {
@@ -73,6 +76,7 @@ task RunExpansionHunter {
       --reads ~{bam_file} \
       --reference ~{reference_fasta} \
       --variant-catalog variant_catalog.json \
+      ~{"--sex " + patient_sex} \  # Conditionally add the -s option
       --output-prefix ~{sample_id}
 
   >>>
