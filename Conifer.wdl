@@ -35,7 +35,7 @@ workflow Conifer {
   }  
 
   # String sample_basename = sub(basename(input_bam), "[\_,\.].*", "" )
-  String xxx = select_first([sample_basename, sub(basename(select_first([input_cram, [""]]), "[\_,\.].*", "")  ])
+  String xxx = select_first([sample_basename, sub(basename(select_first([input_cram, [""]])), "[\_,\.].*", "")  ])
 
   if (defined(input_cram)) {
     call CramConversions.CramToBam as CramToBam {
