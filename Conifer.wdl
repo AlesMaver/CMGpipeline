@@ -35,13 +35,14 @@ workflow Conifer {
   }  
 
   # String sample_basename = sub(basename(input_bam), "[\_,\.].*", "" )
-  String xxx = select_first([sample_basename, sub(basename(select_first([input_cram, [""]])), "[\_,\.].*", "")  ])
+  # String xxx = select_first([sample_basename, sub(basename(select_first([input_cram, [""]])), "[\_,\.].*", "")  ])
+  String sample_name = select_first([sample_basename, sub(basename(select_first([input_bam, input_cram, [""]])), "[\_,\.].*", "")  ])
 
   if (defined(input_cram)) {
     call CramConversions.CramToBam as CramToBam {
         input:
           # sample_name = sample_basename,
-          sample_name = xxx,
+          sample_name = sample_name,
           input_cram = input_cram,
           ref_fasta = reference_fa,
           ref_fasta_index = reference_fai,
@@ -51,8 +52,8 @@ workflow Conifer {
     }
   }
 
-  String file_basename = sub(basename(select_first([input_bam, CramToBam.output_bam])), "[\_,\.].*", "" )
-  String sample_name = select_first([sample_basename, file_basename])
+  #String file_basename = sub(basename(select_first([input_bam, CramToBam.output_bam])), "[\_,\.].*", "" )
+  #String sample_name = select_first([sample_basename, file_basename])
 
   call MakeRPKM {
       input:
