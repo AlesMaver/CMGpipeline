@@ -39,7 +39,8 @@ workflow Conifer {
   if (defined(input_cram)) {
     call CramConversions.CramToBam as CramToBam {
         input:
-          sample_name = sample_basename,
+          # sample_name = sample_basename,
+          sample_name = select_first([sample_basename, sub(basename(input_cram), "[\_,\.].*", "" )]),
           input_cram = input_cram,
           ref_fasta = reference_fa,
           ref_fasta_index = reference_fai,
@@ -66,7 +67,7 @@ workflow Conifer {
         input_rpkm=MakeRPKM.output_rpkm,
         input_reference_rpkms=input_reference_rpkms,
         CONIFER_svd=CONIFER_svd,
-        sample_basename=sample_basename,
+        sample_basename=sample_name,
         enrichment=enrichment,
         enrichment_bed=enrichment_bed
 
@@ -76,20 +77,20 @@ workflow Conifer {
       input:
         input_hdf5=CONIFER_Analyze.output_hdf5,
         CONIFER_threshold=CONIFER_threshold,
-        sample_basename=sample_basename
+        sample_basename=sample_name
   }
 
     call CONIFER_Plotcalls {
       input:
         input_hdf5=CONIFER_Analyze.output_hdf5,
         input_conifer_calls=CONIFER_Call.output_conifer_calls,
-        sample_basename=sample_basename
+        sample_basename=sample_name
   }
 
   call CONIFER_Export {
       input:
         input_hdf5=CONIFER_Analyze.output_hdf5,
-        sample_basename=sample_basename,
+        sample_basename=sample_name,
         enrichment=enrichment
   }
 
@@ -97,7 +98,7 @@ workflow Conifer {
       input:
         genome_build = "GRCh37",
         input_vcf = CONIFER_Call.output_conifer_annotSV_input_bed,
-        output_tsv_name = sample_basename + ".CONIFER.annotSV.tsv"
+        output_tsv_name = sample_name + ".CONIFER.annotSV.tsv"
   }
 
   output {
