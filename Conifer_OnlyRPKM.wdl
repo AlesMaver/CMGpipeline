@@ -1,6 +1,7 @@
 version 1.0
 ## Copyright CMG@KIGM, Ales Maver
 import "./Conifer.wdl" as Conifer
+import "./CRAM_conversions.wdl" as CramConversions
 
 # WORKFLOW DEFINITION 
 workflow Conifer_OnlyRPKM {
