@@ -38,7 +38,7 @@ workflow Conifer_OnlyRPKM {
       input:
         input_bam=select_first([input_bam, CramToBam.output_bam]),
         input_bam_index=select_first([input_bam_index, CramToBam.output_bai]),
-        sample_basename=sample_basename,
+        sample_basename=sample_name,
         enrichment=enrichment,
         enrichment_bed=enrichment_bed
   }
