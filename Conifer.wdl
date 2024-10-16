@@ -34,8 +34,6 @@ workflow Conifer {
     File? enrichment_bed
   }  
 
-  # String sample_basename = sub(basename(input_bam), "[\_,\.].*", "" )
-  # String xxx = select_first([sample_basename, sub(basename(select_first([input_cram, [""]])), "[\_,\.].*", "")  ])
   String sample_name = select_first([sample_basename, sub(basename(select_first([input_bam, input_cram, [""]])), "[\_,\.].*", "")  ])
 
   if (defined(input_cram)) {
@@ -51,9 +49,6 @@ workflow Conifer {
           samtools_path = "samtools"
     }
   }
-
-  #String file_basename = sub(basename(select_first([input_bam, CramToBam.output_bam])), "[\_,\.].*", "" )
-  #String sample_name = select_first([sample_basename, file_basename])
 
   call MakeRPKM {
       input:
@@ -140,7 +135,7 @@ task MakeRPKM {
   runtime {
     docker: docker
     requested_memory_mb_per_core: 1000
-    cpu: 7
+    cpu: 16
     runtime_minutes: 500
   }
   output {
