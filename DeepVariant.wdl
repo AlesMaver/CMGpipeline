@@ -29,8 +29,8 @@ workflow DeepVariant {
     File? input_bam_index
     File? input_cram
     File? input_cram_index
-    File? reference_fa
-    File? reference_fai
+    File  reference_fa
+    File  reference_fai
     File? reference_dict
     String modelType
     # String outputVcf
