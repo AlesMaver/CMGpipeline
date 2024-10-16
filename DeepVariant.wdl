@@ -20,14 +20,18 @@ version 1.0
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import "./CRAM_conversions.wdl" as CramConversions
 
 workflow DeepVariant {
   input {
     String sample_basename
-    File referenceFasta
-    File referenceFastaIndex
-    File inputBam
-    File inputBamIndex
+    File? input_bam
+    File? input_bam_index
+    File? input_cram
+    File? input_cram_index
+    File? reference_fa
+    File? reference_fai
+    File? reference_dict
     String modelType
     # String outputVcf
     Int? numShards
@@ -44,13 +48,26 @@ workflow DeepVariant {
       author: "Gaber Bergant and Aleš Maver"
       email: "cmg.kimg@kclj.si"
   }
-  
+
+  if (defined(input_cram)) {
+    call CramConversions.CramToBam as CramToBam {
+        input:
+          sample_name = sample_basename,
+          input_cram = input_cram,
+          ref_fasta = reference_fa,
+          ref_fasta_index = reference_fai,
+          ref_dict = reference_dict,
+          docker = "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817",
+          samtools_path = "samtools"
+    }
+  }
+
   call RunDeepVariant {
       input:
-        referenceFasta = referenceFasta,
-        referenceFastaIndex = referenceFastaIndex,
-        inputBam = inputBam,
-        inputBamIndex = inputBamIndex,
+        referenceFasta = reference_fa,
+        referenceFastaIndex = reference_fai,
+        inputBam=select_first([input_bam, CramToBam.output_bam]),
+        inputBamIndex=select_first([input_bam_index, CramToBam.output_bai]),
         modelType = modelType,
         # outputVcf = outputVcf,
         outputVcf = sample_basename + ".DeepVariant.vcf.gz",
