@@ -1,5 +1,6 @@
 version 1.0
 
+import "./CRAM_conversions.wdl" as CramConversions
 import "./manta/manta_workflow.wdl" as Manta
 
 workflow ExomeDepth {
@@ -8,17 +9,38 @@ workflow ExomeDepth {
     File? target_bed
     File? input_bam
     File? input_bam_index
+    File? input_cram
+    File? input_cram_index
+    File? reference_fa
+    File? reference_fai
+    File? reference_dict
     File? exome_depth_counts_input
     Array[File]? reference_counts_files
   }
 
   if(!defined(exome_depth_counts_input)) {
+
+    if (defined(input_cram)) {
+      call CramConversions.CramToBam as CramToBam {
+        input:
+          sample_name = sample_name,
+          input_cram = input_cram,
+          ref_fasta = reference_fa,
+          ref_fasta_index = reference_fai,
+          ref_dict = reference_dict,
+          docker = "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817",
+          samtools_path = "samtools"
+      }
+    }
+
     call GetCounts {
       input:
           sample_name = sample_name,
           target_bed = target_bed,
-          input_bam = select_first([input_bam]),
-          input_bam_index = select_first([input_bam_index])
+          # input_bam = select_first([input_bam]),
+          # input_bam_index = select_first([input_bam_index])
+          input_bam = select_first([input_bam, CramToBam.output_bam]),
+          input_bam_index = select_first([input_bam_index, CramToBam.output_bai])
     }
   }
 
