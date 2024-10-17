@@ -11,8 +11,6 @@ import "./QualimapAndCoverage.wdl" as QualimapAndCoverageWdl
 workflow QualimapAndCoverageWrapper {
   input {
     String sample_basename
-    #File input_bam
-    #File input_bam_index
     File? input_bam
     File? input_bam_index
     File? input_cram
