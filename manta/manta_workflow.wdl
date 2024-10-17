@@ -84,7 +84,7 @@ workflow SVcalling {
         input:
             dockerImage = dockerImages["manta"],
             bamFile = select_first([bamFile, CramToBam.output_bam]),
-            bamIndex = select_first([bamIndex, CramToBam.output_bam]),
+            bamIndex = select_first([bamIndex, CramToBam.output_bai]),
             sample = sample,
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,
