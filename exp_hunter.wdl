@@ -1,11 +1,17 @@
 version 1.0
 
+import "./CRAM_conversions.wdl" as CramConversions
+
 workflow ExpansionHunter {
   input {
     String sample_id
-    File bam_file
-    File bai_file
+    File? bam_file
+    File? bai_file
+    File? cram_file
+    File? crai_file
     File reference_fasta
+    File? reference_fasta_index
+    File? reference_dict
     String expansion_hunter_docker
   }
 
@@ -20,12 +26,25 @@ workflow ExpansionHunter {
       author: "Gaber Bergant and Aleš Maver"
       email: "cmg.kimg@kclj.si"
   }
-  
+
+  if (defined(cram_file)) {
+    call CramConversions.CramToBam as CramToBam {
+        input:
+          sample_name = sample_id,
+          input_cram = cram_file,
+          ref_fasta = reference_fasta,
+          ref_fasta_index = reference_fasta_index,
+          ref_dict = reference_dict,
+          docker = "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817",
+          samtools_path = "samtools"
+    }
+  }
+
   call RunExpansionHunter {
       input:
         sample_id = sample_id,
-        bam_file = bam_file,
-        bai_file = bai_file,
+        bam_file = select_first([bam_file, CramToBam.output_bam]),
+        bai_file = select_first([bai_file, CramToBam.output_bai]),
         reference_fasta = reference_fasta,
         expansion_hunter_docker = expansion_hunter_docker
     }
