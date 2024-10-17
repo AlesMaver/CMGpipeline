@@ -3,7 +3,7 @@ version 1.0
 
 
 # Subworkflows
-import "./Qualimap.wdl" as Qualimap
+import "../Qualimap.wdl" as Qualimap
 
 # WORKFLOW DEFINITION 
 workflow QualimapAndCoverage {
