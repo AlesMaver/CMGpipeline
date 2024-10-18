@@ -1,6 +1,6 @@
 version 1.0
 
-import "./CRAM_conversions.wdl" as CramConversions
+import "../CRAM_conversions.wdl" as CramConversions
 import "../manta/manta_workflow.wdl" as Manta
 
 # WORKFLOW DEFINITION 
