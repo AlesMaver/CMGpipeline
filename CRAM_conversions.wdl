@@ -29,9 +29,9 @@ task CramToBam {
   runtime {
     docker: docker
     maxRetries: 3
-    requested_memory_mb_per_core: 5000
-    cpu: 1
-    runtime_minutes: 180
+    requested_memory_mb_per_core: 1000
+    cpu: 16
+    runtime_minutes: 480
  }
   output {
     File output_bam = "~{sample_name}.bam"
