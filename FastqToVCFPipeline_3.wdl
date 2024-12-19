@@ -1216,8 +1216,8 @@ workflow FastqToVCF {
   }
 
   output {
-    File output_bam = SortSam.output_bam
-    File output_bam_index = SortSam.output_bam_index
+    #File output_bam = SortSam.output_bam
+    #File output_bam_index = SortSam.output_bam_index
 
     File? output_cram = ConvertToCram.output_cram
     File? output_cram_index = ConvertToCram.output_cram_index
