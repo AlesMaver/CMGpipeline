@@ -17,7 +17,7 @@ workflow Stripy {
         input:
             sample_basename = sample_basename,
             reference = reference_fasta,
-            output = output_directory,
+            #output = output_directory,
             genome = reference_genome_name,
             sex = if defined(sex) && (sex == "male" || sex == "female") then sex else "male",
             input_file = input_bam_or_cram
