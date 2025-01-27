@@ -15,7 +15,7 @@ workflow Stripy {
 
     call run_stripy {
         input:
-            sample_id = sample_basename,
+            sample_basename = sample_basename,
             reference = reference_fasta,
             output = output_directory,
             genome = reference_genome_name,
@@ -32,9 +32,9 @@ workflow Stripy {
 
 task run_stripy {
     input {
-        String sample_id
+        String sample_basename
         File reference
-        String output
+        #String output
         #String loci
         String genome
         String sex
