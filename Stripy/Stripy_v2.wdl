@@ -8,7 +8,7 @@ workflow Stripy {
         File reference_fasta
         #File? reference_fasta_index
         # sex: male / female (case sensitive)
-        String? sex
+        String sex
         String reference_genome_name = "hg19"
     }
 
@@ -22,6 +22,11 @@ workflow Stripy {
             sex = if defined(sex) && (sex == "male" || sex == "female") then sex else "male",
             input_file = input_bam_or_cram
     }
+
+    #output {
+    #    File stripy_tsv  = run_stripy.AlignAndCall.stripy_tsv
+    #    File stripy_html = run_stripy.AlignAndCall.stripy_html
+    #}
 }
 
 
