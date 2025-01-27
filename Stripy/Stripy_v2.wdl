@@ -12,49 +12,25 @@ workflow stripy_workflow {
         String reference_genome_name = "hg19"
     }
 
-    call extract_loci {
-
-    }
 
     call run_stripy {
         input:
+            sample_id = sample_id,
             reference = reference_fasta,
             output = output_directory,
-            loci = extract_loci.loci_string,
             genome = reference_genome_name,
             sex = sex,
             input_file = bam_file
     }
 }
 
-task extract_loci {
-
-    command {
-        echo "[ PREPARATION ] Downloading variant catalog JSON"
-        wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
-        unset https_proxy
-        wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
-
-        jq -r '[.[] | .LocusId] | join(",")' ./variant_catalog.json
-    }
-
-    output {
-        String loci_string = read_string(stdout())
-    }
-
-    runtime {
-        docker: "stedolan/jq"
-        requested_memory_mb_per_core: 1000
-        cpu: 1
-        runtime_minutes: 10
-    }
-}
 
 task run_stripy {
     input {
+        String sample_id
         File reference
         String output
-        String loci
+        #String loci
         String genome
         String sex
         File bam_file
@@ -63,16 +39,21 @@ task run_stripy {
     command <<<
         set -e
 
-        # Path to required files for docker volumes
-        ref_dir=$(dirname "${reference_fasta}")
-        input_dir=$(dirname "${input_path}")
+        echo ${sex}
+        echo "[ PREPARATION ] Downloading variant catalog JSON"
+        wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
+        unset https_proxy
+        wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
 
-        # Filenames
-        ref_file=$(basename "${reference_path}")
-        input_file=$(basename "${input_path}")
+        echo "[ PREPARATION ] Preparing LOCI"
+        loci=$(jq -r '[.[] | .LocusId] | join(",")' ./variant_catalog.json)
 
+        echo "[ RUNNING ] Stri.py"
         # Constructing Docker run command (inside Docker already)
-        ./batch.sh -o /mnt/results -r /mnt/ref/${ref_file} -l ${loci} -g ${genome} -s ${sex} -i /mnt/data/${input_file}
+        ./batch.sh -o ./ -r ${ref_file} -l ${loci} -g ${genome} -s ${sex} -i ${input_file}
+
+        #mv ./{input_file}.json ./sample_id.Stripy.json
+        
     >>>
 
     runtime {
@@ -84,7 +65,5 @@ task run_stripy {
 
     #output {
     #    File a = "~{sample_basename}.CONIFER_CALLS.txt"
-    #    File b = "~{sample_basename}.CNV.wig"
-    #    File c = "~{sample_basename}.CNV.annotSV.input.bed"
     #}
 }
