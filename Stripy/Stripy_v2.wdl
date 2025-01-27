@@ -33,7 +33,7 @@ task run_stripy {
         #String loci
         String genome
         String sex
-        File bam_file
+        File input_file
     }
 
     command <<<
