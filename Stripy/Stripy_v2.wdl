@@ -57,7 +57,7 @@ task run_stripy {
     >>>
 
     runtime {
-        docker: "stripy:v2.2"
+        docker: "gbergant/stripy_prod:2.5"
         requested_memory_mb_per_core: 1000
         cpu: 4
         runtime_minutes: 30
