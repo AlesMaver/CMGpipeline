@@ -1,6 +1,6 @@
 version 1.0
 
-workflow stripy_workflow {
+workflow Stripy {
     input {
         String sample_id
         File? bam_file
