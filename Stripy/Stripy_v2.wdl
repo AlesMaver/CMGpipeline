@@ -43,6 +43,8 @@ task run_stripy {
         File input_file_index
     }
 
+    String base_name = basename(input_file)
+
     command <<<
         set -e
 
@@ -68,10 +70,10 @@ task run_stripy {
         echo python3 /usr/local/bin/stripy-pipeline/stri.py --input ~{input_file} --locus "\"$loci\"" --sex ~{sex} --genome ~{genome} --reference ~{reference} --output .
         python3 /usr/local/bin/stripy-pipeline/stri.py --input ~{input_file} --locus "\"$loci\"" --sex ~{sex} --genome ~{genome} --reference ~{reference} --output .
         echo ' '
-        echo basename(~{input_file})
+        echo ~{base_name}
         echo ' '
-        #mv ~{input_file}.html ~{sample_basename}.Stripy.html
-        #mv ~{input_file}.tsv  ~{sample_basename}.Stripy.tsv
+        mv ~{base_name}.html ~{sample_basename}.Stripy.html
+        mv ~{base_name}.tsv  ~{sample_basename}.Stripy.tsv
 
         
     >>>
