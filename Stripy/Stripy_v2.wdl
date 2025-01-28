@@ -68,10 +68,10 @@ task run_stripy {
         echo python3 /usr/local/bin/stripy-pipeline/stri.py --input ~{input_file} --locus "\"$loci\"" --sex ~{sex} --genome ~{genome} --reference ~{reference} --output .
         python3 /usr/local/bin/stripy-pipeline/stri.py --input ~{input_file} --locus "\"$loci\"" --sex ~{sex} --genome ~{genome} --reference ~{reference} --output .
         echo ' '
-        ls -ltr
+        echo basename(~{input_file})
         echo ' '
-        mv ./~{input_file}.html ./~{sample_basename}.Stripy.html
-        mv ./~{input_file}.tsv  ./~{sample_basename}.Stripy.tsv
+        #mv ~{input_file}.html ~{sample_basename}.Stripy.html
+        #mv ~{input_file}.tsv  ~{sample_basename}.Stripy.tsv
 
         
     >>>
