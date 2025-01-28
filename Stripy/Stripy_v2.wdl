@@ -24,10 +24,10 @@ workflow Stripy {
             input_file_index = input_bam_or_cram_index
     }
 
-    #output {
-    #    File stripy_tsv  = run_stripy.AlignAndCall.stripy_tsv
-    #    File stripy_html = run_stripy.AlignAndCall.stripy_html
-    #}
+    output {
+        File stripy_tsv  = run_stripy.stripy_tsv
+        File stripy_html = run_stripy.stripy_html
+    }
 }
 
 
@@ -69,13 +69,10 @@ task run_stripy {
         echo ' '
         echo python3 /usr/local/bin/stripy-pipeline/stri.py --input ~{input_file} --locus "\"$loci\"" --sex ~{sex} --genome ~{genome} --reference ~{reference} --output .
         python3 /usr/local/bin/stripy-pipeline/stri.py --input ~{input_file} --locus "\"$loci\"" --sex ~{sex} --genome ~{genome} --reference ~{reference} --output .
-        echo ' '
-        echo ~{base_name}
-        echo ' '
+
         mv ~{base_name}.html ~{sample_basename}.Stripy.html
         mv ~{base_name}.tsv  ~{sample_basename}.Stripy.tsv
-
-        
+        echo 'END.'
     >>>
 
     runtime {
@@ -85,8 +82,8 @@ task run_stripy {
         runtime_minutes: 30
     }
 
-    #output {
-    #    File stripy_tsv = "~{sample_basename}.Stripy.tsv"
-    #    File stripy_html = "~{sample_basename}.Stripy.html"
-    #}
+    output {
+        File stripy_tsv = "~{sample_basename}.Stripy.tsv"
+        File stripy_html = "~{sample_basename}.Stripy.html"
+    }
 }
