@@ -60,9 +60,8 @@ task run_stripy {
         echo "[ RUNNING ] Stri.py"
         # Constructing Docker run command (inside Docker already)
         echo ' '
-        cd /usr/local/bin/stripy-pipeline
-        echo batch.sh -o . -r ~{reference} -l "\"$loci\"" -g ~{genome} -s ~{sex} -i ~{input_file}
-        ./batch.sh -o . -r ~{reference} -l "\"$loci\"" -g ~{genome} -s ~{sex} -i ~{input_file}
+        echo /usr/local/bin/stripy-pipeline/batch.sh -o . -r ~{reference} -l "\"$loci\"" -g ~{genome} -s ~{sex} -i ~{input_file}
+        /usr/local/bin/stripy-pipeline/batch.sh -o . -r ~{reference} -l "\"$loci\"" -g ~{genome} -s ~{sex} -i ~{input_file}
 
         #mv ./~{input_file}.html ./~{sample_basename}.Stripy.html
         #mv ./~{input_file}.tsv ./~{sample_basename}.Stripy.tsv
