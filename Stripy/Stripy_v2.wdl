@@ -21,6 +21,7 @@ workflow Stripy {
             genome = reference_genome_name,
             sex = if defined(sex) && (sex == "male" || sex == "female") then sex else "male",
             input_file = input_bam_or_cram
+            input_file_index = input_bam_or_cram_index
     }
 
     #output {
@@ -39,6 +40,7 @@ task run_stripy {
         String genome
         String sex
         File input_file
+        File input_file_index
     }
 
     command <<<
