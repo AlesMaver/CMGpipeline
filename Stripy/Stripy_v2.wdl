@@ -57,20 +57,20 @@ task run_stripy {
 
         echo "[ PREPARATION ] Preparing LOCI"
         loci=$(jq -r '[.[] | .LocusId] | join(",")' ./variant_catalog.json)
-        echo $loci
+        #echo $loci
 
         echo "[ RUNNING ] Stri.py"
         # Constructing Docker run command (inside Docker already)
         echo ' '
         #echo /usr/local/bin/stripy-pipeline/batch.sh -o . -r ~{reference} -l "\"$loci\"" -g ~{genome} -s ~{sex} -i ~{input_file}
         #/usr/local/bin/stripy-pipeline/batch.sh -o . -r ~{reference} -l "\"$loci\"" -g ~{genome} -s ~{sex} -i ~{input_file}
-
+        echo ' '
         echo python3 /usr/local/bin/stripy-pipeline/stri.py --input ~{input_file} --locus "\"$loci\"" --sex ~{sex} --genome ~{genome} --reference ~{reference} --output .
         python3 /usr/local/bin/stripy-pipeline/stri.py --input ~{input_file} --locus "\"$loci\"" --sex ~{sex} --genome ~{genome} --reference ~{reference} --output .
+        echo ' '
 
-
-        #mv ./~{input_file}.html ./~{sample_basename}.Stripy.html
-        #mv ./~{input_file}.tsv ./~{sample_basename}.Stripy.tsv
+        mv ~{input_file}.html ~{sample_basename}.Stripy.html
+        mv ~{input_file}.tsv  ~{sample_basename}.Stripy.tsv
 
         
     >>>
