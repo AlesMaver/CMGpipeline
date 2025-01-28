@@ -44,8 +44,10 @@ task run_stripy {
     command <<<
         set -e
 
-        echo ${sample_basename}
-        echo ${sex}
+        echo ~{sample_basename}
+        echo ~{sex}
+        pwd
+
         echo "[ PREPARATION ] Downloading variant catalog JSON"
         wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
         unset https_proxy
@@ -56,10 +58,10 @@ task run_stripy {
 
         echo "[ RUNNING ] Stri.py"
         # Constructing Docker run command (inside Docker already)
-        /usr/local/bin/stripy-pipeline/batch.sh -o ./ -r ${ref_file} -l ${loci} -g ${genome} -s ${sex} -i ${input_file}
+        /usr/local/bin/stripy-pipeline/batch.sh -o . -r ~{ref_file} -l ~{loci} -g ~{genome} -s ~{sex} -i ~{input_file}
 
-        #mv ./${input_file}.html ./${sample_basename}.Stripy.html
-        #mv ./${input_file}.tsv ./${sample_basename}.Stripy.tsv
+        #mv ./~{input_file}.html ./~{sample_basename}.Stripy.html
+        #mv ./~{input_file}.tsv ./~{sample_basename}.Stripy.tsv
 
         
     >>>
