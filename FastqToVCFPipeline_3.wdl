@@ -1199,8 +1199,8 @@ workflow FastqToVCF {
   call Stripy.Stripy as Stripy {
     input:
       sample_basename = sample_basename,
-      input_bam_or_cram = ConvertToCram.output_cram,
-      input_bam_or_cram_index = ConvertToCram.output_cram_index,
+      input_bam_or_cram = select_first([ConvertToCram.output_cram, input_cram, ""]),
+      input_bam_or_cram_index = select_first([ConvertToCram.output_cram_index, input_cram_index, ""]),
       reference_fasta = reference_fa,
       sex = gender
   }
