@@ -48,7 +48,7 @@ task run_stripy {
         echo ~{sex}
         echo ' '
         echo "[ PREPARATION ] Downloading variant catalog JSON"
-        wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
+        #wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
         unset https_proxy
         wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
 
