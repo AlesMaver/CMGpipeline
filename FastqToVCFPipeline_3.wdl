@@ -31,7 +31,7 @@ import "https://raw.githubusercontent.com/AlesMaver/gatk/master/scripts/mutect2_
 import "./MitochondriaPipeline/MitochondriaPipeline.wdl" as MitochondriaPipeline
 ### import "./Exomiser.wdl" as Exomiser
 import "./ExomeDepth.wdl" as ExomeDepth
-import "./Stripy/Stripy.wdl" as Stripy
+import "./Stripy/Stripy_v2.wdl" as Stripy
 
 # WORKFLOW DEFINITION 
 workflow FastqToVCF {
