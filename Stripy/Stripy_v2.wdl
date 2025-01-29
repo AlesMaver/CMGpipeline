@@ -3,8 +3,8 @@ version 1.0
 workflow Stripy {
     input {
         String sample_basename
-        File? input_bam_or_cram
-        File? input_bam_or_cram_index
+        File input_bam_or_cram
+        File input_bam_or_cram_index
         File reference_fasta
         # sex: male / female (case sensitive)
         String sex
