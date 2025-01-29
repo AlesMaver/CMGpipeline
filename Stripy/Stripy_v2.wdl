@@ -23,8 +23,8 @@ workflow Stripy {
     }
 
     output {
-        File stripy_tsv  = run_stripy.stripy_tsv
-        File stripy_html = run_stripy.stripy_html
+        File? stripy_tsv  = run_stripy.stripy_tsv
+        File? stripy_html = run_stripy.stripy_html
     }
 }
 
@@ -77,7 +77,7 @@ task run_stripy {
     }
 
     output {
-        File stripy_tsv = "~{sample_basename}.Stripy.tsv"
-        File stripy_html = "~{sample_basename}.Stripy.html"
+        File? stripy_tsv = "~{sample_basename}.Stripy.tsv"
+        File? stripy_html = "~{sample_basename}.Stripy.html"
     }
 }
