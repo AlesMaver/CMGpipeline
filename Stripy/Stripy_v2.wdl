@@ -6,7 +6,6 @@ workflow Stripy {
         File input_bam_or_cram
         File input_bam_or_cram_index
         File reference_fasta
-        #File? reference_fasta_index
         # sex: male / female (case sensitive)
         String sex
         String reference_genome_name = "hg19"
@@ -17,7 +16,6 @@ workflow Stripy {
         input:
             sample_basename = sample_basename,
             reference = reference_fasta,
-            #output = output_directory,
             genome = reference_genome_name,
             sex = if defined(sex) && (sex == "male" || sex == "female") then sex else "male",
             input_file = input_bam_or_cram,
@@ -35,8 +33,6 @@ task run_stripy {
     input {
         String sample_basename
         File reference
-        #String output
-        #String loci
         String genome
         String sex
         File input_file
@@ -50,7 +46,6 @@ task run_stripy {
 
         echo ~{sample_basename}
         echo ~{sex}
-        pwd
         echo ' '
         echo "[ PREPARATION ] Downloading variant catalog JSON"
         wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
@@ -59,7 +54,6 @@ task run_stripy {
 
         echo "[ PREPARATION ] Preparing LOCI"
         loci=$(jq -r '[.[] | .LocusId] | join(",")' ./variant_catalog.json)
-        #echo $loci
 
         echo "[ RUNNING ] Stri.py"
         # Constructing Docker run command (inside Docker already)
@@ -69,9 +63,9 @@ task run_stripy {
         echo ' '
         echo python3 /usr/local/bin/stripy-pipeline/stri.py --input ~{input_file} --locus "\"$loci\"" --sex ~{sex} --genome ~{genome} --reference ~{reference} --output .
         python3 /usr/local/bin/stripy-pipeline/stri.py --input ~{input_file} --locus "\"$loci\"" --sex ~{sex} --genome ~{genome} --reference ~{reference} --output .
-
         mv ~{base_name}.html ~{sample_basename}.Stripy.html
         mv ~{base_name}.tsv  ~{sample_basename}.Stripy.tsv
+        echo  ' '
         echo 'END.'
     >>>
 
