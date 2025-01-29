@@ -622,7 +622,7 @@ task runSnpEff {
   wget  -t 1 -T 20 https://raw.githubusercontent.com/AstraZeneca-NGS/reference_data/master/transcripts/canon_transcripts_hg19_refseq.txt
   
   java -jar /home/biodocker/bin/snpEff/snpEff.jar -lof -noInteraction -spliceRegionIntronMax 20 -nodownload hg19 ~{input_vcf} > ~{sample_basename}.temp1.vcf 
-  java -jar /home/biodocker/bin/snpEff/SnpSift.jar dbNSFP -db ~{dbNSFP} -f REVEL_rankscore,SIFT_pred,SIFT4G_pred,Polyphen2_HDIV_pred,MutationTaster_pred,MetaSVM_pred,M-CAP_pred,PrimateAI_pred,Aloft_Fraction_transcripts_affected,Aloft_prob_Tolerant,Aloft_prob_Recessive,Aloft_prob_Dominant,Aloft_pred,Aloft_Confidence,CADD_phred,DANN_rankscore,GERP++_NR,GERP++_RS,Interpro_domain,GTEx_V7_gene,GTEx_V7_tissue,Geuvadis_eQTL_target_gene,Polyphen2_HDIV_score -v ~{sample_basename}.temp1.vcf | sed "s/dbNSFP_GERP++/dbNSFP_GERP/g" > ~{sample_basename}.snpEff.vcf
+  java -jar /home/biodocker/bin/snpEff/SnpSift.jar dbNSFP -db ~{dbNSFP} -f REVEL_score,REVEL_rankscore,SIFT_pred,SIFT4G_pred,Polyphen2_HDIV_pred,MutationTaster_pred,MetaSVM_pred,M-CAP_pred,PrimateAI_pred,Aloft_Fraction_transcripts_affected,Aloft_prob_Tolerant,Aloft_prob_Recessive,Aloft_prob_Dominant,Aloft_pred,Aloft_Confidence,CADD_phred,DANN_rankscore,GERP++_NR,GERP++_RS,Interpro_domain,GTEx_V7_gene,GTEx_V7_tissue,Geuvadis_eQTL_target_gene,Polyphen2_HDIV_score -v ~{sample_basename}.temp1.vcf | sed "s/dbNSFP_GERP++/dbNSFP_GERP/g" > ~{sample_basename}.snpEff.vcf
 
   }
   runtime {
