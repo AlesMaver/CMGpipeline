@@ -1309,7 +1309,7 @@ workflow FastqToVCF {
     File? softsearch_filter_vcf = SoftsearchWF.output_vcf
     File? softsearch_annotSV = SoftsearchWF.output_tsv_name
 
-    File? expansion_hunter_vcf_annotated = ExpansionHunter.expansion_hunter_vcf_annotate
+    File? expansion_hunter_vcf_annotated = ExpansionHunter.expansion_hunter_vcf_annotated
     File? stripy_tsv = Stripy.stripy_tsv
     File? stripy_html = Stripy.stripy_html
     
