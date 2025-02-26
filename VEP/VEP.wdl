@@ -6,7 +6,7 @@ workflow VEP {
     File input_vcf
     #File input_vcf_index
     String output_vcf
-    ### tole uporabi pri klicu call VEP v anotacijah: output_vcf = sample_basename + ".VEP.annotated.vcf.gz" | sample_basename + ".DeepVariant.VEP.annotated.vcf.gz" 
+    ### tole uporabi pri klicu call VEP v anotacijah: output_vcf = sample_basename + ".VEP.hg19.annotated.vcf.gz" | sample_basename + ".DeepVariant.VEP.hg19.annotated.vcf.gz" 
 
   }
 
