@@ -647,13 +647,13 @@ task runSnpEff {
   }
 }
 
-task AlphaMissense_docker {
+task RunVEP {
     input {
         File input_vcf
         #String input_dir
         String sample_basename
         String annotated_vcf
-        #String annotated_vcf = "~{sample_basename}_DockerVEP.vcf.gz"
+        #String annotated_vcf = "~{sample_basename}_VEP_hg19.vcf.gz"
     }
 
     command <<<
