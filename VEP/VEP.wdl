@@ -18,8 +18,8 @@ call RunVEP {
     }
 
   output {
-      #File outputVCF = RunVEP.outputVCF
-      #File outputVCFIndex = RunVEP.outputVCFIndex
+      #File output_vcf = RunVEP.output_vcf
+      #File output_vcf_index = RunVEP.output_vcf_index
   }
 
 }
@@ -33,6 +33,8 @@ task RunVEP {
 
     command {
         set -e
+        echo annotated_vcf
+        echo "Starting VEP analysis..."
         vep -i ~{input_vcf} \
             -o ~{annotated_vcf} \
             --fork 48 --offline --format vcf --vcf --force_overwrite --compress_output bgzip -v \
@@ -56,8 +58,8 @@ task RunVEP {
     }
 
     output {
-        File hg19_annotated_vcf = annotated_vcf
-        File hg19_annotated_vcf = annotated_vcf + ".tbi"
+        File output_vcf = annotated_vcf
+        File output_vcf_index = annotated_vcf + ".tbi"
     }
 
 }
