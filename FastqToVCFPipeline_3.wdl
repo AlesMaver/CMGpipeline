@@ -1354,8 +1354,8 @@ workflow FastqToVCF {
     # VEP annotated vcf files
     File VEPannotatedVCF = AnnotateVCF.VEPannotatedVCF
     File VEPannotatedVCFIndex = AnnotateVCF.VEPannotatedVCFIndex
-    File VEPannotatedVCF = DeepVariant.VEPdeepvariantannotatedVCFannotatedVCF
-    File VEPannotatedVCFIndex = DeepVariant.VEPdeepvariantannotatedVCFIndex  
+    File VEPdeepvariantannotatedVCF = DeepVariant.VEPdeepvariantannotatedVCFannotatedVCF
+    File VEPdeepvariantannotatedVCFIndex = DeepVariant.VEPdeepvariantannotatedVCFIndex  
 
   }
 }
