@@ -256,7 +256,8 @@ workflow AnnotateVCF {
   call VEP.VEP as VEP {
       input:
         sample_basename = sample_basename,
-        input_vcf = runSnpEff.output_vcf
+        #input_vcf = runSnpEff.output_vcf
+        input_vcf = MergeVCFs.output_vcfgz
   }
 
   # Outputs that will be retained when execution is complete
