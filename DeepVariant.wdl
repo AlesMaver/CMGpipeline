@@ -76,7 +76,7 @@ workflow DeepVariant {
         sampleName = sample_basename
     }
 
-  call VEP.VEP as VEP {
+  call VEP.VEP as VEPDeepVariant {
       input:
         sample_basename = sample_basename,
         input_vcf = RunDeepVariant.outputVCF,
@@ -89,8 +89,8 @@ workflow DeepVariant {
       File? outputVCFStatsReport = RunDeepVariant.outputVCFStatsReport
       File? outputGVCF = RunDeepVariant.outputGVCF
       File? outputGVCFIndex = RunDeepVariant.outputGVCFIndex
-      File VEPannotatedVCF = VEP.output_vcf
-      File VEPannotatedVCFIndex = VEP.output_vcf_index      
+      File VEPeepvariantannotatedVCF = VEPDeepVariant.output_vcf
+      File VEPeepvariantannotatedVCFIndex = VEPDeepVariant.output_vcf_index      
   }
 }
 
