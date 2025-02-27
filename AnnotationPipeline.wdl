@@ -1,6 +1,8 @@
 version 1.0
 ## Copyright CMG@KIGM, Ales Maver
 
+import "./VEP/Vep.wdl" as VEP
+
 # WORKFLOW DEFINITION 
 workflow AnnotateVCF {
   input {
@@ -250,11 +252,20 @@ workflow AnnotateVCF {
       docker = SnpEff_docker
   }
 
+  # Annotate with VEP method
+  call VEP.VEP as VEP {
+      input:
+        sample_basename = sample_basename,
+        input_vcf = runSnpEff.output_vcf
+  }
+
   # Outputs that will be retained when execution is complete
   output {
     File output_vcf = MergeVCFs.output_vcfgz
     File output_vcf_index = MergeVCFs.output_vcfgz_index
     #File output_table = GenerateVariantTable.output_table
+    File VEPannotatedVCF = VEP.output_vcf
+    File VEPannotatedVCFIndex = VEP.output_vcf_index 
   }
 }
 
