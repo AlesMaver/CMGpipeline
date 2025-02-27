@@ -49,7 +49,7 @@ task RunVEP {
     }
 
     runtime {
-        docker: "alesmaver/vep"
+        docker: "alesmaver/vep_grch37"
         requested_memory_mb_per_core: 1000
         cpu: 8
         runtime_minutes: 60
