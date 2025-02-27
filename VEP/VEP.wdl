@@ -56,8 +56,8 @@ task RunVEP {
     }
 
     output {
-        File annotated_vcf = annotated_vcf
-        File annotated_vcf = annotated_vcf + ".tbi"
+        File hg19_annotated_vcf = annotated_vcf
+        File hg19_annotated_vcf = annotated_vcf + ".tbi"
     }
 
 }
