@@ -1351,6 +1351,12 @@ workflow FastqToVCF {
     File? exome_depth_ratios_nomissing_wig_gz_tbi = ExomeDepth.exome_depth_ratios_nomissing_wig_gz_tbi
     File? exome_depth_annotSV_tsv = ExomeDepth.exome_depth_annotSV_tsv
 
+    # VEP annotated vcf files
+    File VEPannotatedVCF = AnnotateVCF.VEPannotatedVCF
+    File VEPannotatedVCFIndex = AnnotateVCF.VEPannotatedVCFIndex
+    File VEPannotatedVCF = DeepVariant.VEPannotatedVCF
+    File VEPannotatedVCFIndex = DeepVariant.VEPannotatedVCFIndex  
+
   }
 }
 
