@@ -77,7 +77,7 @@ workflow DeepVariant {
     }
 
   call VEP.VEP as VEP {
-      input {
+      input:
         sample_basename = sample_basename,
         input_vcf = RunDeepVariant.outputVCF,
         filename_infix = "DeepVariant"
