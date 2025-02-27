@@ -12,7 +12,7 @@ workflow VEP {
 String filename_suffix = ".VEP.hg19.annotated.vcf.gz"
 call RunVEP {
       input:
-        sampleName = sample_basename,
+        sample_basename = sample_basename,
         input_vcf = input_vcf,
         annotated_vcf = sample_basename + filename_infix + filename_suffix
     }
