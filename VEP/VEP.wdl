@@ -5,16 +5,16 @@ workflow VEP {
     String sample_basename
     File input_vcf
     # not needed File input_vcf_index
-    String output_vcf
+    String filename_infix = ""
     ### tole uporabi pri klicu call VEP v anotacijah: output_vcf = sample_basename + ".VEP.hg19.annotated.vcf.gz" | sample_basename + ".DeepVariant.VEP.hg19.annotated.vcf.gz" 
-
   }
 
+String filename_suffix = ".VEP.hg19.annotated.vcf.gz"
 call RunVEP {
       input:
         sampleName = sample_basename,
         input_vcf = input_vcf,
-        output_vcf = annotated_vcf
+        annotated_vcf = sample_basename + filename_infix + filename_suffix
     }
 
   output {
