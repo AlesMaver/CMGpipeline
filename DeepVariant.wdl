@@ -89,8 +89,8 @@ workflow DeepVariant {
       File? outputVCFStatsReport = RunDeepVariant.outputVCFStatsReport
       File? outputGVCF = RunDeepVariant.outputGVCF
       File? outputGVCFIndex = RunDeepVariant.outputGVCFIndex
-      File VEPeepvariantannotatedVCF = VEPDeepVariant.output_vcf
-      File VEPeepvariantannotatedVCFIndex = VEPDeepVariant.output_vcf_index      
+      File VEPdeepvariantannotatedVCF = VEPDeepVariant.output_vcf
+      File VEPdeepvariantannotatedIndex = VEPDeepVariant.output_vcf_index      
   }
 }
 
