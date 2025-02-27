@@ -18,8 +18,8 @@ call RunVEP {
     }
 
   output {
-      #File output_vcf = RunVEP.output_vcf
-      #File output_vcf_index = RunVEP.output_vcf_index
+      File output_vcf = RunVEP.output_vcf
+      File output_vcf_index = RunVEP.output_vcf_index
   }
 
 }
@@ -33,7 +33,7 @@ task RunVEP {
 
     command {
         set -e
-        echo annotated_vcf
+        echo ~{annotated_vcf}
         echo "Starting VEP analysis..."
         vep -i ~{input_vcf} \
             -o ~{annotated_vcf} \
@@ -47,6 +47,7 @@ task RunVEP {
             --assembly GRCh37 \
             --no_stats 
         tabix -p vcf ~{annotated_vcf}
+        echo "Finishing VEP analysis."
         ls -ls ~{annotated_vcf}*
     }
 
