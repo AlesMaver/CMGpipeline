@@ -32,6 +32,8 @@ import "./MitochondriaPipeline/MitochondriaPipeline.wdl" as MitochondriaPipeline
 ### import "./Exomiser.wdl" as Exomiser
 import "./ExomeDepth.wdl" as ExomeDepth
 import "./Stripy/Stripy_v2.wdl" as Stripy
+import "./VEP/Vep.wdl" as VEP
+
 
 # WORKFLOW DEFINITION 
 workflow FastqToVCF {
@@ -800,6 +802,13 @@ workflow FastqToVCF {
       vcfanno_docker = vcfanno_docker
   }
 
+  # Annotate sample.vcf file with VEP method
+  call VEP.VEP as VEP_AnnotateVCF {
+      input:
+        sample_basename = sample_basename,
+        input_vcf = SelectFinalVariants.output_vcf
+  }
+
   # Exomiser
   # if ( defined(hpo_ids) ) {
   #   call Exomiser.Exomiser as Exomiser {
@@ -1352,8 +1361,8 @@ workflow FastqToVCF {
     File? exome_depth_annotSV_tsv = ExomeDepth.exome_depth_annotSV_tsv
 
     # VEP annotated vcf files
-    File VEPannotatedVCF = AnnotateVCF.VEPannotatedVCF
-    File VEPannotatedVCFIndex = AnnotateVCF.VEPannotatedVCFIndex
+    File VEPannotatedVCF = VEP_AnnotateVCF.output_vcf
+    File VEPannotatedVCFIndex = VEP_AnnotateVCF.output_vcf_index
     File VEPdeepvariantannotatedVCF = DeepVariant.VEPdeepvariantannotatedVCFannotatedVCF
     File VEPdeepvariantannotatedVCFIndex = DeepVariant.VEPdeepvariantannotatedVCFIndex  
 
