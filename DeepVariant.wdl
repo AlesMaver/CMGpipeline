@@ -90,7 +90,7 @@ workflow DeepVariant {
       File? outputGVCF = RunDeepVariant.outputGVCF
       File? outputGVCFIndex = RunDeepVariant.outputGVCFIndex
       File VEPdeepvariantannotatedVCF = VEPDeepVariant.output_vcf
-      File VEPdeepvariantannotatedIndex = VEPDeepVariant.output_vcf_index      
+      File VEPdeepvariantannotatedVCFIndex = VEPDeepVariant.output_vcf_index      
   }
 }
 
