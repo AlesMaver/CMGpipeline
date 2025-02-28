@@ -80,7 +80,7 @@ workflow DeepVariant {
       input:
         sample_basename = sample_basename,
         input_vcf = RunDeepVariant.outputVCF,
-        filename_infix = "DeepVariant"
+        filename_infix = ".DeepVariant"
   }
 
   output {
