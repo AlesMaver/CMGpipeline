@@ -806,7 +806,7 @@ workflow FastqToVCF {
   call VEP.VEP as VEP_AnnotateVCF {
       input:
         sample_basename = sample_basename,
-        input_vcf = SelectFinalVariants.output_vcf
+        input_vcf = select_first([Mutect2.filtered_vcf, SelectFinalVariants.output_vcf])
   }
 
   # Exomiser
