@@ -257,7 +257,7 @@ workflow AnnotateVCF {
       input:
         sample_basename = sample_basename,
         #input_vcf = runSnpEff.output_vcf
-        input_vcf = MergeVCFs.output_vcfgz
+        input_vcf = SelectFinalVariants.output_vcf
   }
 
   # Outputs that will be retained when execution is complete
