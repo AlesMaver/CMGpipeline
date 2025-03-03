@@ -22,6 +22,14 @@ workflow ExomeDepth {
     }
   }
 
+  call GetCounts_Bedtools {
+    input:
+        sample_name = sample_name,
+        target_bed = target_bed,
+        input_bam = select_first([input_bam]),
+        input_bam_index = select_first([input_bam_index])
+  }
+
   if(defined(reference_counts_files)) {
     call ExomeDepth {
       input:
@@ -90,7 +98,7 @@ task GetCounts {
 task GetCounts_Bedtools {
   input {
     String sample_name
-    File target_bed
+    File? target_bed
     File input_bam
     File input_bam_index
     Int samtools_threads = 30
