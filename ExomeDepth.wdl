@@ -87,6 +87,49 @@ task GetCounts {
   }
 }
 
+task GetCounts_Bedtools {
+  input {
+    String sample_name
+    File target_bed
+    File input_bam
+    File input_bam_index
+    Int samtools_threads = 30
+  }
+
+  command <<<
+    # Get BAM chromosome order
+    samtools view -H ~{input_bam} | grep '@SQ' | awk '{print $2}' | cut -d':' -f2 > bam_chrom_order.txt
+
+    # Get BED chromosome order
+    cut -f1 ~{target_bed} | sort -u > bed_chrom_order.txt
+
+    # Sort BED file by chromosome order in BAM (so that bedtools will work)
+    awk 'NR==FNR {order[$1]=NR; next} $1 in order {print order[$1], $0}' bam_chrom_order.txt ~{target_bed} | sort -k1,1n -k3,3n | cut -d' ' -f2- > bam_sorted.bed
+
+    # Calculate coverage using bedtools
+    samtools view -@ ~{samtools_threads} -h -F 3852 -f 3 -q 30 ~{input_bam} | \
+    awk '$1 ~ /^@/ || $9 > 0' | \
+    samtools view -@ ~{samtools_threads} -O BAM -h | \
+    bedtools bamtobed -i stdin | \
+    bedtools coverage -a bam_sorted.bed -b stdin -counts > bam_sorted_counts.bed
+
+    awk 'NR==FNR {order[$1]=NR; next} $1 in order {print order[$1], $0}' bed_chrom_order.txt bam_sorted_counts.bed | sort -k1,1n -k3,3n | cut -d' ' -f2- > bed_sorted_counts.bed
+    (echo -e "chromosome\tstart\tend\t~{sample_name}.bam"; cat bed_sorted_counts.bed) > ~{sample_name}_ExomeDepth_counts.tsv
+  >>>
+
+  runtime {
+    docker: "danhumassmed/samtools-bedtools:1.0.2"
+    maxRetries: 3
+    requested_memory_mb_per_core: 1000
+    cpu: 16
+    runtime_minutes: 180
+  }
+
+  output {
+    File exome_depth_counts = "~{sample_name}_ExomeDepth_counts.tsv"
+  }
+}
+
 task ExomeDepth {
   input {
     String sample_name
