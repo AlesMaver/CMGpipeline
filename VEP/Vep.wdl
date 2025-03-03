@@ -55,7 +55,8 @@ task RunVEP {
         docker: "alesmaver/vep_grch37"
         requested_memory_mb_per_core: 1000
         cpu: 32
-        runtime_minutes: 60
+        # 60 minutes is enough for an exome. what is the min time for genome?
+        runtime_minutes: 180
     }
 
     output {
