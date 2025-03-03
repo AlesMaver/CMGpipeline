@@ -198,7 +198,7 @@ task DepthOfCoverage34 {
 
     command <<<
     set -e
-    java -Xmx8g -jar /usr/GenomeAnalysisTK.jar \
+    java -Xmx16g -jar /usr/GenomeAnalysisTK.jar \
       -T DepthOfCoverage \
       -R ~{reference_fa} \
       -I ~{input_bam} \
@@ -218,7 +218,7 @@ task DepthOfCoverage34 {
     cat targetGenes.coverage.sample_interval_summary | grep -v "Target" | awk -F '[\t:-]' '{print $1,$2,$3,$11}' OFS='\t' | sed 's/NaN/0.00/g' > ~{sample_basename}.coverage.wig
     cat targetGenes.coverage.sample_interval_summary | grep -v "Target" | awk -F '[\t:-]' '{print $1,$2,$3,($11-100)}' OFS='\t' | sed 's/NaN/0.00/g' > ~{sample_basename}.coverage_neg.wig
 
-    java -Xmx8g -jar /usr/GenomeAnalysisTK.jar \
+    java -Xmx16g -jar /usr/GenomeAnalysisTK.jar \
       -T DepthOfCoverage \
       -R ~{reference_fa} \
       -I ~{input_bam} \
@@ -251,7 +251,7 @@ task DepthOfCoverage34 {
         docker: "~{docker}"
         maxRetries: 3
         requested_memory_mb_per_core: 1000
-        cpu: 12
+        cpu: 16
         runtime_minutes: 2400
     }
 }

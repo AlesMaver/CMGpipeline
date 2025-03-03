@@ -3,6 +3,7 @@ version 1.0
 
 
 # Subworkflows
+import "../CRAM_conversions.wdl" as CramConversions
 import "../PrepareMaskedGenomeFiles.wdl" as PrepareMaskedGenomeFileswdl
 import "./QualimapAndCoverage.wdl" as QualimapAndCoverageWdl
 
@@ -10,8 +11,10 @@ import "./QualimapAndCoverage.wdl" as QualimapAndCoverageWdl
 workflow QualimapAndCoverageWrapper {
   input {
     String sample_basename
-    File input_bam
-    File input_bam_index
+    File? input_bam
+    File? input_bam_index
+    File? input_cram
+    File? input_cram_index
 
     File reference_fixed_fa
     File reference_fixed_fai
@@ -32,6 +35,20 @@ workflow QualimapAndCoverageWrapper {
   }
 
   # START
+
+  if (defined(input_cram)) {
+    call CramConversions.CramToBam as CramToBam {
+        input:
+          sample_name = sample_basename,
+          input_cram = input_cram,
+          ref_fasta = reference_fa,
+          ref_fasta_index = reference_fai,
+          ref_dict = reference_dict,
+          docker = "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817",
+          samtools_path = "samtools"
+    }
+  }
+
   
   # 
   if ( defined(targetRegions) && select_first([perform_masked_alignment, false]) ) {
@@ -49,8 +66,8 @@ workflow QualimapAndCoverageWrapper {
   call QualimapAndCoverageWdl.QualimapAndCoverage as QualimapAndCoverage {
        input:
           sample_basename = sample_basename,
-          input_bam = input_bam,
-          input_bam_index = input_bam_index,
+          input_bam = select_first([input_bam, CramToBam.output_bam]),
+          input_bam_index = select_first([input_bam_index, CramToBam.output_bai]),
           reference_fa = reference_fa,
           reference_fai = reference_fai,
           reference_dict = reference_dict,

@@ -1,24 +1,40 @@
 version 1.0
 
+import "../CRAM_conversions.wdl" as CramConversions
 import "../manta/manta_workflow.wdl" as Manta
 
 # WORKFLOW DEFINITION 
 workflow SoftSearchWF {
   input {
-    File input_bam
-    File input_bam_index
+    File? input_bam
+    File? input_bam_index
+    File? input_cram
+    File? input_cram_index
     File reference_fa
     File reference_fai
     File reference_dict
     String sample_basename
   }
-  
+
+  if (defined(input_cram)) {
+    call CramConversions.CramToBam as CramToBam {
+        input:
+          sample_name = sample_basename,
+          input_cram = input_cram,
+          ref_fasta = reference_fa,
+          ref_fasta_index = reference_fai,
+          ref_dict = reference_dict,
+          docker = "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817",
+          samtools_path = "samtools"
+    }
+  }
+
   call FileToArray
   
   call LocaliseInput as LocaliseInput {
     input:
-      input_bam = input_bam,
-      input_bam_index = input_bam_index
+      input_bam = select_first([input_bam, CramToBam.output_bam]),
+      input_bam_index = select_first([input_bam_index, CramToBam.output_bai])
   }
 
   scatter (chromosome in FileToArray.scatter_regions ) {

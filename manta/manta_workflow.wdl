@@ -25,12 +25,14 @@ version 1.0
 
 import "./manta.wdl" as manta
 import "../AnnotationPipeline.wdl" as Annotation
-
+import "../CRAM_conversions.wdl" as CramConversions
 
 workflow SVcalling {
     input {
-        File bamFile
-        File bamIndex
+        File? bamFile
+        File? bamIndex
+        File? cramFile
+        File? cramIndex
         File referenceFasta
         File referenceFastaFai
         File referenceFastaDict
@@ -61,6 +63,19 @@ workflow SVcalling {
 
     meta {allowNestedInputs: true}
 
+    if (defined(cramFile)) {
+      call CramConversions.CramToBam as CramToBam {
+        input:
+          sample_name = sample,
+          input_cram = cramFile,
+          ref_fasta = referenceFasta,
+          ref_fasta_index = referenceFastaFai,
+          ref_dict = referenceFastaDict,
+          docker = "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817",
+          samtools_path = "samtools"
+      }
+    }
+
     String SVdir = outputDir + '/structural-variants/'
 
     call DownloadFiles
@@ -68,8 +83,8 @@ workflow SVcalling {
     call manta.Germline as manta {
         input:
             dockerImage = dockerImages["manta"],
-            bamFile = bamFile,
-            bamIndex = bamIndex,
+            bamFile = select_first([bamFile, CramToBam.output_bam]),
+            bamIndex = select_first([bamIndex, CramToBam.output_bai]),
             sample = sample,
             referenceFasta = referenceFasta,
             referenceFastaFai = referenceFastaFai,

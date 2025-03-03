@@ -6,11 +6,11 @@ version 1.0
 task CramToBam {
   input {
     # Command parameters
-    File ref_fasta
-    File ref_fasta_index
-    File ref_dict
+    File? ref_fasta
+    File? ref_fasta_index
+    File? ref_dict
     File? input_cram # Declared this as an optional input because the input of workflow is also optional
-    String sample_name
+    String? sample_name
 
     # Runtime parameters
     String docker
@@ -29,9 +29,9 @@ task CramToBam {
   runtime {
     docker: docker
     maxRetries: 3
-    requested_memory_mb_per_core: 5000
-    cpu: 1
-    runtime_minutes: 180
+    requested_memory_mb_per_core: 1000
+    cpu: 16
+    runtime_minutes: 480
  }
   output {
     File output_bam = "~{sample_name}.bam"
