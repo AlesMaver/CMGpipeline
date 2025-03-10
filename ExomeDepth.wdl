@@ -57,18 +57,22 @@ workflow ExomeDepth {
           sample_name = sample_name,
           target_bed = target_bed,
           input_bam = select_first([input_cram, input_bam]),
-          input_bam_index = select_first([input_cram_index, input_bam_index])
+          input_bam_index = select_first([input_cram_index, input_bam_index]),
+          reference_fa = reference_fa,
+          reference_fai = reference_fai,
+          reference_dict = reference_dict
       }
     }
 
-
+  # Select the output from either GetCounts or GetCounts_Bedtools
+  File exome_depth_counts_calculated = select_first([GetCounts.exome_depth_counts, GetCounts_Bedtools.exome_depth_counts])
 
   if(defined(reference_counts_files)) {
     call ExomeDepth {
       input:
         sample_name = sample_name,
         target_bed = target_bed,
-        test_counts_file = select_first([exome_depth_counts_input, GetCounts.exome_depth_counts]),
+        test_counts_file = select_first([exome_depth_counts_input, exome_depth_counts_calculated]),
         reference_counts_files = select_first([reference_counts_files])
     }
 
@@ -81,7 +85,7 @@ workflow ExomeDepth {
   }
 
   output {
-    File? exome_depth_counts = GetCounts.exome_depth_counts
+    File? exome_depth_counts = exome_depth_counts_calculated
     File? exome_depth_cnv_calls_bed = ExomeDepth.exome_depth_cnv_calls_bed
     File? exome_depth_cnv_calls_csv = ExomeDepth.exome_depth_cnv_calls_csv
     File? exome_depth_ratios_all_wig_gz = ExomeDepth.exome_depth_ratios_all_wig_gz
@@ -134,6 +138,9 @@ task GetCounts_Bedtools {
     File? target_bed
     File input_bam
     File input_bam_index
+    File? reference_fa
+    File? reference_fai
+    File? reference_dict
     Int samtools_threads = 30
   }
 
@@ -142,17 +149,17 @@ task GetCounts_Bedtools {
     samtools view -H ~{input_bam} | grep '@SQ' | awk '{print $2}' | cut -d':' -f2 > bam_chrom_order.txt
 
     # Get BED chromosome order
-    cut -f1 ~{target_bed} | sort -u > bed_chrom_order.txt
+    cut -f1 ~{target_bed} | uniq > bed_chrom_order.txt
 
     # Sort BED file by chromosome order in BAM (so that bedtools will work)
     awk 'NR==FNR {order[$1]=NR; next} $1 in order {print order[$1], $0}' bam_chrom_order.txt ~{target_bed} | sort -k1,1n -k3,3n | cut -d' ' -f2- > bam_sorted.bed
 
     # Calculate coverage using bedtools
-    samtools view -@ ~{samtools_threads} -h -F 3852 -f 3 -q 30 ~{input_bam} | \
+    samtools view -@ ~{samtools_threads} -h -F 3852 -f 3 -q 30 ~{if defined(reference_fa) then "-T " + reference_fa else ""} ~{input_bam} | \
     awk '$1 ~ /^@/ || $9 > 0' | \
     samtools view -@ ~{samtools_threads} -O BAM -h | \
     bedtools bamtobed -i stdin | \
-    bedtools coverage -a bam_sorted.bed -b stdin -counts > bam_sorted_counts.bed
+    bedtools coverage -a bam_sorted.bed -b stdin -counts -sorted > bam_sorted_counts.bed
 
     awk 'NR==FNR {order[$1]=NR; next} $1 in order {print order[$1], $0}' bed_chrom_order.txt bam_sorted_counts.bed | sort -k1,1n -k3,3n | cut -d' ' -f2- > bed_sorted_counts.bed
     (echo -e "chromosome\tstart\tend\t~{sample_name}.bam"; cat bed_sorted_counts.bed) > ~{sample_name}_ExomeDepth_counts.tsv
