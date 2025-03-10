@@ -6,6 +6,8 @@ import "./manta/manta_workflow.wdl" as Manta
 workflow ExomeDepth {
   input {
     String sample_name
+    String test_type = "WES"
+    String enrichment
     File? target_bed
     File? input_bam
     File? input_bam_index
@@ -18,7 +20,12 @@ workflow ExomeDepth {
     Array[File]? reference_counts_files
   }
 
-  if(!defined(exome_depth_counts_input)) {
+  if (defined(enrichment)) {
+    String test_type = if (enrichment == "WGS1Mb") then "WGS" else "WES"
+  }
+
+  # If the input has not yet been counted, convert the CRAM to BAM and count the reads
+  if(!defined(exome_depth_counts_input) && test_type == "WES") {
 
     if (defined(input_cram)) {
       call CramConversions.CramToBam as CramToBam {
@@ -44,13 +51,17 @@ workflow ExomeDepth {
     }
   }
 
-  call GetCounts_Bedtools {
-    input:
-        sample_name = sample_name,
-        target_bed = target_bed,
-        input_bam = select_first([input_bam]),
-        input_bam_index = select_first([input_bam_index])
-  }
+  if(!defined(exome_depth_counts_input) && test_type == "WGS") {
+    call GetCounts_Bedtools {
+      input:
+          sample_name = sample_name,
+          target_bed = target_bed,
+          input_bam = select_first([input_cram, input_bam]),
+          input_bam_index = select_first([input_cram_index, input_bam_index])
+      }
+    }
+
+
 
   if(defined(reference_counts_files)) {
     call ExomeDepth {
