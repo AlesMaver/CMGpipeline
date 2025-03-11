@@ -941,6 +941,7 @@ workflow FastqToVCF {
     call ExomeDepth.ExomeDepth as ExomeDepth {
     input:
       sample_name = sample_basename,
+      enrichment = enrichment,
       target_bed = enrichment_bed,
       input_bam = SortSam.output_bam,
       input_bam_index = SortSam.output_bam_index,

@@ -7,7 +7,7 @@ workflow ExomeDepth {
   input {
     String sample_name
     String test_type = "WES"
-    String enrichment
+    String? enrichment
     File? target_bed
     File? input_bam
     File? input_bam_index
