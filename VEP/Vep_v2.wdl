@@ -111,7 +111,7 @@ task VcfPartitioning {
   command {
     set -e
     echo ~{chromosome}
-    bcftools view -r chromosome ~{input_vcf}  > ~{sample_basename}.part.vcf.gz
+    bcftools view -r chromosome ~{input_vcf}  > ~{sample_basename}.~{chromosome}.vcf.gz
   }
 
   runtime {
