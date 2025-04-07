@@ -79,11 +79,12 @@ task VcfZippingAndIndexing {
   input {
     File input_vcf
   }
-  
+
+  String file_name = basename(input_vcf)
   command {
     set -e
-    bgzip -c ~{input_vcf} > ~{input_vcf}.gz
-    bcftools index -t ~{input_vcf}.gz
+    bgzip -c ~{input_vcf} > ~{file_name}.gz
+    bcftools index -t ~{file_name}.gz
   }
   runtime {
     docker: "dceoy/bcftools"
@@ -93,8 +94,8 @@ task VcfZippingAndIndexing {
     runtime_minutes: 60
   }
   output {
-    File output_vcf = "~{input_vcf}.gz"
-    File output_vcf_index = "~{input_vcf}.gz.tbi"
+    File output_vcf = "~{file_name}.gz"
+    File output_vcf_index = "~{file_name}.gz.tbi"
   }
 }
 
