@@ -122,7 +122,7 @@ task VcfPartitioning {
     runtime_minutes: 60
   }
   output {
-    File output_vcf = "~{sample_basename}.part.vcf.gz"
+    File output_vcf = "~{sample_basename}.~{chromosome}.vcf.gz"
   }
 }
 
