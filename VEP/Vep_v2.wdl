@@ -33,9 +33,9 @@ workflow VEP {
 
     call VcfPartitioning {
         input:
-		        # to je task, ki uporablja bcftools kontejner: bcftools_docker
-		        # bcftools view -r chromosome ~{input_vcf} 
-		        # output file: File vcf_partial = ...
+            sample_basename = sample_basename,
+	    input_vcf = input_vcf,
+	    chromosome = chromosome
 	  }
 
     call RunVEP {
@@ -55,17 +55,6 @@ workflow VEP {
       output_filename_gz = sample_basename + filename_infix + filename_suffix
   }
 
-#------------------------------------------------------------------------------
-
-call RunVEP {
-      input:
-        sample_basename = sample_basename,
-        input_vcf = input_vcf,
-        annotated_vcf = sample_basename + filename_infix + filename_suffix
-    }
-
-# -----------------------------------------------------------------------------
-
   # workflow VEP output files:
   output {
       #File output_vcf = RunVEP.output_vcf
@@ -82,6 +71,7 @@ task VcfPartitioning {
   input {
     String sample_basename
     File input_vcf
+    String chromosome
   }
   
   command {
