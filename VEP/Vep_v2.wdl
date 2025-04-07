@@ -83,7 +83,8 @@ task VcfZippingAndIndexing {
   String file_name = basename(input_vcf)
   command {
     set -e
-    bgzip -c ~{input_vcf} > ~{file_name}.gz
+    bcftools sort ~{input_vcf} -Oz -o ~{file_name}.gz
+    #bgzip -c ~{input_vcf} > ~{file_name}.gz
     bcftools index -t ~{file_name}.gz
   }
   runtime {
