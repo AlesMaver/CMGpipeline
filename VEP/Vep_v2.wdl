@@ -21,6 +21,11 @@ workflow VEP {
 
   Array[String] chromosomes = read_lines(chromosome_list)
 
+  call VcfZippingAndIndexing {
+        input:
+	    input_vcf = input_vcf
+  }
+
   if( defined(targetRegions) ) {
       call StringToArray {
         input:
@@ -34,9 +39,10 @@ workflow VEP {
     call VcfPartitioning {
         input:
             sample_basename = sample_basename,
-	    input_vcf = input_vcf,
+	    input_vcf = VcfZippingAndIndexing.output_vcf,
+	    input_vcf_index = VcfZippingAndIndexing.output_vcf_index,
 	    chromosome = chromosome
-	  }
+    }
 
     call RunVEP {
         input:
@@ -57,8 +63,8 @@ workflow VEP {
 
   # workflow VEP output files:
   output {
-      #File output_vcf = RunVEP.output_vcf
-      #File output_vcf_index = RunVEP.output_vcf_index
+      #File output_vcf = MergeVCFs.output_vcfgz
+      #File output_vcf_index = MergeVCFs.output_vcfgz_index
   }
 
 }
@@ -67,23 +73,44 @@ workflow VEP {
 # TASK DEFINITIONS
 ##################
 
+
+task VcfZippingAndIndexing {
+  input {
+    File input_vcf
+  }
+  
+  command {
+    set -e
+    bgzip -c ~{input_vcf} > ~{input_vcf}.gz
+    bcftools index -t ~{input_vcf}.gz
+  }
+  runtime {
+    docker: "dceoy/bcftools"
+    maxRetries: 1
+    requested_memory_mb_per_core: 1000
+    cpu: 4
+    runtime_minutes: 60
+  }
+  output {
+    File output_vcf = "~{input_vcf}.gz"
+    File output_vcf_index = "~{input_vcf}.gz.tbi"
+  }
+}
+
 task VcfPartitioning {
   input {
     String sample_basename
     File input_vcf
+    File input_vcf_index
     String chromosome
   }
   
   command {
     set -e
-    # bcftools view -r chromosome ~{input_vcf}  > ~{sample_basename}.part.vcf.gz
-
-    bgzip -c ~{input_vcf} > compressed.vcf.gz
-    bcftools index compressed.vcf.gz
-    bcftools view -r chromosome compressed.vcf.gz > ~{sample_basename}.part.vcf.gz
-
-    #bcftools index -t ~{sample_basename}.part.vcf.gz
+    echo ~{chromosome}
+    bcftools view -r chromosome ~{input_vcf}  > ~{sample_basename}.part.vcf.gz
   }
+
   runtime {
     docker: "dceoy/bcftools"
     maxRetries: 1
@@ -106,6 +133,7 @@ task RunVEP {
 
     command {
         set -e
+        echo ~{chromosome}
         echo ~{annotated_vcf}
         echo "Starting VEP analysis..."
         vep -i ~{input_vcf} \
