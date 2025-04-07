@@ -1,5 +1,11 @@
 version 1.0
 
+# VEP wdl: scattered version
+
+#--------------------------
+# v delu... in progress...
+#--------------------------
+
 workflow VEP {
   input {
     String sample_basename
@@ -7,9 +13,50 @@ workflow VEP {
     # not needed File input_vcf_index
     String filename_infix = ""
     ### tole uporabi pri klicu call VEP v anotacijah: output_vcf = sample_basename + ".VEP.hg19.annotated.vcf.gz" | sample_basename + ".DeepVariant.VEP.hg19.annotated.vcf.gz" 
+    File chromosome_list
+    String? targetRegions
   }
 
-String filename_suffix = ".VEP.hg19.annotated.vcf.gz"
+  String filename_suffix = ".VEP.hg19.annotated.vcf.gz"
+
+  Array[String] chromosomes = read_lines(chromosome_list)
+
+  if( defined(targetRegions) ) {
+      call StringToArray {
+        input:
+            input_string = select_first([targetRegions, ""]),
+            separator = ";"
+      }
+  }
+
+  scatter (chromosome in select_first([StringToArray.values, chromosomes]) ) {
+
+    call VcfPartitioning {
+        input:
+		        # to je task, ki uporablja bcftools kontejner: bcftools_docker
+		        # bcftools view -r chromosome ~{input_vcf} 
+		        # output file: File vcf_partial = ...
+	  }
+
+    call RunVEP {
+        input:
+            sample_basename = sample_basename,
+            input_vcf = VcfPartitioning.output_vcf,
+            annotated_vcf = sample_basename + filename_infix + filename_suffix
+    }
+
+  }  # end-of-scatter
+
+  call MergeVCFs {
+    input:
+      input_vcfs = RunVEP.output_vcf,
+      input_vcfs_indexes = RunVEP.output_vcf_index,
+      sample_basename = sample_basename,
+      output_filename_gz = sample_basename + filename_infix + filename_suffix
+  }
+
+#------------------------------------------------------------------------------
+
 call RunVEP {
       input:
         sample_basename = sample_basename,
@@ -17,12 +64,43 @@ call RunVEP {
         annotated_vcf = sample_basename + filename_infix + filename_suffix
     }
 
+# -----------------------------------------------------------------------------
+
+  # workflow VEP output files:
   output {
-      File output_vcf = RunVEP.output_vcf
-      File output_vcf_index = RunVEP.output_vcf_index
+      #File output_vcf = RunVEP.output_vcf
+      #File output_vcf_index = RunVEP.output_vcf_index
   }
 
 }
+
+##################
+# TASK DEFINITIONS
+##################
+
+task VcfPartitioning {
+  input {
+    String sample_basename
+    File input_vcf
+  }
+  
+  command {
+    set -e
+    bcftools view -r chromosome ~{input_vcf}  > ~{sample_basename}.part.vcf.gz
+    #bcftools index -t ~{sample_basename}.part.vcf.gz
+  }
+  runtime {
+    docker: "dceoy/bcftools"
+    maxRetries: 1
+    requested_memory_mb_per_core: 1000
+    cpu: 4
+    runtime_minutes: 60
+  }
+  output {
+    File output_vcf = "~{sample_basename}.part.vcf.gz"
+  }
+}
+
 
 task RunVEP {
     input {
@@ -62,5 +140,61 @@ task RunVEP {
         File output_vcf = annotated_vcf
         File output_vcf_index = annotated_vcf + ".tbi"
     }
-
 }
+
+
+
+task MergeVCFs {
+  input {
+    Array[File] input_vcfs
+    Array[File] input_vcfs_indexes
+    String sample_basename
+    String output_filename_gz
+    String gatk_docker = "broadinstitute/gatk:latest"
+    String gatk_path = "/gatk/gatk"
+  }
+  
+  command {
+    set -e
+    ~{gatk_path} --java-options -Xmx4G  \
+      MergeVcfs \
+      --INPUT ~{sep=' --INPUT ' input_vcfs} \
+      --OUTPUT ~{output_filename_gz}
+  }
+  runtime {
+    docker: gatk_docker
+    maxRetries: 3
+    requested_memory_mb_per_core: 1000
+    cpu: 8
+    runtime_minutes: 120
+  }
+  output {
+    File output_vcfgz = "~{output_filename_gz}"
+    File output_vcfgz_index = "~{output_filename_gz}.tbi"
+  }
+}
+
+
+task StringToArray {
+  input {
+    String input_string
+    String separator
+  }
+  command {
+    echo '~{input_string}' | tr '~{separator}' \\n | tr -d "[:blank:]" > intervals.list
+    echo '~{input_string}' | tr '~{separator}' \\n | tr -d "[:blank:]"
+  }
+  runtime {
+    docker:"biocontainers/bcftools:v1.9-1-deb_cv1"
+    requested_memory_mb_per_core: 500
+    cpu: 1
+    runtime_minutes: 5
+  }
+  output {
+    Array[String] values = read_lines(stdout())
+    File intervals_list = "intervals.list"
+  }
+}
+
+
+
