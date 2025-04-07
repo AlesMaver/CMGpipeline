@@ -48,7 +48,8 @@ workflow VEP {
         input:
             sample_basename = sample_basename,
             input_vcf = VcfPartitioning.output_vcf,
-            annotated_vcf = sample_basename + filename_infix + filename_suffix
+            annotated_vcf = sample_basename + filename_infix + filename_suffix,
+	    chromosome = chromosome
     }
 
   }  # end-of-scatter
@@ -129,6 +130,7 @@ task RunVEP {
       String sample_basename
       File input_vcf
       String annotated_vcf
+      String chromosome
     }
 
     command {
