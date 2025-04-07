@@ -79,6 +79,7 @@ task VcfPartitioning {
     # bcftools view -r chromosome ~{input_vcf}  > ~{sample_basename}.part.vcf.gz
 
     bgzip -c ~{input_vcf} > compressed.vcf.gz
+    bcftools index compressed.vcf.gz
     bcftools view -r chromosome compressed.vcf.gz > ~{sample_basename}.part.vcf.gz
 
     #bcftools index -t ~{sample_basename}.part.vcf.gz
