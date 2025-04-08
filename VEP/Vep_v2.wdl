@@ -26,15 +26,16 @@ workflow VEP {
 	    input_vcf = input_vcf
   }
 
-  if( defined(targetRegions) ) {
-      call StringToArray {
-        input:
-            input_string = select_first([targetRegions, ""]),
-            separator = ";"
-      }
-  }
+  #if( defined(targetRegions) ) {
+  #    call StringToArray {
+  #      input:
+  #          input_string = select_first([targetRegions, ""]),
+  #          separator = ";"
+  #    }
+  #}
 
-  scatter (chromosome in select_first([StringToArray.values, chromosomes]) ) {
+  # scatter (chromosome in select_first([StringToArray.values, chromosomes]) ) {
+  scatter (chromosome in chromosomes) {
 
     call VcfPartitioning {
         input:
