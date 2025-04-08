@@ -23,7 +23,7 @@ workflow VEP {
 
   # if target regions, then process input file as a whole  ...  else scatter it, process parts and merge the results
   if( defined(targetRegions) ) {
-      call RunVEP {
+      call RunVEP as RunVEPtarget {
           input:
               sample_basename = sample_basename,
               input_vcf = VcfPartitioning.output_vcf,
@@ -50,7 +50,7 @@ workflow VEP {
   	      chromosome = chromosome
       }
 
-      call RunVEP {
+      call RunVEP as RunVEP {
           input:
               sample_basename = sample_basename,
               input_vcf = VcfPartitioning.output_vcf,
@@ -73,8 +73,8 @@ workflow VEP {
   output {
       #File output_vcf = MergeVCFs.output_vcfgz
       #File output_vcf_index = MergeVCFs.output_vcfgz_index
-      File output_vcf = select_first([MergeVCFs.output_vcfgz, RunVEP.output_vcf])
-      File output_vcf_index = select_first([MergeVCFs.output_vcfgz_index, RunVEP.output_vcf_index])
+      File output_vcf = select_first([MergeVCFs.output_vcfgz, RunVEPtarget.output_vcf])
+      File output_vcf_index = select_first([MergeVCFs.output_vcfgz_index, RunVEPtarget.output_vcf_index])
   }
 
 }
