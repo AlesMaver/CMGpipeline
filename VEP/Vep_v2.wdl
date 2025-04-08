@@ -21,52 +21,60 @@ workflow VEP {
 
   Array[String] chromosomes = read_lines(chromosome_list)
 
-  call VcfZippingAndIndexing {
-        input:
-	    input_vcf = input_vcf
+  # if target regions, then process input file as a whole  ...  else scatter it, process parts and merge the results
+  if( defined(targetRegions) ) {
+      call RunVEP {
+          input:
+              sample_basename = sample_basename,
+              input_vcf = VcfPartitioning.output_vcf,
+              annotated_vcf = sample_basename + filename_infix + filename_suffix,
+	      chromosome = ""
+      }
   }
 
-  #if( defined(targetRegions) ) {
-  #    call StringToArray {
-  #      input:
-  #          input_string = select_first([targetRegions, ""]),
-  #          separator = ";"
-  #    }
-  #}
+  if( !defined(targetRegions) ) {
 
-  # scatter (chromosome in select_first([StringToArray.values, chromosomes]) ) {
-  scatter (chromosome in chromosomes) {
-
-    call VcfPartitioning {
+    call VcfZippingAndIndexing {
         input:
-            sample_basename = sample_basename,
-	    input_vcf = VcfZippingAndIndexing.output_vcf,
-	    input_vcf_index = VcfZippingAndIndexing.output_vcf_index,
-	    chromosome = chromosome
+	    input_vcf = input_vcf
     }
 
-    call RunVEP {
-        input:
-            sample_basename = sample_basename,
-            input_vcf = VcfPartitioning.output_vcf,
-            annotated_vcf = sample_basename + filename_infix + filename_suffix,
-	    chromosome = chromosome
+    # scatter (chromosome in select_first([StringToArray.values, chromosomes]) ) {
+    scatter (chromosome in chromosomes) {
+
+      call VcfPartitioning {
+          input:
+              sample_basename = sample_basename,
+	      input_vcf = VcfZippingAndIndexing.output_vcf,
+	      input_vcf_index = VcfZippingAndIndexing.output_vcf_index,
+  	      chromosome = chromosome
+      }
+
+      call RunVEP {
+          input:
+              sample_basename = sample_basename,
+              input_vcf = VcfPartitioning.output_vcf,
+              annotated_vcf = sample_basename + filename_infix + filename_suffix,
+	      chromosome = chromosome
+      }
+
+    }  # end-of-scatter
+
+    call MergeVCFs {
+      input:
+        input_vcfs = RunVEP.output_vcf,
+        input_vcfs_indexes = RunVEP.output_vcf_index,
+        sample_basename = sample_basename,
+        output_filename_gz = sample_basename + filename_infix + filename_suffix
     }
-
-  }  # end-of-scatter
-
-  call MergeVCFs {
-    input:
-      input_vcfs = RunVEP.output_vcf,
-      input_vcfs_indexes = RunVEP.output_vcf_index,
-      sample_basename = sample_basename,
-      output_filename_gz = sample_basename + filename_infix + filename_suffix
   }
 
   # workflow VEP output files:
   output {
       #File output_vcf = MergeVCFs.output_vcfgz
       #File output_vcf_index = MergeVCFs.output_vcfgz_index
+      File output_vcf = select_first([MergeVCFs.output_vcfgz, RunVEP.output_vcf])
+      File output_vcf_index = select_first([MergeVCFs.output_vcfgz_index, RunVEP.output_vcf_index])
   }
 
 }
