@@ -26,7 +26,7 @@ workflow VEP {
       call RunVEP as RunVEPtarget {
           input:
               sample_basename = sample_basename,
-              input_vcf = VcfPartitioning.output_vcf,
+              input_vcf = input_vcf,
               annotated_vcf = sample_basename + filename_infix + filename_suffix,
 	      chromosome = ""
       }
