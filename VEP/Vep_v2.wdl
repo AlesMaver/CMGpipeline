@@ -2,9 +2,6 @@ version 1.0
 
 # VEP wdl: scattered version
 
-#--------------------------
-# v delu... in progress...
-#--------------------------
 
 workflow VEP {
   input {
@@ -21,7 +18,10 @@ workflow VEP {
 
   Array[String] chromosomes = read_lines(chromosome_list)
 
-  # if target regions, then process input file as a whole  ...  else scatter it, process parts and merge the results
+  # -------------------------------------------------------------------------------------------------------------------------------
+  # if target regions, then process input file as a whole  ...  else scatter it by chromosomes, process parts and merge the results
+  # -------------------------------------------------------------------------------------------------------------------------------
+
   if( defined(targetRegions) ) {
       call RunVEP as RunVEPtarget {
           input:
@@ -39,7 +39,6 @@ workflow VEP {
 	    input_vcf = input_vcf
     }
 
-    # scatter (chromosome in select_first([StringToArray.values, chromosomes]) ) {
     scatter (chromosome in chromosomes) {
 
       call VcfPartitioning {
@@ -71,8 +70,6 @@ workflow VEP {
 
   # workflow VEP output files:
   output {
-      #File output_vcf = MergeVCFs.output_vcfgz
-      #File output_vcf_index = MergeVCFs.output_vcfgz_index
       File output_vcf = select_first([MergeVCFs.output_vcfgz, RunVEPtarget.output_vcf])
       File output_vcf_index = select_first([MergeVCFs.output_vcfgz_index, RunVEPtarget.output_vcf_index])
   }
@@ -101,7 +98,7 @@ task VcfZippingAndIndexing {
     maxRetries: 1
     requested_memory_mb_per_core: 1000
     cpu: 4
-    runtime_minutes: 60
+    runtime_minutes: 30
   }
   output {
     File output_vcf = "~{file_name}.gz"
@@ -202,35 +199,10 @@ task MergeVCFs {
     maxRetries: 3
     requested_memory_mb_per_core: 1000
     cpu: 8
-    runtime_minutes: 120
+    runtime_minutes: 30
   }
   output {
     File output_vcfgz = "~{output_filename_gz}"
     File output_vcfgz_index = "~{output_filename_gz}.tbi"
   }
 }
-
-
-task StringToArray {
-  input {
-    String input_string
-    String separator
-  }
-  command {
-    echo '~{input_string}' | tr '~{separator}' \\n | tr -d "[:blank:]" > intervals.list
-    echo '~{input_string}' | tr '~{separator}' \\n | tr -d "[:blank:]"
-  }
-  runtime {
-    docker:"biocontainers/bcftools:v1.9-1-deb_cv1"
-    requested_memory_mb_per_core: 500
-    cpu: 1
-    runtime_minutes: 5
-  }
-  output {
-    Array[String] values = read_lines(stdout())
-    File intervals_list = "intervals.list"
-  }
-}
-
-
-
