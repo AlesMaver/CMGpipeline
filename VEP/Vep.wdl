@@ -56,8 +56,8 @@ task RunVEP {
         continueOnReturnCode: true
         requested_memory_mb_per_core: 1000
         cpu: 32
-        # 60 minutes is enough for an exome. what is the min time for genome?
-        runtime_minutes: 90
+        # 60 minutes is enough for an exome and genome. plus a little save margine.
+        runtime_minutes: 40
     }
 
     output {
