@@ -140,7 +140,7 @@ task RunDeepVariant {
         docker: "google/deepvariant:1.5.0"
         requested_memory_mb_per_core: 1000
         cpu: 30
-        runtime_minutes: 2800
+        runtime_minutes: 720
     }
 
     output {
