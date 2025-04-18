@@ -1,5 +1,13 @@
 version 1.0
 
+# Comment by TM (2025-04-18)
+# VEP annotation program has a bug: certain vcf files produced by Deep Variant program cannot be annotated. The VEP program 
+# prints out the error message, but the program "runs" further. The whole container is then stopped by the system schedular
+# when the time-limit is reached. 
+# If this happens, the VEP annotated vcf index file is missing and the corresponding vcf.gz file is only partially built.
+# In this case the Cleanup task is called to remove the partial file and to create two empty files (just for the record).
+
+
 workflow VEP {
   input {
     String sample_basename
@@ -14,18 +22,6 @@ workflow VEP {
         input_vcf = input_vcf,
         annotated_vcf = sample_basename + filename_infix + filename_suffix
   }
-
-  # Get the return code from RunVEP's metadata
-  #Int return_code = select(first: select(RunVEP: workflow.RunVEP.metadata.calls))['returnCode']    
-  # Conditional execution based on return code: 0 is success, 79 is OTL, if anything else, the runVEP should crash
-  # when 79: the runVEP outputs are incorrect, so delete the content of them
-  #if (return_code == 79) {
-  #      call Cleanup as Cleanup {
-  #          input: 
-  #            input_vcf = RunVEP.output_vcf,
-  #            output_filename = basename(RunVEP.output_vcf)
-  #      }
-  #}
 
   if ( !defined(RunVEP.output_vcf_index)) {
         call Cleanup as Cleanup {
