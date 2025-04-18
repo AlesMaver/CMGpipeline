@@ -16,19 +16,24 @@ workflow VEP {
   }
 
   # Get the return code from RunVEP's metadata
-  #Int return_code = select(first: select(RunVEP: workflow.RunVEP.metadata.calls))['returnCode']
-  Int return_code = select_first(select_first(RunVEP: workflow.RunVEP.metadata.calls))['returnCode']
-    
+  #Int return_code = select(first: select(RunVEP: workflow.RunVEP.metadata.calls))['returnCode']    
   # Conditional execution based on return code: 0 is success, 79 is OTL, if anything else, the runVEP should crash
   # when 79: the runVEP outputs are incorrect, so delete the content of them
-  if (return_code == 79) {
+  #if (return_code == 79) {
+  #      call Cleanup as Cleanup {
+  #          input: 
+  #            input_vcf = RunVEP.output_vcf,
+  #            output_filename = basename(RunVEP.output_vcf)
+  #      }
+  #}
+
+  if ( !defined(RunVEP.output_vcf_index)) {
         call Cleanup as Cleanup {
             input: 
               input_vcf = RunVEP.output_vcf,
               output_filename = basename(RunVEP.output_vcf)
         }
   }
-
   output {
       File? output_vcf = select_first([Cleanup.output_vcf, RunVEP.output_vcf]) 
       File? output_vcf_index = select_first([Cleanup.output_vcf_index, RunVEP.output_vcf_index])
