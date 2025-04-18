@@ -31,7 +31,7 @@ workflow VEP {
         call Cleanup as Cleanup {
             input: 
               input_vcf = RunVEP.output_vcf,
-              output_filename = basename(RunVEP.output_vcf)
+              output_filename = select_first([basename(RunVEP.output_vcf), ""])
         }
   }
   output {
