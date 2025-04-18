@@ -18,8 +18,8 @@ call RunVEP {
     }
 
   output {
-      File output_vcf = RunVEP.output_vcf
-      File output_vcf_index = RunVEP.output_vcf_index
+      File? output_vcf = RunVEP.output_vcf
+      File? output_vcf_index = RunVEP.output_vcf_index
   }
 
 }
