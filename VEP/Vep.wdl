@@ -61,8 +61,8 @@ task RunVEP {
     }
 
     output {
-        File output_vcf = annotated_vcf
-        File output_vcf_index = annotated_vcf + ".tbi"
+        File? output_vcf = annotated_vcf
+        File? output_vcf_index = annotated_vcf + ".tbi"
     }
 
 }
