@@ -85,8 +85,8 @@ task RunVEP {
 
 task Cleanup {
     input {
-      File input_vcf
-      String output_filename
+      File? input_vcf
+      String? output_filename
     }
 
     command {
