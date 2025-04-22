@@ -88,9 +88,17 @@ task Cleanup {
     command {
         set -e
         echo "Running cleanup..."
-        rm ~{input_vcf}
-        touch ~{output_filename}
-        touch ~{output_filename}.tbi
+
+        ## remove the file and create a new completely empty file and its index
+        # rm ~{input_vcf}
+        # touch ~{output_filename}
+        # touch ~{output_filename}.tbi
+
+        ## grep out all commented lines and put them into a temp file, gzip it and index it.
+        zgrep "#" ~{input_vcf} > temp.vcf 
+        bgzip -c temp.vcf > ~{output_filename}
+        tabix -p vcf ~{output_filename}
+
         ls -ls ~{output_filename}*
     }
 
