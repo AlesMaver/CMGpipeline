@@ -86,7 +86,7 @@ task Cleanup {
     }
 
     command {
-        set -e
+        ## don't use. zgrep on a corrupted file returns code 2 .... set -e
         echo "Running cleanup..."
 
         ## remove the file and create a new completely empty file and its index
