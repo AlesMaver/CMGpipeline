@@ -730,8 +730,8 @@
         "LocusStructure": "(GCN)*",
         "ReferenceRegion": "chr14:23790681-23790711",
         "Disease": "OPMD",
-        "NormalMax": 10,
-        "PathologicMin": 12
+        "NormalMax": 6,
+        "PathologicMin": 7
     },
     {
         "VariantType": "Repeat",
