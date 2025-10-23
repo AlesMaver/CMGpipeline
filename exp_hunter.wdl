@@ -79,6 +79,8 @@ task RunExpansionHunter {
   }
 
   command <<<
+    set -euo pipefail
+    
     echo "[ PREPARATION ] Downloading variant catalog JSON"
     wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
     unset https_proxy
@@ -92,11 +94,11 @@ task RunExpansionHunter {
 
     echo "[ RUNNING ] expansion hunter on sample ~{sample_id}"
     ExpansionHunter \
-      --reads ~{bam_file} \
-      --reference ~{reference_fasta} \
+      --reads "~{bam_file}" \
+      --reference "~{reference_fasta}" \
       --variant-catalog variant_catalog.json \
-      ~{"--sex " + patient_sex} \  # Conditionally add the -s option
-      --output-prefix ~{sample_id}
+      --output-prefix "~{sample_id}" \
+      ~{if defined(patient_sex) then ("--sex " + patient_sex) else ""}
 
   >>>
   
