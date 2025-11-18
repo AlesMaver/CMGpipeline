@@ -214,7 +214,7 @@ workflow upstream {
     input:
       aligned_bam        = aligned_bam_data,
       aligned_bam_index  = aligned_bam_index,
-      ref_fasta          = ref_map["fasta_hg39"],         # !FileCoercion
+      ref_fasta          = ref_map["fasta_hg38"],         # !FileCoercion
       ref_index          = ref_map["fasta_hg38_index"],   # !FileCoercion
       sample_id          = sample_id,
       runtime_attributes = default_runtime_attributes
