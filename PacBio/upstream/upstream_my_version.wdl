@@ -210,25 +210,25 @@ workflow upstream {
       runtime_attributes      = default_runtime_attributes
   }
 
-  call Paraphase.paraphase {
-    input:
-      aligned_bam        = aligned_bam_data,
-      aligned_bam_index  = aligned_bam_index,
-      ref_fasta          = ref_map["fasta_hg38"],         # !FileCoercion
-      ref_index          = ref_map["fasta_hg38_index"],   # !FileCoercion
-      sample_id          = sample_id,
-      runtime_attributes = default_runtime_attributes
-  }
+  #call Paraphase.paraphase {
+  #  input:
+  #    aligned_bam        = aligned_bam_data,
+  #    aligned_bam_index  = aligned_bam_index,
+  #    ref_fasta          = ref_map["fasta_hg38"],         # !FileCoercion
+  #    ref_index          = ref_map["fasta_hg38_index"],   # !FileCoercion
+  #    sample_id          = sample_id,
+  #    runtime_attributes = default_runtime_attributes
+  #}
 
-  call Mitorsaw.mitorsaw {
-    input:
-      aligned_bam        = aligned_bam_data,
-      aligned_bam_index  = aligned_bam_index,
-      ref_fasta          = ref_map["fasta_hg38"],                  # !FileCoercion
-      ref_index          = ref_map["fasta_hg38_index"],            # !FileCoercion
-      out_prefix         = "~{sample_id}.~{ref_map['name']}",
-      runtime_attributes = default_runtime_attributes
-  }
+  #call Mitorsaw.mitorsaw {
+  #  input:
+  #    aligned_bam        = aligned_bam_data,
+  #    aligned_bam_index  = aligned_bam_index,
+  #    ref_fasta          = ref_map["fasta_hg38"],                  # !FileCoercion
+  #    ref_index          = ref_map["fasta_hg38_index"],            # !FileCoercion
+  #    out_prefix         = "~{sample_id}.~{ref_map['name']}",
+  #    runtime_attributes = default_runtime_attributes
+  #}
 
   # if fail_reads were aligned, merge them with the aligned hifi bams for trgt
   if (defined(subset_bam.bam)) {
@@ -245,19 +245,19 @@ workflow upstream {
     then "Including fail_reads for TRGT genotyping for regions specified in the TRGT catalog."
     else ""
 
-  call Trgt.trgt {
-    input:
-      sample_id          = sample_id,
-      sex                = mosdepth.inferred_sex,
-      aligned_bam        = select_first([merge_hifi_fail_bams.merged_bam, aligned_bam_data]),
-      aligned_bam_index  = select_first([merge_hifi_fail_bams.merged_bam_index, aligned_bam_index]),
-      ref_fasta          = ref_map["fasta_hg38"],                  # !FileCoercion
-      ref_index          = ref_map["fasta_hg38_index"],            # !FileCoercion
-      trgt_bed           = trgt_catalog,
-      out_prefix         = "~{sample_id}.~{ref_map['name']}",
-      min_read_quality   = -1.0,
-      runtime_attributes = default_runtime_attributes
-  }
+  #call Trgt.trgt {
+  #  input:
+  #    sample_id          = sample_id,
+  #    sex                = mosdepth.inferred_sex,
+  #    aligned_bam        = select_first([merge_hifi_fail_bams.merged_bam, aligned_bam_data]),
+  #    aligned_bam_index  = select_first([merge_hifi_fail_bams.merged_bam_index, aligned_bam_index]),
+  #    ref_fasta          = ref_map["fasta_hg38"],                  # !FileCoercion
+  #    ref_index          = ref_map["fasta_hg38_index"],            # !FileCoercion
+  #    trgt_bed           = trgt_catalog,
+  #    out_prefix         = "~{sample_id}.~{ref_map['name']}",
+  #    min_read_quality   = -1.0,
+  #    runtime_attributes = default_runtime_attributes
+  #}
 
   if (single_sample) {
     call Sawfish.sawfish_call {
@@ -311,24 +311,24 @@ workflow upstream {
     File small_variant_gvcf       = deepvariant.gvcf
     File small_variant_gvcf_index = deepvariant.gvcf_index
 
-    # trgt outputs
-    File   trgt_vcf                  = trgt.vcf
-    File   trgt_vcf_index            = trgt.vcf_index
-    File   trgt_spanning_reads       = trgt.bam
-    File   trgt_spanning_reads_index = trgt.bam_index
-    String stat_trgt_genotyped_count = trgt.stat_genotyped_count
-    String stat_trgt_uncalled_count  = trgt.stat_uncalled_count
+    ## trgt outputs
+    #File   trgt_vcf                  = trgt.vcf
+    #File   trgt_vcf_index            = trgt.vcf_index
+    #File   trgt_spanning_reads       = trgt.bam
+    #File   trgt_spanning_reads_index = trgt.bam_index
+    #String stat_trgt_genotyped_count = trgt.stat_genotyped_count
+    #String stat_trgt_uncalled_count  = trgt.stat_uncalled_count
 
-    # paraphase outputs
-    File? paraphase_output_json         = paraphase.out_json
-    File? paraphase_realigned_bam       = paraphase.bam
-    File? paraphase_realigned_bam_index = paraphase.bam_index
-    File? paraphase_vcfs                = paraphase.vcfs_tar
+    ## paraphase outputs
+    #File? paraphase_output_json         = paraphase.out_json
+    #File? paraphase_realigned_bam       = paraphase.bam
+    #File? paraphase_realigned_bam_index = paraphase.bam_index
+    #File? paraphase_vcfs                = paraphase.vcfs_tar
 
-    # per sample mitorsaw outputs
-    File mitorsaw_vcf       = mitorsaw.vcf
-    File mitorsaw_vcf_index = mitorsaw.vcf_index
-    File mitorsaw_hap_stats = mitorsaw.hap_stats
+    ## per sample mitorsaw outputs
+    #File mitorsaw_vcf       = mitorsaw.vcf
+    #File mitorsaw_vcf_index = mitorsaw.vcf_index
+    #File mitorsaw_hap_stats = mitorsaw.hap_stats
 
     # qc messages
     Array[String] msg = flatten(
