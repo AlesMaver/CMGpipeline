@@ -336,7 +336,7 @@ workflow upstream {
         flatten(pbmm2.msg),
         [qc_sex],
         [include_fail_reads],
-        trgt.msg,
+    #    trgt.msg,
         sawfish_discover.msg
       ]
     )
