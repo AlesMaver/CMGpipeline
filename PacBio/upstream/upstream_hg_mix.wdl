@@ -45,7 +45,7 @@ workflow PB_upstream {
           sample_id = sample_id,
           sex = sex,
           hifi_reads = hifi_reads,
-          ref_map_file = hg38_ref_map_file
+          ref_map_file = hg38_ref_map_file,
           max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
           trgt_catalog = trgt_catalog,
           single_sample = true,
@@ -59,7 +59,7 @@ workflow PB_upstream {
           sample_id = sample_id,
           sex = sex,
           hifi_reads = hifi_reads,
-          ref_map_file = hg19_ref_map_file
+          ref_map_file = hg19_ref_map_file,
           max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
           trgt_catalog = trgt_catalog,
           single_sample = true,
