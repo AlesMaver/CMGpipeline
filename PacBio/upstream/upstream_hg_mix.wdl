@@ -13,10 +13,6 @@ import "./upstream_my_version.wdl" as upstream_hg19
 import "https://raw.githubusercontent.com/PacificBiosciences/wdl-common/1b8bbbcaf6f8783189c1ca1421f5ea94ca0f10c4/wdl/structs.wdl"
 
 workflow PB_upstream {
-  meta {
-    description: "Given a set of HiFi reads for a human sample, run steps upstream of phasing."
-  }
-
   input {
     String sample_id
     String? sex
@@ -51,7 +47,7 @@ workflow PB_upstream {
           trgt_catalog = trgt_catalog,
           single_sample = true,
           gpu = false,
-          runtime_attributes = default_runtime_attributes
+          default_runtime_attributes = default_runtime_attributes
   }
 
   # Part HG19 
@@ -65,7 +61,7 @@ workflow PB_upstream {
           trgt_catalog = trgt_catalog,
           single_sample = true,
           gpu = false,
-          runtime_attributes = default_runtime_attributes
+          default_runtime_attributes = default_runtime_attributes
   }
 
 
