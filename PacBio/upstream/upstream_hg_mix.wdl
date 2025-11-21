@@ -9,7 +9,8 @@ version 1.0
 
 import "./upstream.wdl" as upstream_hg38
 import "./upstream_my_version.wdl" as upstream_hg19
-
+# importing structure "RuntimeAttributes"
+import "https://raw.githubusercontent.com/PacificBiosciences/wdl-common/1b8bbbcaf6f8783189c1ca1421f5ea94ca0f10c4/wdl/structs.wdl"
 
 workflow PB_upstream {
   meta {
