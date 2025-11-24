@@ -77,7 +77,15 @@ workflow PB_upstream {
           small_variant_vcf        = upstream_hg19.small_variant_vcf,
           small_variant_vcf_index  = upstream_hg19.small_variant_vcf_index,
           small_variant_gvcf       = upstream_hg19.small_variant_gvcf,
-          small_variant_gvcf_index = upstream_hg19.small_variant_gvcf_index          
+          small_variant_gvcf_index = upstream_hg19.small_variant_gvcf_index,   
+		  sv_vcf                        = upstream_hg19.sv_vcf,
+          sv_vcf_index                  = upstream_hg19.sv_vcf_index,
+          sv_supporting_reads           = upstream_hg19.sv_supporting_reads,
+          sv_copynum_bedgraph           = upstream_hg19.sv_copynum_bedgraph,
+          sv_depth_bw                   = upstream_hg19.sv_depth_bw,
+          sv_gc_bias_corrected_depth_bw = upstream_hg19.sv_gc_bias_corrected_depth_bw,
+          sv_maf_bw                     = upstream_hg19.sv_maf_bw,
+          sv_copynum_summary            = upstream_hg19.sv_copynum_summary
   }
 
   call VEP.VEP as VEPDeepVariant {
@@ -153,12 +161,6 @@ workflow PB_upstream {
 }
 
 # renaming some of the upstream output files so that they match our naming rules:
-# PX15843.DeepVariant.vcf.gz
-# PX15843.DeepVariant.vcf.gz.tbi
-# PX15843.DeepVariant.VEP.hg19.annotated.vcf.gz
-# PX15843.DeepVariant.VEP.hg19.annotated.vcf.gz.tbi
-# bam: PX19220.PX19220.reset.hg19.aligned.bam --> PX19220.hg19.aligned.bam
-
 task Rename_files {
   input {
     String sample_id
@@ -179,12 +181,12 @@ task Rename_files {
   }
 
   command {
-    cp  ~{aligned_bam} ~{sample_id}.aligned.bam
-    cp  ~{aligned_bam_index} ~{sample_id}.aligned.bam.bai
-    cp ~{small_variant_vcf} ~{sample_id}.DeepVariant.vcf.gz
-    cp ~{small_variant_vcf_index} ~{sample_id}.DeepVariant.vcf.gz.tbi
-    cp ~{small_variant_gvcf} ~{sample_id}.DeepVariant.gvcf.gz
-    cp ~{small_variant_gvcf_index} ~{sample_id}.DeepVariant.gvcf.tbi
+	cp  ~{aligned_bam} ~{sample_id}.aligned.bam
+	cp  ~{aligned_bam_index} ~{sample_id}.aligned.bam.bai
+	cp ~{small_variant_vcf} ~{sample_id}.DeepVariant.vcf.gz
+	cp ~{small_variant_vcf_index} ~{sample_id}.DeepVariant.vcf.gz.tbi
+	cp ~{small_variant_gvcf} ~{sample_id}.DeepVariant.gvcf.gz
+	cp ~{small_variant_gvcf_index} ~{sample_id}.DeepVariant.gvcf.tbi
 	cp ~{sv_vcf} ~{sample_id}.hg19.sawfish.structural_variants.vcf.gz
 	cp ~{sv_vcf_index} ~{sample_id}.hg19.sawfish.structural_variants.vcf.gz.tbi
 	cp ~{sv_copynum_bedgraph} ~{sample_id}.hg19.sawfish.structural_variants.copynum.bedgraph
@@ -201,6 +203,7 @@ task Rename_files {
     requested_memory_mb_per_core: 1000
     runtime_minutes: 30
   }
+
   output {
     File output_bam = "~{sample_id}.aligned.bam"
     File output_bam_index = "~{sample_id}.aligned.bam.bai"
