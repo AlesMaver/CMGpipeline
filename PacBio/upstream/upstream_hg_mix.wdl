@@ -78,7 +78,7 @@ workflow PB_upstream {
           small_variant_vcf_index  = upstream_hg19.small_variant_vcf_index,
           small_variant_gvcf       = upstream_hg19.small_variant_gvcf,
           small_variant_gvcf_index = upstream_hg19.small_variant_gvcf_index,   
-		  sv_vcf                        = upstream_hg19.sv_vcf,
+          sv_vcf                        = upstream_hg19.sv_vcf,
           sv_vcf_index                  = upstream_hg19.sv_vcf_index,
           sv_supporting_reads           = upstream_hg19.sv_supporting_reads,
           sv_copynum_bedgraph           = upstream_hg19.sv_copynum_bedgraph,
