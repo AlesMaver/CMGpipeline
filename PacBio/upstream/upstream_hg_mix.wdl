@@ -79,7 +79,7 @@ workflow PB_upstream {
     ##String stat_depth_mean              = upstream_hg19.stat_depth_mean
 
     # per sample sv signatures
-    File discover_tar = upstream_hg19.discover_tar
+    ### not needed: File discover_tar = upstream_hg19.discover_tar
 
     # sawfish outputs for single sample
     File? sv_vcf                        = upstream_hg19.sv_vcf
@@ -102,8 +102,8 @@ workflow PB_upstream {
     File   trgt_vcf_index            = upstream_hg38.trgt_vcf_index
     File   trgt_spanning_reads       = upstream_hg38.trgt_spanning_reads
     File   trgt_spanning_reads_index = upstream_hg38.trgt_spanning_reads_index
-    String stat_trgt_genotyped_count = upstream_hg38.stat_trgt_genotyped_count
-    String stat_trgt_uncalled_count  = upstream_hg38.stat_trgt_uncalled_count
+    #String stat_trgt_genotyped_count = upstream_hg38.stat_trgt_genotyped_count
+    #String stat_trgt_uncalled_count  = upstream_hg38.stat_trgt_uncalled_count
 
     # paraphase outputs
     File? paraphase_output_json         = upstream_hg38.paraphase_output_json
