@@ -83,16 +83,19 @@ workflow PB_upstream {
   call VEP.VEP as VEPDeepVariant {
       input:
         sample_basename = sample_id,
-        input_vcf = RunDeepVariant.outputVCF,
+        #input_vcf = RunDeepVariant.outputVCF,
+        #filename_infix = ".DeepVariant"
+        input_vcf = Rename_files.output_small_variant_vcf,
         filename_infix = ".DeepVariant"
   }
 
+  Map[String, String] hg19_ref_map = read_map(hg19_ref_map_file)
   call CramConversions.ConvertToCram as ConvertToCram {
 	    input:
-	      input_bam = SortSam.output_bam,
-	      ref_fasta = reference_fa,
-	      ref_fasta_index = reference_fai,
-	      sample_basename = sample_basename
+	      input_bam = Rename_files.output_bam,
+	      ref_fasta = hg19_ref_map["fasta"],
+	      ref_fasta_index = hg19_ref_map["fasta_index"],
+	      sample_basename = sample_id
   }
 
   output {
