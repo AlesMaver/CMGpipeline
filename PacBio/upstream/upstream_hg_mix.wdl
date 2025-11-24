@@ -168,6 +168,14 @@ task Rename_files {
     File small_variant_vcf_index
     File small_variant_gvcf
     File small_variant_gvcf_index
+    File? sv_vcf
+    File? sv_vcf_index 
+    File? sv_supporting_reads
+    File? sv_copynum_bedgraph
+    File? sv_depth_bw
+    File? sv_gc_bias_corrected_depth_bw
+    File? sv_maf_bw
+    File? sv_copynum_summary
   }
 
   command {
@@ -177,13 +185,21 @@ task Rename_files {
     cp ~{small_variant_vcf_index} ~{sample_id}.DeepVariant.vcf.gz.tbi
     cp ~{small_variant_gvcf} ~{sample_id}.DeepVariant.gvcf.gz
     cp ~{small_variant_gvcf_index} ~{sample_id}.DeepVariant.gvcf.tbi
+	cp ~{sv_vcf} ~{sample_id}.hg19.sawfish.structural_variants.vcf.gz
+	cp ~{sv_vcf_index} ~{sample_id}.hg19.sawfish.structural_variants.vcf.gz.tbi
+	cp ~{sv_copynum_bedgraph} ~{sample_id}.hg19.sawfish.structural_variants.copynum.bedgraph
+	cp ~{sv_copynum_summary} ~{sample_id}.hg19.sawfish.structural_variants.copynum.summary.json
+	cp ~{sv_depth_bw} ~{sample_id}.hg19.sawfish.structural_variants.depth.bw
+	cp ~{sv_gc_bias_corrected_depth_bw} ~{sample_id}.hg19.sawfish.structural_variants.gc_bias_corrected_depth.bw
+	cp ~{sv_maf_bw} ~{sample_id}.hg19.sawfish.structural_variants.maf.bw
+	cp ~{sv_supporting_reads} ~{sample_id}.hg19.sawfish.structural_variants.supporting_reads.json.gz
   }
 
   runtime {
     docker: "alpine:latest"
-    cpu: 1
+    cpu: 4
     requested_memory_mb_per_core: 1000
-    runtime_minutes: 5
+    runtime_minutes: 30
   }
   output {
     File output_bam = "~{sample_id}.aligned.bam"
@@ -192,6 +208,14 @@ task Rename_files {
     File output_small_variant_vcf_index = "~{sample_id}.DeepVariant.vcf.gz.tbi"
     File output_small_variant_gvcf = "~{sample_id}.DeepVariant.gvcf.gz"
     File output_small_variant_gvcf_index = "~{sample_id}.DeepVariant.gvcf.tbi"
+    File? output_sv_vcf = "~{sample_id}.hg19.sawfish.structural_variants.vcf.gz"
+    File? output_sv_vcf_index = "~{sample_id}.hg19.sawfish.structural_variants.vcf.gz.tbi"
+    File? output_sv_supporting_reads = "~{sample_id}.hg19.sawfish.structural_variants.supporting_reads.json.gz"
+    File? output_sv_copynum_bedgraph = "~{sample_id}.hg19.sawfish.structural_variants.copynum.bedgraph"
+    File? output_sv_depth_bw = "~{sample_id}.hg19.sawfish.structural_variants.depth.bw"
+    File? output_sv_gc_bias_corrected_depth_bw = "~{sample_id}.hg19.sawfish.structural_variants.gc_bias_corrected_depth.bw"
+    File? output_sv_maf_bw = "~{sample_id}.hg19.sawfish.structural_variants.maf.bw"
+    File? output_sv_copynum_summary = "~{sample_id}.hg19.sawfish.structural_variants.copynum.summary.json"
   }
 }
 
