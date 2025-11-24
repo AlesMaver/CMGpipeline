@@ -188,10 +188,10 @@ task Rename_files {
   output {
     File output_bam = "~{sample_id}.aligned.bam"
     File output_bam_index = "~{sample_id}.aligned.bam.bai"
-    File output_small_variant_vcf "~{sample_id}.DeepVariant.vcf.gz"
-    File output_small_variant_vcf_index "~{sample_id}.DeepVariant.vcf.gz.tbi"
-    File output_small_variant_gvcf "~{sample_id}.DeepVariant.gvcf.gz"
-    File output_small_variant_gvcf_index "~{sample_id}.DeepVariant.gvcf.tbi"
+    File output_small_variant_vcf = "~{sample_id}.DeepVariant.vcf.gz"
+    File output_small_variant_vcf_index = "~{sample_id}.DeepVariant.vcf.gz.tbi"
+    File output_small_variant_gvcf = "~{sample_id}.DeepVariant.gvcf.gz"
+    File output_small_variant_gvcf_index = "~{sample_id}.DeepVariant.gvcf.tbi"
   }
 }
 
