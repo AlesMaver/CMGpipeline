@@ -12,6 +12,10 @@ import "./upstream_my_version.wdl" as upstream_hg19
 # importing structure "RuntimeAttributes"
 import "https://raw.githubusercontent.com/PacificBiosciences/wdl-common/1b8bbbcaf6f8783189c1ca1421f5ea94ca0f10c4/wdl/structs.wdl"
 
+import "../../VEP/Vep2.wdl" as VEP
+import "../../CRAM_conversions.wdl" as CramConversions
+
+
 workflow PB_upstream {
   input {
     String sample_id
@@ -64,6 +68,32 @@ workflow PB_upstream {
           default_runtime_attributes = default_runtime_attributes
   }
 
+  # let's rename the output files to our like
+  call Rename_files {
+        input:
+          sample_id = sample_id,
+          aligned_bam              = upstream_hg19.out_bam,
+          aligned_bam_index        = upstream_hg19.out_bam_index,
+          small_variant_vcf        = upstream_hg19.small_variant_vcf,
+          small_variant_vcf_index  = upstream_hg19.small_variant_vcf_index,
+          small_variant_gvcf       = upstream_hg19.small_variant_gvcf,
+          small_variant_gvcf_index = upstream_hg19.small_variant_gvcf_index          
+  }
+
+  call VEP.VEP as VEPDeepVariant {
+      input:
+        sample_basename = sample_id,
+        input_vcf = RunDeepVariant.outputVCF,
+        filename_infix = ".DeepVariant"
+  }
+
+  call CramConversions.ConvertToCram as ConvertToCram {
+	    input:
+	      input_bam = SortSam.output_bam,
+	      ref_fasta = reference_fa,
+	      ref_fasta_index = reference_fai,
+	      sample_basename = sample_basename
+  }
 
   output {
     # alignments
@@ -118,3 +148,47 @@ workflow PB_upstream {
 
   }
 }
+
+# renaming some of the upstream output files so that they match our naming rules:
+# PX15843.DeepVariant.vcf.gz
+# PX15843.DeepVariant.vcf.gz.tbi
+# PX15843.DeepVariant.VEP.hg19.annotated.vcf.gz
+# PX15843.DeepVariant.VEP.hg19.annotated.vcf.gz.tbi
+# bam: PX19220.PX19220.reset.hg19.aligned.bam --> PX19220.hg19.aligned.bam
+
+task Rename_files {
+  input {
+    String sample_id
+    File aligned_bam
+    File aligned_bam_index
+    File small_variant_vcf
+    File small_variant_vcf_index
+    File small_variant_gvcf
+    File small_variant_gvcf_index
+  }
+
+  command {
+    cp  ~{aligned_bam} ~{sample_id}.aligned.bam
+    cp  ~{aligned_bam_index} ~{sample_id}.aligned.bam.bai
+    cp ~{small_variant_vcf} ~{sample_id}.DeepVariant.vcf.gz
+    cp ~{small_variant_vcf_index} ~{sample_id}.DeepVariant.vcf.gz.tbi
+    cp ~{small_variant_gvcf} ~{sample_id}.DeepVariant.gvcf.gz
+    cp ~{small_variant_gvcf_index} ~{sample_id}.DeepVariant.gvcf.tbi
+  }
+
+  runtime {
+    docker: "alpine:latest"
+    cpu: 1
+    requested_memory_mb_per_core: 1000
+    runtime_minutes: 5
+  }
+  output {
+    File output_bam = "~{sample_id}.aligned.bam"
+    File output_bam_index = "~{sample_id}.aligned.bam.bai"
+    File output_small_variant_vcf "~{sample_id}.DeepVariant.vcf.gz"
+    File output_small_variant_vcf_index "~{sample_id}.DeepVariant.vcf.gz.tbi"
+    File output_small_variant_gvcf "~{sample_id}.DeepVariant.gvcf.gz"
+    File output_small_variant_gvcf_index "~{sample_id}.DeepVariant.gvcf.tbi"
+  }
+}
+
