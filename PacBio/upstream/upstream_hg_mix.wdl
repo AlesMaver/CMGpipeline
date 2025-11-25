@@ -14,6 +14,7 @@ import "https://raw.githubusercontent.com/PacificBiosciences/wdl-common/1b8bbbca
 
 import "../../VEP/Vep2.wdl" as VEP
 import "../../CRAM_conversions.wdl" as CramConversions
+import "../../manta/manta_workflow.wdl" as manta
 
 
 workflow PB_upstream {
@@ -68,6 +69,14 @@ workflow PB_upstream {
           default_runtime_attributes = default_runtime_attributes
   }
 
+  # annotSV for sawfish sv vcf file
+  call manta.annotSV as annotSV {
+        input:
+            genome_build = "GRCh37",
+            input_vcf = upstream_hg19.sv_vcf,
+            output_tsv_name = sample_basename + ".sawfish.AnnotSV.tsv"
+  }
+
   # let's rename the output files to our like
   call Rename_files {
         input:
@@ -108,8 +117,10 @@ workflow PB_upstream {
 
   output {
     # alignments
-    File out_bam       = upstream_hg19.out_bam
-    File out_bam_index = upstream_hg19.out_bam_index
+    File out_bam        = upstream_hg19.out_bam
+    File out_bam_index  = upstream_hg19.out_bam_index
+    File out_cram       = ConvertToCram.output_cram
+    File out_cram_index = ConvertToCram.output_cram_index
 
     # mosdepth outputs
     File mosdepth_summary                 = upstream_hg19.mosdepth_summary
@@ -131,6 +142,8 @@ workflow PB_upstream {
     File? sv_gc_bias_corrected_depth_bw = upstream_hg19.sv_gc_bias_corrected_depth_bw
     File? sv_maf_bw                     = upstream_hg19.sv_maf_bw
     File? sv_copynum_summary            = upstream_hg19.sv_copynum_summary
+    
+	File? sv_annotsv                    = annotSV.sv_variants_tsv
 
     # small variant outputs
     File small_variant_vcf        = upstream_hg19.small_variant_vcf
