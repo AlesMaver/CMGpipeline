@@ -198,7 +198,7 @@ task Rename_files {
   }
 
   runtime {
-    docker: "alpine:latest"
+    docker: "debian:buster-slim"
     cpu: 4
     requested_memory_mb_per_core: 1000
     runtime_minutes: 30
