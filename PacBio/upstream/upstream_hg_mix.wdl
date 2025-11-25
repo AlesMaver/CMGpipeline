@@ -151,6 +151,9 @@ workflow PB_upstream {
     File small_variant_gvcf       = upstream_hg19.small_variant_gvcf
     File small_variant_gvcf_index = upstream_hg19.small_variant_gvcf_index
 
+    File vep_deep_variant_annotated_vcf       = VEPDeepVariant.output_vcf
+    File vep_deep_variant_annotated_vcf_index = VEPDeepVariant.output_vcf_index 
+
     # trgt outputs
     File   trgt_vcf                  = upstream_hg38.trgt_vcf
     File   trgt_vcf_index            = upstream_hg38.trgt_vcf_index
