@@ -69,12 +69,14 @@ workflow PB_upstream {
           default_runtime_attributes = default_runtime_attributes
   }
 
-  # annotSV for sawfish sv vcf file
-  call manta.annotSV as annotSV {
+  if ( defined(upstream_hg19.sv_vcf) ) {
+    # annotSV for sawfish sv vcf file
+    call manta.annotSV as annotSV {
         input:
             genome_build = "GRCh37",
             input_vcf = upstream_hg19.sv_vcf,
             output_tsv_name = sample_id + ".sawfish.AnnotSV.tsv"
+    }
   }
 
   # let's rename the output files to our like
