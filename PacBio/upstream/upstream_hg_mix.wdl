@@ -74,7 +74,7 @@ workflow PB_upstream {
     call manta.annotSV as annotSV {
         input:
             genome_build = "GRCh37",
-            input_vcf = upstream_hg19.sv_vcf,
+            input_vcf = select_first([upstream_hg19.sv_vcf, ""],      # upstream_hg19.sv_vcf,
             output_tsv_name = sample_id + ".sawfish.AnnotSV.tsv"
     }
   }
