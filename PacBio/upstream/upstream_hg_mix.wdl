@@ -74,7 +74,7 @@ workflow PB_upstream {
         input:
             genome_build = "GRCh37",
             input_vcf = upstream_hg19.sv_vcf,
-            output_tsv_name = sample_basename + ".sawfish.AnnotSV.tsv"
+            output_tsv_name = sample_id + ".sawfish.AnnotSV.tsv"
   }
 
   # let's rename the output files to our like
