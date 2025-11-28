@@ -102,10 +102,15 @@ workflow PB_upstream {
   call VEP.VEP as VEPDeepVariant {
       input:
         sample_basename = sample_id,
-        #input_vcf = RunDeepVariant.outputVCF,
-        #filename_infix = ".DeepVariant"
         input_vcf = Rename_files.output_small_variant_vcf,
         filename_infix = ".DeepVariant"
+  }
+
+  # transformation of upstream_hg19.small_variant_vcf file to match AnnotateVCF workflow: no mitochondria data, transcribing GRCh37 notation into hg19 notation
+  call TransformVcfFile {
+      input:
+        output_vcf_name = sample_id + ".DeepVariant.vcf.gz",
+        input_vcf = upstream_hg19.small_variant_vcf
   }
 
   Map[String, String] hg19_ref_map = read_map(hg19_ref_map_file)
@@ -144,17 +149,35 @@ workflow PB_upstream {
     File? sv_gc_bias_corrected_depth_bw = upstream_hg19.sv_gc_bias_corrected_depth_bw
     File? sv_maf_bw                     = upstream_hg19.sv_maf_bw
     File? sv_copynum_summary            = upstream_hg19.sv_copynum_summary
+
+    File? output_sv_vcf = Rename_files.output_sv_vcf
+    File? output_sv_vcf_index = Rename_files.output_sv_vcf_index
+    File? output_sv_supporting_reads = Rename_files.output_sv_supporting_reads
+    File? output_sv_copynum_bedgraph = Rename_files.output_sv_copynum_bedgraph
+    File? output_sv_depth_bw = Rename_files.output_sv_depth_bw
+    File? output_sv_gc_bias_corrected_depth_bw = Rename_files.output_sv_gc_bias_corrected_depth_bw
+    File? output_sv_maf_bw = Rename_files.output_sv_maf_bw
+    File? output_sv_copynum_summary = Rename_files.output_sv_copynum_summary
     
 	File? sv_annotsv                    = annotSV.sv_variants_tsv
 
-    # small variant outputs
+    # deep variant: small variant outputs
     File small_variant_vcf        = upstream_hg19.small_variant_vcf
     File small_variant_vcf_index  = upstream_hg19.small_variant_vcf_index
     File small_variant_gvcf       = upstream_hg19.small_variant_gvcf
     File small_variant_gvcf_index = upstream_hg19.small_variant_gvcf_index
 
+    File output_small_variant_vcf = Rename_files.output_small_variant_vcf
+    File output_small_variant_vcf_index = Rename_files.output_small_variant_vcf_index
+    File output_small_variant_gvcf = Rename_files.output_small_variant_gvcf
+    File output_small_variant_gvcf_index = Rename_files.output_small_variant_gvcf_index
+
+    File? deep_variant_vcf_modified           = TransformVcfFile.output_vcf
+    File? deep_variant_vcf_modified_index     = TransformVcfFile.output_vcf_index
+
     File vep_deep_variant_annotated_vcf       = VEPDeepVariant.output_vcf
-    File vep_deep_variant_annotated_vcf_index = VEPDeepVariant.output_vcf_index 
+    File vep_deep_variant_annotated_vcf_index = VEPDeepVariant.output_vcf_index
+
 
     # trgt outputs
     File   trgt_vcf                  = upstream_hg38.trgt_vcf
@@ -201,8 +224,8 @@ task Rename_files {
   command {
 	cp  ~{aligned_bam} ~{sample_id}.aligned.bam
 	cp  ~{aligned_bam_index} ~{sample_id}.aligned.bam.bai
-	cp ~{small_variant_vcf} ~{sample_id}.DeepVariant.vcf.gz
-	cp ~{small_variant_vcf_index} ~{sample_id}.DeepVariant.vcf.gz.tbi
+	cp ~{small_variant_vcf} ~{sample_id}.DeepVariant.GRCh37.vcf.gz
+	cp ~{small_variant_vcf_index} ~{sample_id}.DeepVariant.GRCh37.vcf.gz.tbi
 	cp ~{small_variant_gvcf} ~{sample_id}.DeepVariant.gvcf.gz
 	cp ~{small_variant_gvcf_index} ~{sample_id}.DeepVariant.gvcf.tbi
 	cp ~{sv_vcf} ~{sample_id}.hg19.sawfish.structural_variants.vcf.gz
@@ -225,8 +248,8 @@ task Rename_files {
   output {
     File output_bam = "~{sample_id}.aligned.bam"
     File output_bam_index = "~{sample_id}.aligned.bam.bai"
-    File output_small_variant_vcf = "~{sample_id}.DeepVariant.vcf.gz"
-    File output_small_variant_vcf_index = "~{sample_id}.DeepVariant.vcf.gz.tbi"
+    File output_small_variant_vcf = "~{sample_id}.DeepVariant.GRCh37.vcf.gz"
+    File output_small_variant_vcf_index = "~{sample_id}.DeepVariant.GRCh37.vcf.gz.tbi"
     File output_small_variant_gvcf = "~{sample_id}.DeepVariant.gvcf.gz"
     File output_small_variant_gvcf_index = "~{sample_id}.DeepVariant.gvcf.tbi"
     File? output_sv_vcf = "~{sample_id}.hg19.sawfish.structural_variants.vcf.gz"
@@ -240,3 +263,27 @@ task Rename_files {
   }
 }
 
+# prepare GRCh37 notated vcf file for use in hg19 notated environment of AnnotateVCF workflow; cut out all MT data
+task TransformVcfFile {
+  input {
+    File input_vcf
+	String output_vcf_name
+  }
+
+  command {
+    zcat ~{input_vcf} | grep -v MT | sed -e 's/^/chr/' | sed -e 's/chr#/#/' | sed -e 's/contig=<ID=/contig=<ID=chr/' | bgzip -c > ~{output_vcf_name}
+    tabix -p vcf ~{output_vcf_name}
+  }
+
+  output {
+    File output_vcf = "~{output_vcf_name}"
+    File output_vcf_index = "~{output_vcf_name}.tbi"
+  }
+
+  runtime {
+    docker: "broadinstitute/gatk:4.2.0.0"
+    cpu: 4
+    requested_memory_mb_per_core: 1000
+    runtime_minutes: 30
+  }
+}
