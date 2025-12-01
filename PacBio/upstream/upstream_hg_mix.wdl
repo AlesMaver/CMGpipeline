@@ -97,7 +97,7 @@ workflow PB_upstream {
           sv_gc_bias_corrected_depth_bw = upstream_hg19.sv_gc_bias_corrected_depth_bw,
           sv_maf_bw                     = upstream_hg19.sv_maf_bw,
           sv_copynum_summary            = upstream_hg19.sv_copynum_summary,
-          #mosdepth_summary                 = upstream_hg19.mosdepth_summary,
+          mosdepth_summary                 = upstream_hg19.mosdepth_summary,
           mosdepth_region_bed              = upstream_hg19.mosdepth_region_bed,
           mosdepth_region_bed_index        = upstream_hg19.mosdepth_region_bed_index,
           mosdepth_depth_distribution_plot = upstream_hg19.mosdepth_depth_distribution_plot
@@ -140,7 +140,7 @@ workflow PB_upstream {
     File mosdepth_depth_distribution_plot = upstream_hg19.mosdepth_depth_distribution_plot
     ##String inferred_sex                 = upstream_hg19.inferred_sex
     ##String stat_depth_mean              = upstream_hg19.stat_depth_mean
-    #File output_mosdepth_summary                 = Rename_files.output_mosdepth_summary
+    File output_mosdepth_summary                 = Rename_files.output_mosdepth_summary
     File output_mosdepth_region_bed              = Rename_files.output_mosdepth_region_bed
     File output_mosdepth_region_bed_index        = Rename_files.output_mosdepth_region_bed_index
     File output_mosdepth_depth_distribution_plot = Rename_files.output_mosdepth_depth_distribution_plot
@@ -224,7 +224,7 @@ task Rename_files {
     File? sv_gc_bias_corrected_depth_bw
     File? sv_maf_bw
     File? sv_copynum_summary
-    #File mosdepth_summary
+    File mosdepth_summary
     File mosdepth_region_bed
     File mosdepth_region_bed_index
     File mosdepth_depth_distribution_plot
@@ -245,7 +245,7 @@ task Rename_files {
 	cp ~{sv_gc_bias_corrected_depth_bw} ~{sample_id}.hg19.sawfish.structural_variants.gc_bias_corrected_depth.bw
 	cp ~{sv_maf_bw} ~{sample_id}.hg19.sawfish.structural_variants.maf.bw
 	cp ~{sv_supporting_reads} ~{sample_id}.hg19.sawfish.structural_variants.supporting_reads.json.gz
-	#cp ~{mosdepth_summary} ~{sample_id}.hg19.mosdepth.summary.txt
+	cp ~{mosdepth_summary} ~{sample_id}.hg19.mosdepth.summary.txt.rename
 	cp ~{mosdepth_region_bed} ~{sample_id}.hg19.mosdepth.regions.bed.gz
 	cp ~{mosdepth_region_bed_index} ~{sample_id}.hg19.mosdepth.regions.bed.gz.csi
 	cp ~{mosdepth_depth_distribution_plot} ~{sample_id}.hg19.mosdepth.depth_distribution.png
@@ -273,7 +273,7 @@ task Rename_files {
     File? output_sv_gc_bias_corrected_depth_bw = "~{sample_id}.hg19.sawfish.structural_variants.gc_bias_corrected_depth.bw"
     File? output_sv_maf_bw = "~{sample_id}.hg19.sawfish.structural_variants.maf.bw"
     File? output_sv_copynum_summary = "~{sample_id}.hg19.sawfish.structural_variants.copynum.summary.json"
-	#File  output_mosdepth_summary = "~{sample_id}.hg19.mosdepth.summary.txt"
+	File  output_mosdepth_summary = "~{sample_id}.hg19.mosdepth.summary.txt.rename"
 	File  output_mosdepth_region_bed = "~{sample_id}.hg19.mosdepth.regions.bed.gz"
 	File  output_mosdepth_region_bed_index = "~{sample_id}.hg19.mosdepth.regions.bed.gz.csi"
 	File  output_mosdepth_depth_distribution_plot = "~{sample_id}.hg19.mosdepth.depth_distribution.png"
