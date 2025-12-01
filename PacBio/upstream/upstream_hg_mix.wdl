@@ -166,7 +166,7 @@ workflow PB_upstream {
     File? output_sv_maf_bw = Rename_files.output_sv_maf_bw
     File? output_sv_copynum_summary = Rename_files.output_sv_copynum_summary
     
-	File? sv_annotsv                    = annotSV.sv_variants_tsv
+    File? sv_annotsv                    = annotSV.sv_variants_tsv
 
     # deep variant: small variant outputs
     ##File small_variant_vcf        = upstream_hg19.small_variant_vcf
