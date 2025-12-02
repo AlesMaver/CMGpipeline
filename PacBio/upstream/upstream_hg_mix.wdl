@@ -236,7 +236,7 @@ task Rename_files {
 	cp ~{small_variant_vcf} ~{sample_id}.DeepVariant.GRCh37.vcf.gz
 	cp ~{small_variant_vcf_index} ~{sample_id}.DeepVariant.GRCh37.vcf.gz.tbi
 	cp ~{small_variant_gvcf} ~{sample_id}.DeepVariant.gvcf.gz
-	cp ~{small_variant_gvcf_index} ~{sample_id}.DeepVariant.gvcf.tbi
+	cp ~{small_variant_gvcf_index} ~{sample_id}.DeepVariant.gvcf.gz.tbi
 	cp ~{sv_vcf} ~{sample_id}.hg19.sawfish.structural_variants.vcf.gz
 	cp ~{sv_vcf_index} ~{sample_id}.hg19.sawfish.structural_variants.vcf.gz.tbi
 	cp ~{sv_copynum_bedgraph} ~{sample_id}.hg19.sawfish.structural_variants.copynum.bedgraph
