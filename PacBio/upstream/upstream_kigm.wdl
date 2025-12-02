@@ -42,7 +42,6 @@ workflow PB_upstream {
     # --------------------------------#
     #  inputs for annotateVCF 
     # --------------------------------#
-    File input_vcf
     File chromosome_list
     
     File gnomAD_vcf
