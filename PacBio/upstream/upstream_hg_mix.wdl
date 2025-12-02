@@ -128,19 +128,19 @@ workflow PB_upstream {
 
   output {
     # alignments
-    File out_bam        = upstream_hg19.out_bam
-    File out_bam_index  = upstream_hg19.out_bam_index
+    #File out_bam        = upstream_hg19.out_bam
+    #File out_bam_index  = upstream_hg19.out_bam_index
     File out_cram       = ConvertToCram.output_cram
     File out_cram_index = ConvertToCram.output_cram_index
 
     # mosdepth outputs
     File mosdepth_summary                 = upstream_hg19.mosdepth_summary
-    File mosdepth_region_bed              = upstream_hg19.mosdepth_region_bed
-    File mosdepth_region_bed_index        = upstream_hg19.mosdepth_region_bed_index
-    File mosdepth_depth_distribution_plot = upstream_hg19.mosdepth_depth_distribution_plot
+    #File mosdepth_region_bed              = upstream_hg19.mosdepth_region_bed
+    #File mosdepth_region_bed_index        = upstream_hg19.mosdepth_region_bed_index
+    #File mosdepth_depth_distribution_plot = upstream_hg19.mosdepth_depth_distribution_plot
     ##String inferred_sex                 = upstream_hg19.inferred_sex
     ##String stat_depth_mean              = upstream_hg19.stat_depth_mean
-    File output_mosdepth_summary                 = Rename_files.output_mosdepth_summary
+    #File output_mosdepth_summary                 = Rename_files.output_mosdepth_summary
     File output_mosdepth_region_bed              = Rename_files.output_mosdepth_region_bed
     File output_mosdepth_region_bed_index        = Rename_files.output_mosdepth_region_bed_index
     File output_mosdepth_depth_distribution_plot = Rename_files.output_mosdepth_depth_distribution_plot
