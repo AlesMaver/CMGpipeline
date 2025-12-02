@@ -263,9 +263,9 @@ workflow PB_upstream {
         metaDome_bed = metaDome_bed,
         metaDome_bed_index = metaDome_bed_index,
 
-        fasta_reference = reference_fa,
-        fasta_reference_index = reference_fai,
-        fasta_reference_dict = reference_dict,
+        fasta_reference = fasta_reference,
+        fasta_reference_index = fasta_reference_index,
+        fasta_reference_dict = fasta_reference_dict,
 
         dbNSFP = dbNSFP,
         dbNSFP_index = dbNSFP_index
