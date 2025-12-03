@@ -410,7 +410,7 @@ task Rename_files {
     File output_small_variant_vcf = "~{sample_id}.DeepVariant.GRCh37.vcf.gz"
     File output_small_variant_vcf_index = "~{sample_id}.DeepVariant.GRCh37.vcf.gz.tbi"
     File output_small_variant_gvcf = "~{sample_id}.DeepVariant.gvcf.gz"
-    File output_small_variant_gvcf_index = "~{sample_id}.DeepVariant.gvcf.tbi"
+    File output_small_variant_gvcf_index = "~{sample_id}.DeepVariant.gvcf.gz.tbi"
     File? output_sv_vcf = "~{sample_id}.hg19.sawfish.structural_variants.vcf.gz"
     File? output_sv_vcf_index = "~{sample_id}.hg19.sawfish.structural_variants.vcf.gz.tbi"
     File? output_sv_supporting_reads = "~{sample_id}.hg19.sawfish.structural_variants.supporting_reads.json.gz"
