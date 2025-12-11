@@ -7,10 +7,17 @@ version 1.0
 # cherry picking the result files
 # converting bam files to cram
 
-import "./upstream.wdl" as upstream_hg38
-import "./upstream_my_version.wdl" as upstream_hg19
+# stara verzija
+#import "./upstream.wdl" as upstream_hg38
+#import "./upstream_my_version.wdl" as upstream_hg19
+## importing structure "RuntimeAttributes"
+#import "https://raw.githubusercontent.com/PacificBiosciences/wdl-common/1b8bbbcaf6f8783189c1ca1421f5ea94ca0f10c4/wdl/structs.wdl"
+
+import "https://raw.githubusercontent.com/tanmaj/PacBio-HiFi-human-WGS-WDL/refs/heads/our-general-changes/workflows/upstream/upstream_kigm.wdl" as upstream
 # importing structure "RuntimeAttributes"
-import "https://raw.githubusercontent.com/PacificBiosciences/wdl-common/1b8bbbcaf6f8783189c1ca1421f5ea94ca0f10c4/wdl/structs.wdl"
+import "https://raw.githubusercontent.com/tanmaj/wdl-common/refs/heads/19ca392-branch/wdl/structs.wdl"
+
+import "./upstream.wdl" as upstream_hg38
 
 import "../../VEP/Vep2.wdl" as VEP
 import "../../CRAM_conversions.wdl" as CramConversions
@@ -42,7 +49,7 @@ workflow PB_upstream {
 
 
   # Part HG38 
-  call upstream_hg38.upstream as upstream_hg38 {
+  call upstream.upstream as upstream_hg38 {
         input:
           sample_id = sample_id,
           sex = sex,
@@ -56,7 +63,7 @@ workflow PB_upstream {
   }
 
   # Part HG19 
-  call upstream_hg19.upstream as upstream_hg19 {
+  call upstream.upstream as upstream_hg19 {
         input:
           sample_id = sample_id,
           sex = sex,
