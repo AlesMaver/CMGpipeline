@@ -17,7 +17,6 @@ import "https://raw.githubusercontent.com/tanmaj/PacBio-HiFi-human-WGS-WDL/refs/
 # importing structure "RuntimeAttributes"
 import "https://raw.githubusercontent.com/tanmaj/wdl-common/refs/heads/19ca392-branch/wdl/structs.wdl"
 
-import "./upstream.wdl" as upstream_hg38
 
 import "../../VEP/Vep2.wdl" as VEP
 import "../../CRAM_conversions.wdl" as CramConversions
