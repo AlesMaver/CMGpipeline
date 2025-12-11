@@ -89,24 +89,24 @@ workflow PB_upstream {
   call Rename_files {
         input:
           sample_id = sample_id,
-          aligned_bam              = upstream_hg19.out_bam,
-          aligned_bam_index        = upstream_hg19.out_bam_index,
-          small_variant_vcf        = upstream_hg19.small_variant_vcf,
-          small_variant_vcf_index  = upstream_hg19.small_variant_vcf_index,
-          small_variant_gvcf       = upstream_hg19.small_variant_gvcf,
-          small_variant_gvcf_index = upstream_hg19.small_variant_gvcf_index,   
-          sv_vcf                        = upstream_hg19.sv_vcf,
-          sv_vcf_index                  = upstream_hg19.sv_vcf_index,
-          sv_supporting_reads           = upstream_hg19.sv_supporting_reads,
-          sv_copynum_bedgraph           = upstream_hg19.sv_copynum_bedgraph,
-          sv_depth_bw                   = upstream_hg19.sv_depth_bw,
-          sv_gc_bias_corrected_depth_bw = upstream_hg19.sv_gc_bias_corrected_depth_bw,
-          sv_maf_bw                     = upstream_hg19.sv_maf_bw,
-          sv_copynum_summary            = upstream_hg19.sv_copynum_summary,
-          mosdepth_summary                 = upstream_hg19.mosdepth_summary,
-          mosdepth_region_bed              = upstream_hg19.mosdepth_region_bed,
-          mosdepth_region_bed_index        = upstream_hg19.mosdepth_region_bed_index,
-          mosdepth_depth_distribution_plot = upstream_hg19.mosdepth_depth_distribution_plot
+          aligned_bam              = select_first([upstream_hg19.out_bam, ""]),
+          aligned_bam_index        = select_first([upstream_hg19.out_bam_index, ""]),
+          small_variant_vcf        = select_first([upstream_hg19.small_variant_vcf, ""]),
+          small_variant_vcf_index  = select_first([upstream_hg19.small_variant_vcf_index, ""]),
+          small_variant_gvcf       = select_first([upstream_hg19.small_variant_gvcf, ""]),
+          small_variant_gvcf_index = select_first([upstream_hg19.small_variant_gvcf_index, ""]),   
+          sv_vcf                        = select_first([upstream_hg19.sv_vcf, ""]),
+          sv_vcf_index                  = select_first([upstream_hg19.sv_vcf_index, ""]),
+          sv_supporting_reads           = select_first([upstream_hg19.sv_supporting_reads, ""]),
+          sv_copynum_bedgraph           = select_first([upstream_hg19.sv_copynum_bedgraph, ""]),
+          sv_depth_bw                   = select_first([upstream_hg19.sv_depth_bw, ""]),
+          sv_gc_bias_corrected_depth_bw = select_first([upstream_hg19.sv_gc_bias_corrected_depth_bw, ""]),
+          sv_maf_bw                     = select_first([upstream_hg19.sv_maf_bw, ""]),
+          sv_copynum_summary            = select_first([upstream_hg19.sv_copynum_summary, ""]),
+          mosdepth_summary                 = select_first([upstream_hg19.mosdepth_summary, ""]),
+          mosdepth_region_bed              = select_first([upstream_hg19.mosdepth_region_bed, ""]),
+          mosdepth_region_bed_index        = select_first([upstream_hg19.mosdepth_region_bed_index, ""]),
+          mosdepth_depth_distribution_plot = select_first([upstream_hg19.mosdepth_depth_distribution_plot, ""])
   }
 
   call VEP.VEP as VEPDeepVariant {
