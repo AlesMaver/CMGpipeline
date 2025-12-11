@@ -913,7 +913,7 @@
         "SweGenMean": 16.87,
         "SweGenStd": 8.388,
         "NormalMax": 39,
-        "PathologicMin": 100
+        "PathologicMin": 50
     },
     {
         "VariantType": "Repeat",
