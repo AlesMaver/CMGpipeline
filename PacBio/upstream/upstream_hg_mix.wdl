@@ -140,16 +140,16 @@ workflow PB_upstream {
     File out_cram_index = ConvertToCram.output_cram_index
 
     # mosdepth outputs
-    File mosdepth_summary                 = upstream_hg19.mosdepth_summary
+    File? mosdepth_summary                 = upstream_hg19.mosdepth_summary
     #File mosdepth_region_bed              = upstream_hg19.mosdepth_region_bed
     #File mosdepth_region_bed_index        = upstream_hg19.mosdepth_region_bed_index
     #File mosdepth_depth_distribution_plot = upstream_hg19.mosdepth_depth_distribution_plot
     ##String inferred_sex                 = upstream_hg19.inferred_sex
     ##String stat_depth_mean              = upstream_hg19.stat_depth_mean
     #File output_mosdepth_summary                 = Rename_files.output_mosdepth_summary
-    File output_mosdepth_region_bed              = Rename_files.output_mosdepth_region_bed
-    File output_mosdepth_region_bed_index        = Rename_files.output_mosdepth_region_bed_index
-    File output_mosdepth_depth_distribution_plot = Rename_files.output_mosdepth_depth_distribution_plot
+    File? output_mosdepth_region_bed              = Rename_files.output_mosdepth_region_bed
+    File? output_mosdepth_region_bed_index        = Rename_files.output_mosdepth_region_bed_index
+    File? output_mosdepth_depth_distribution_plot = Rename_files.output_mosdepth_depth_distribution_plot
 
     # per sample sv signatures
     ### not needed: File discover_tar = upstream_hg19.discover_tar
@@ -179,10 +179,10 @@ workflow PB_upstream {
     ##File small_variant_vcf_index  = upstream_hg19.small_variant_vcf_index
     ##File small_variant_gvcf       = upstream_hg19.small_variant_gvcf
     ##File small_variant_gvcf_index = upstream_hg19.small_variant_gvcf_index
-    File output_small_variant_vcf        = Rename_files.output_small_variant_vcf
-    File output_small_variant_vcf_index  = Rename_files.output_small_variant_vcf_index
-    File output_small_variant_gvcf       = Rename_files.output_small_variant_gvcf
-    File output_small_variant_gvcf_index = Rename_files.output_small_variant_gvcf_index
+    File? output_small_variant_vcf        = Rename_files.output_small_variant_vcf
+    File? output_small_variant_vcf_index  = Rename_files.output_small_variant_vcf_index
+    File? output_small_variant_gvcf       = Rename_files.output_small_variant_gvcf
+    File? output_small_variant_gvcf_index = Rename_files.output_small_variant_gvcf_index
 
     File? deep_variant_vcf_modified           = TransformVcfFile.output_vcf
     File? deep_variant_vcf_modified_index     = TransformVcfFile.output_vcf_index
@@ -191,10 +191,10 @@ workflow PB_upstream {
 
 
     # trgt outputs
-    File   trgt_vcf                  = upstream_hg38.trgt_vcf
-    File   trgt_vcf_index            = upstream_hg38.trgt_vcf_index
-    File   trgt_spanning_reads       = upstream_hg38.trgt_spanning_reads
-    File   trgt_spanning_reads_index = upstream_hg38.trgt_spanning_reads_index
+    File?   trgt_vcf                  = upstream_hg38.trgt_vcf
+    File?   trgt_vcf_index            = upstream_hg38.trgt_vcf_index
+    File?   trgt_spanning_reads       = upstream_hg38.trgt_spanning_reads
+    File?   trgt_spanning_reads_index = upstream_hg38.trgt_spanning_reads_index
     #String stat_trgt_genotyped_count = upstream_hg38.stat_trgt_genotyped_count
     #String stat_trgt_uncalled_count  = upstream_hg38.stat_trgt_uncalled_count
 
@@ -205,9 +205,9 @@ workflow PB_upstream {
     File? paraphase_vcfs                = upstream_hg38.paraphase_vcfs
 
     # per sample mitorsaw outputs
-    File mitorsaw_vcf       = upstream_hg38.mitorsaw_vcf
-    File mitorsaw_vcf_index = upstream_hg38.mitorsaw_vcf_index
-    File mitorsaw_hap_stats = upstream_hg38.mitorsaw_hap_stats
+    File? mitorsaw_vcf       = upstream_hg38.mitorsaw_vcf
+    File? mitorsaw_vcf_index = upstream_hg38.mitorsaw_vcf_index
+    File? mitorsaw_hap_stats = upstream_hg38.mitorsaw_hap_stats
 
   }
 }
