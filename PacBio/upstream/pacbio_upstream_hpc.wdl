@@ -154,8 +154,8 @@ workflow PacBioUpstream {
   call Rename_files {
         input:
           sample_id = sample_id,
-          aligned_bam              = select_first([upstream_hg19.out_bam, ""]),
-          aligned_bam_index        = select_first([upstream_hg19.out_bam_index, ""]),
+          #aligned_bam              = select_first([upstream_hg19.out_bam, ""]),
+          #aligned_bam_index        = select_first([upstream_hg19.out_bam_index, ""]),
           small_variant_vcf        = select_first([upstream_hg19.small_variant_vcf, ""]),
           small_variant_vcf_index  = select_first([upstream_hg19.small_variant_vcf_index, ""]),
           small_variant_gvcf       = select_first([upstream_hg19.small_variant_gvcf, ""]),
@@ -364,8 +364,8 @@ workflow PacBioUpstream {
 task Rename_files {
   input {
     String sample_id
-    File aligned_bam
-    File aligned_bam_index
+    #File aligned_bam
+    #File aligned_bam_index
     File small_variant_vcf
     File small_variant_vcf_index
     File small_variant_gvcf
@@ -384,9 +384,10 @@ task Rename_files {
     File mosdepth_depth_distribution_plot
   }
 
+	#####cp  ~{aligned_bam} ~{sample_id}.aligned.bam
+	#####cp  ~{aligned_bam_index} ~{sample_id}.aligned.bam.bai
+
   command {
-	cp  ~{aligned_bam} ~{sample_id}.aligned.bam
-	cp  ~{aligned_bam_index} ~{sample_id}.aligned.bam.bai
 	cp ~{small_variant_vcf} ~{sample_id}.DeepVariant.GRCh37.vcf.gz
 	cp ~{small_variant_vcf_index} ~{sample_id}.DeepVariant.GRCh37.vcf.gz.tbi
 	cp ~{small_variant_gvcf} ~{sample_id}.DeepVariant.gvcf.gz
@@ -413,8 +414,8 @@ task Rename_files {
   }
 
   output {
-    File output_bam = "~{sample_id}.aligned.bam"
-    File output_bam_index = "~{sample_id}.aligned.bam.bai"
+    #File output_bam = "~{sample_id}.aligned.bam"
+    #File output_bam_index = "~{sample_id}.aligned.bam.bai"
     File output_small_variant_vcf = "~{sample_id}.DeepVariant.GRCh37.vcf.gz"
     File output_small_variant_vcf_index = "~{sample_id}.DeepVariant.GRCh37.vcf.gz.tbi"
     File output_small_variant_gvcf = "~{sample_id}.DeepVariant.gvcf.gz"
