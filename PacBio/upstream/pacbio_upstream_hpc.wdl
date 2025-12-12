@@ -6,9 +6,12 @@ version 1.0
 # calling pbmm2, paraphase, mitorsaw and trgt tasks with hg38 reference data
 # cherry picking the result files
 # converting bam files to cram
+# annotating deep variant vcf with VEP tool 
+# annotating deep variant vcf with AnnotateVCF tool
+# annotating sawfish sv_vcf with annotSV tool
 
 import "https://raw.githubusercontent.com/tanmaj/PacBio-HiFi-human-WGS-WDL/refs/heads/our-general-changes/workflows/upstream/upstream_kigm.wdl" as upstream
-# importing structure "RuntimeAttributes"
+# importing structure "RuntimeAttributes". This structure is hardly needed, taking along due to compatibility with original workflow.
 import "https://raw.githubusercontent.com/tanmaj/wdl-common/refs/heads/19ca392-branch/wdl/structs.wdl"
 
 import "../../VEP/Vep2.wdl" as VEP
@@ -268,7 +271,9 @@ workflow PacBioUpstream {
 
   }
 
-
+  # ------------
+  # OUTPUT FILES
+  # ------------
   output {
     # alignments
     #File out_bam        = upstream_hg19.out_bam
@@ -350,6 +355,10 @@ workflow PacBioUpstream {
 
   }
 }
+
+# ------
+# TASKS 
+# ------
 
 # renaming some of the upstream output files so that they match our naming rules:
 task Rename_files {
