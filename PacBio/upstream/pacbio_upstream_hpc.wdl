@@ -276,8 +276,8 @@ workflow PacBioUpstream {
   # ------------
   output {
     # alignments
-    #File out_bam        = upstream_hg19.out_bam
-    #File out_bam_index  = upstream_hg19.out_bam_index
+    File out_bam        = upstream_hg19.out_bam
+    File out_bam_index  = upstream_hg19.out_bam_index
     File out_cram       = ConvertToCram.output_cram
     File out_cram_index = ConvertToCram.output_cram_index
 
