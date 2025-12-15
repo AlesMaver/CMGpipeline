@@ -191,7 +191,8 @@ workflow PacBioUpstream {
   Map[String, String] hg19_ref_map = read_map(hg19_ref_map_file)
   call CramConversions.ConvertToCram as ConvertToCram {
 	    input:
-	      input_bam = Rename_files.output_bam,
+	      #input_bam = Rename_files.output_bam,
+		  input_bam = select_first([upstream_hg19.out_bam, ""]),
 	      ref_fasta = hg19_ref_map["fasta"],
 	      ref_fasta_index = hg19_ref_map["fasta_index"],
 	      sample_basename = sample_id
