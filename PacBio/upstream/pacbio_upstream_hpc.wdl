@@ -36,7 +36,8 @@ workflow PacBioUpstream {
     #File? fail_reads_bed
     #File? fail_reads_bait_fasta
     #File? fail_reads_bait_index
-    #Boolean gpu = false
+    Boolean single_sample = true
+    Boolean gpu = false
     RuntimeAttributes default_runtime_attributes
 
     # --------------------------------#
@@ -121,8 +122,8 @@ workflow PacBioUpstream {
           ref_map_file = hg38_ref_map_file,
           max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
           trgt_catalog = trgt_catalog,
-          single_sample = true,
-          gpu = false,
+          single_sample = single_sample,
+          gpu = gpu,
           default_runtime_attributes = default_runtime_attributes
   }
 
@@ -135,7 +136,7 @@ workflow PacBioUpstream {
           ref_map_file = hg19_ref_map_file,
           max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
           trgt_catalog = trgt_catalog,
-          single_sample = true,
+          single_sample = single_sample,
           gpu = false,
           default_runtime_attributes = default_runtime_attributes
   }
@@ -192,7 +193,7 @@ workflow PacBioUpstream {
   call CramConversions.ConvertToCram as ConvertToCram {
 	    input:
 	      #input_bam = Rename_files.output_bam,
-		  input_bam = select_first([upstream_hg19.out_bam, ""]),
+          input_bam = select_first([upstream_hg19.out_bam, ""]),
 	      ref_fasta = hg19_ref_map["fasta"],
 	      ref_fasta_index = hg19_ref_map["fasta_index"],
 	      sample_basename = sample_id
