@@ -137,7 +137,7 @@ workflow PacBioUpstream {
           max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
           trgt_catalog = trgt_catalog,
           single_sample = single_sample,
-          gpu = false,
+          gpu = gpu,
           default_runtime_attributes = default_runtime_attributes
   }
 
