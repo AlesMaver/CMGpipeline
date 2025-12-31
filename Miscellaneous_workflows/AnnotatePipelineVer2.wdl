@@ -214,7 +214,7 @@ workflow AnnotateVCF {
 
    
     # Get snpEff and dbNSFP annotations
-      call runSnpEffVer2 {
+      call runSnpEffVer2 as runSnpEff {
       input:
         input_vcf = VCFANNO.output_vcfgz,
         sample_basename = sample_basename,
@@ -604,7 +604,7 @@ task VCFANNO {
 }
 
 # SNPeff task
-task runSnpEff {
+task runSnpEffVer1 {
   input {
     # Command parameters
     File input_vcf
