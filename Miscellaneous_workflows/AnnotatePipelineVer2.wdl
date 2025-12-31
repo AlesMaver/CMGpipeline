@@ -681,9 +681,9 @@ task runSnpEffVer2 {
     sed -i 's/dbNSFP_GERP++/dbNSFP_GERP/g' ~{sample_basename}.snpEff.tmp.vcf
 
     # -----------------------------------------
-    # 4. Validate VCF integrity (fail fast)
+    # 4. Validate VCF integrity (fail fast)  --- cannot be used. This container does not have bcftools
     # -----------------------------------------
-    bcftools view -Ov ~{sample_basename}.snpEff.tmp.vcf > /dev/null
+    # bcftools view -Ov ~{sample_basename}.snpEff.tmp.vcf > /dev/null
 
     # -----------------------------------------
     # 5. Atomic publish
