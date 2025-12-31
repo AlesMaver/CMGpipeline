@@ -693,10 +693,10 @@ task runSnpEffVer2 {
 
   runtime {
     docker: docker
-    cpu: 16
+    cpu: 32
     requested_memory_mb_per_core: 1000
     runtime_minutes: 120
-    maxRetries: 3
+    maxRetries: 1
   }
 
   output {
