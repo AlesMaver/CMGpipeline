@@ -214,7 +214,7 @@ workflow AnnotateVCF {
 
    
     # Get snpEff and dbNSFP annotations
-      call runSnpEff {
+      call runSnpEffVer2 {
       input:
         input_vcf = VCFANNO.output_vcfgz,
         sample_basename = sample_basename,
@@ -637,6 +637,77 @@ task runSnpEff {
     File output_vcf = "~{sample_basename}.snpEff.vcf"
   }
 }
+
+# new version of task runSnpEff
+
+task runSnpEffVer2 {
+  input {
+    File input_vcf
+    String sample_basename
+
+    File dbNSFP
+    File dbNSFP_index
+
+    String docker
+  }
+
+  command {
+    set -euo pipefail
+
+    # ----------------------------
+    # 1. Run snpEff (write to temp)
+    # ----------------------------
+    java -jar /home/biodocker/bin/snpEff/snpEff.jar \
+      -lof \
+      -noInteraction \
+      -spliceRegionIntronMax 20 \
+      -nodownload \
+      hg19 \
+      ~{input_vcf} \
+      > ~{sample_basename}.snpEff.step1.vcf
+
+    # -----------------------------------------
+    # 2. Annotate with dbNSFP (write to temp)
+    # -----------------------------------------
+    java -jar /home/biodocker/bin/snpEff/SnpSift.jar dbNSFP \
+      -db ~{dbNSFP} \
+      -f REVEL_score,REVEL_rankscore,SIFT_pred,SIFT4G_pred,Polyphen2_HDIV_pred,MutationTaster_pred,MetaSVM_pred,M-CAP_pred,PrimateAI_pred,Aloft_Fraction_transcripts_affected,Aloft_prob_Tolerant,Aloft_prob_Recessive,Aloft_prob_Dominant,Aloft_pred,Aloft_Confidence,CADD_phred,DANN_rankscore,GERP++_NR,GERP++_RS,Interpro_domain,GTEx_V7_gene,GTEx_V7_tissue,Geuvadis_eQTL_target_gene,Polyphen2_HDIV_score \
+      -v ~{sample_basename}.snpEff.step1.vcf \
+      > ~{sample_basename}.snpEff.tmp.vcf
+
+    # -----------------------------------------
+    # 3. Fix INFO field naming (in-place)
+    # -----------------------------------------
+    sed -i 's/dbNSFP_GERP++/dbNSFP_GERP/g' ~{sample_basename}.snpEff.tmp.vcf
+
+    # -----------------------------------------
+    # 4. Validate VCF integrity (fail fast)
+    # -----------------------------------------
+    bcftools view -Ov ~{sample_basename}.snpEff.tmp.vcf > /dev/null
+
+    # -----------------------------------------
+    # 5. Atomic publish
+    # -----------------------------------------
+    mv ~{sample_basename}.snpEff.tmp.vcf ~{sample_basename}.snpEff.vcf
+  }
+
+  runtime {
+    docker: docker
+    cpu: 16
+    requested_memory_mb_per_core: 1000
+    runtime_minutes: 120
+    maxRetries: 3
+  }
+
+  output {
+    File output_vcf = "~{sample_basename}.snpEff.vcf"
+  }
+}
+
+
+
+
+
 
 # Merge GVCFs generated per-interval for the same sample
 task MergeVCFs {
