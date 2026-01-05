@@ -400,7 +400,7 @@ task bcftoolsAnnotate {
     docker: docker
     maxRetries: 3
     requested_memory_mb_per_core: 1000
-    cpu: 12
+    cpu: 32
     runtime_minutes: 120
   }
   output {
@@ -595,7 +595,7 @@ task VCFANNO {
     #cpu: 4
     #runtime_minutes: 240
     requested_memory_mb_per_core: 1000
-    cpu: 8
+    cpu: 32
     runtime_minutes: 300
   }
   output {
@@ -629,7 +629,7 @@ task runSnpEff {
   runtime {
     docker: docker
     maxRetries: 3
-    requested_memory_mb_per_core: 1000
+    requested_memory_mb_per_core: 2000
     cpu: 32
     runtime_minutes: 120
   }
