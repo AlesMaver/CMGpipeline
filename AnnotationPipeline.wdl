@@ -350,7 +350,7 @@ task CompressAndIndexVCF {
     #cpu: 1
     #runtime_minutes: 90
     requested_memory_mb_per_core: 1000
-    cpu: 32
+    cpu: 16
     runtime_minutes: 120
   }
   output {
