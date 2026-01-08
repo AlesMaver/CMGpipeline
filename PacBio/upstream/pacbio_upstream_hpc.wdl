@@ -18,6 +18,7 @@ import "../../VEP/Vep2.wdl" as VEP
 import "../../CRAM_conversions.wdl" as CramConversions
 import "../../manta/manta_workflow.wdl" as manta
 import "../../AnnotationPipeline.wdl" as Annotation
+import "../../ROH/ROH_workflow.wdl" as ROH
 
 
 workflow PacBioUpstream {
@@ -110,6 +111,25 @@ workflow PacBioUpstream {
     File dbNSFP
     File dbNSFP_index
 
+    # --------------------------------#
+    # ROH Analysis Inputs
+    # --------------------------------#
+    Boolean run_roh_analysis = false  # Set to true to run ROH analysis
+
+    String enrichment = "WGS1Mb"  # Type of analysis: WGS1Mb for whole genome
+
+    File? dbSNPcommon_bed
+    File? dbSNPcommon_bed_index
+
+    File? gnomAD_maf01_vcf
+    File? gnomAD_maf01_vcf_index
+
+    File? gnomAD_maf01_tab
+    File? gnomAD_maf01_tab_index
+
+    String bwa_docker = "alesmaver/bwa_samtools_picard"
+    String bcftools_docker = "biocontainers/bcftools:v1.9-1-deb_cv1"
+
   }
 
 
@@ -139,6 +159,24 @@ workflow PacBioUpstream {
           single_sample = single_sample,
           gpu = gpu,
           default_runtime_attributes = default_runtime_attributes
+  }
+
+  # Run ROH analysis if enabled
+  if ( run_roh_analysis && defined(upstream_hg19.out_bam) && defined(reference_fa_roh) ) {
+    call ROH.ROHanalysis as ROHanalysis {
+      input:
+        input_bam = select_first([upstream_hg19.out_bam, ""]),
+        input_bam_index = select_first([upstream_hg19.out_bam_index, ""]),
+        sample_basename = sample_id,
+        enrichment = enrichment,
+        reference_fa = hg19_ref_map["fasta"],
+        dbSNPcommon_bed = select_first([dbSNPcommon_bed, ""]),
+        dbSNPcommon_bed_index = select_first([dbSNPcommon_bed_index, ""]),
+        gnomAD_maf01_vcf = select_first([gnomAD_maf01_vcf, ""]),
+        gnomAD_maf01_vcf_index = select_first([gnomAD_maf01_vcf_index, ""]),
+        gnomAD_maf01_tab = select_first([gnomAD_maf01_tab, ""]),
+        gnomAD_maf01_tab_index = select_first([gnomAD_maf01_tab_index, ""])
+    }
   }
 
   if ( defined(upstream_hg19.sv_vcf) ) {
@@ -354,6 +392,14 @@ workflow PacBioUpstream {
     File? mitorsaw_vcf       = upstream_hg38.mitorsaw_vcf
     File? mitorsaw_vcf_index = upstream_hg38.mitorsaw_vcf_index
     File? mitorsaw_hap_stats = upstream_hg38.mitorsaw_hap_stats
+
+    # ROH analysis outputs (if run_roh_analysis is enabled)
+    File? output_BAF = ROHanalysis.output_BAF
+    File? ROH_calls_qual = ROHanalysis.ROH_calls_qual
+    File? ROH_calls_size = ROHanalysis.ROH_calls_size
+    File? ROH_intervals_state = ROHanalysis.ROH_intervals_state
+    File? ROH_intervals_qual = ROHanalysis.ROH_intervals_qual
+    File? ROH_annotSV_tsv = ROHanalysis.ROH_annotSV_tsv
 
   }
 }
