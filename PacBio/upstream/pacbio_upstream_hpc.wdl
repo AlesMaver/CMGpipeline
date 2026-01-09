@@ -162,7 +162,8 @@ workflow PacBioUpstream {
   }
 
   # Run ROH analysis if enabled
-  if ( run_roh_analysis && defined(upstream_hg19.out_bam) && defined(reference_fa_roh) ) {
+  ##if ( run_roh_analysis && defined(upstream_hg19.out_bam) && defined(reference_fa_roh) ) {
+  if ( run_roh_analysis && defined(upstream_hg19.out_bam) ) {
     call ROH.ROHanalysis as ROHanalysis {
       input:
         input_bam = select_first([upstream_hg19.out_bam, ""]),
