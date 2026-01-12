@@ -9,6 +9,8 @@ version 1.0
 # transforming deepvariant vcf file from GRCh37 notated for use in hg19 notated environment for our standard annotate vcf workflow
 # deep variant annotate vcf workflow
 
+## 12.6.2026: using hg19 fasta instead of hs37d5 fasta (GRCh37)
+
 import "./upstream.wdl" as upstream_hg38
 import "./upstream_my_version.wdl" as upstream_hg19
 # importing structure "RuntimeAttributes"
@@ -181,12 +183,13 @@ workflow PB_upstream {
         filename_infix = ".DeepVariant"
   }
 
-  # transformation of upstream_hg19.small_variant_vcf file to match AnnotateVCF workflow: no mitochondria data, transcribing GRCh37 notation into hg19 notation
-  call TransformVcfFile {
-      input:
-        output_vcf_name = sample_id + ".DeepVariant.vcf.gz",
-        input_vcf = upstream_hg19.small_variant_vcf
-  }
+  # izključeno. delam direktno s hg19 fasto
+  ## transformation of upstream_hg19.small_variant_vcf file to match AnnotateVCF workflow: no mitochondria data, transcribing GRCh37 notation into hg19 notation
+  #call TransformVcfFile {
+  #    input:
+  #      output_vcf_name = sample_id + ".DeepVariant.vcf.gz",
+  #      input_vcf = upstream_hg19.small_variant_vcf
+  #}
 
   Map[String, String] hg19_ref_map = read_map(hg19_ref_map_file)
   call CramConversions.ConvertToCram as ConvertToCram {
@@ -201,7 +204,8 @@ workflow PB_upstream {
       input:
         sample_basename = sample_id,
         output_filename = sample_id + ".DeepVariant.annotated.vcf",
-        input_vcf = TransformVcfFile.output_vcf,
+        ## input_vcf = TransformVcfFile.output_vcf,
+		input_vcf = upstream_hg19.small_variant_vcf,
 
         chromosome_list = chromosome_list,
         gnomAD_vcf = gnomAD_vcf,
