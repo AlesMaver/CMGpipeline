@@ -325,9 +325,11 @@ workflow PB_upstream {
     File output_small_variant_vcf_index  = Rename_files.output_small_variant_vcf_index
     File output_small_variant_gvcf       = Rename_files.output_small_variant_gvcf
     File output_small_variant_gvcf_index = Rename_files.output_small_variant_gvcf_index
+    #File deep_variant_vcf            	 = TransformVcfFile.output_vcf
+    #File deep_variant_vcf_index          = TransformVcfFile.output_vcf_index
 
-    File deep_variant_vcf_modified            = TransformVcfFile.output_vcf
-    File deep_variant_vcf_modified_index      = TransformVcfFile.output_vcf_index
+    File deep_variant_vcf_modified            = upstream_hg19.small_variant_vcf
+    File deep_variant_vcf_modified_index      = upstream_hg19.small_variant_vcf_index
     File deep_variant_annotated_vcf           = AnnotateVCF_DeepVariant.output_vcf
     File deep_variant_annotated_vcf_index     = AnnotateVCF_DeepVariant.output_vcf_index
     File vep_deep_variant_annotated_vcf       = VEPDeepVariant.output_vcf
