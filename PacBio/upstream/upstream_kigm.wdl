@@ -9,7 +9,6 @@ version 1.0
 # transforming deepvariant vcf file from GRCh37 notated for use in hg19 notated environment for our standard annotate vcf workflow
 # deep variant annotate vcf workflow
 
-## 12.6.2026: using hg19 fasta instead of hs37d5 fasta (GRCh37)
 
 import "./upstream.wdl" as upstream_hg38
 import "./upstream_my_version.wdl" as upstream_hg19
@@ -183,13 +182,12 @@ workflow PB_upstream {
         filename_infix = ".DeepVariant"
   }
 
-  # izključeno. delam direktno s hg19 fasto
-  ## transformation of upstream_hg19.small_variant_vcf file to match AnnotateVCF workflow: no mitochondria data, transcribing GRCh37 notation into hg19 notation
-  #call TransformVcfFile {
-  #    input:
-  #      output_vcf_name = sample_id + ".DeepVariant.vcf.gz",
-  #      input_vcf = upstream_hg19.small_variant_vcf
-  #}
+  # transformation of upstream_hg19.small_variant_vcf file to match AnnotateVCF workflow: no mitochondria data, transcribing GRCh37 notation into hg19 notation
+  call TransformVcfFile {
+      input:
+        output_vcf_name = sample_id + ".DeepVariant.vcf.gz",
+        input_vcf = upstream_hg19.small_variant_vcf
+  }
 
   Map[String, String] hg19_ref_map = read_map(hg19_ref_map_file)
   call CramConversions.ConvertToCram as ConvertToCram {
@@ -204,8 +202,7 @@ workflow PB_upstream {
       input:
         sample_basename = sample_id,
         output_filename = sample_id + ".DeepVariant.annotated.vcf",
-        ## input_vcf = TransformVcfFile.output_vcf,
-		input_vcf = upstream_hg19.small_variant_vcf,
+        input_vcf = TransformVcfFile.output_vcf,
 
         chromosome_list = chromosome_list,
         gnomAD_vcf = gnomAD_vcf,
@@ -325,11 +322,9 @@ workflow PB_upstream {
     File output_small_variant_vcf_index  = Rename_files.output_small_variant_vcf_index
     File output_small_variant_gvcf       = Rename_files.output_small_variant_gvcf
     File output_small_variant_gvcf_index = Rename_files.output_small_variant_gvcf_index
-    #File deep_variant_vcf            	 = TransformVcfFile.output_vcf
-    #File deep_variant_vcf_index          = TransformVcfFile.output_vcf_index
 
-    File deep_variant_vcf_modified            = upstream_hg19.small_variant_vcf
-    File deep_variant_vcf_modified_index      = upstream_hg19.small_variant_vcf_index
+	File deep_variant_vcf            	 = TransformVcfFile.output_vcf
+    File deep_variant_vcf_index          = TransformVcfFile.output_vcf_index
     File deep_variant_annotated_vcf           = AnnotateVCF_DeepVariant.output_vcf
     File deep_variant_annotated_vcf_index     = AnnotateVCF_DeepVariant.output_vcf_index
     File vep_deep_variant_annotated_vcf       = VEPDeepVariant.output_vcf
