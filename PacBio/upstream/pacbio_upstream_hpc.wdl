@@ -228,7 +228,6 @@ workflow PacBioUpstream {
   #      output_vcf_name = sample_id + ".DeepVariant.vcf.gz",
   #      input_vcf = select_first([upstream_hg19.small_variant_vcf, ""])
   #}
-  }
 
   Map[String, String] hg19_ref_map = read_map(hg19_ref_map_file)
   call CramConversions.ConvertToCram as ConvertToCram {
