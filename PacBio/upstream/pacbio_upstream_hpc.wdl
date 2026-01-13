@@ -221,11 +221,13 @@ workflow PacBioUpstream {
         filename_infix = ".DeepVariant"
   }
 
-  # transformation of upstream_hg19.small_variant_vcf file to match AnnotateVCF workflow: no mitochondria data, transcribing GRCh37 notation into hg19 notation
-  call TransformVcfFile {
-      input:
-        output_vcf_name = sample_id + ".DeepVariant.vcf.gz",
-        input_vcf = select_first([upstream_hg19.small_variant_vcf, ""])
+  # delam direktno s hg19 fasto. korekcija ni več potrebna.
+  ## transformation of upstream_hg19.small_variant_vcf file to match AnnotateVCF workflow: no mitochondria data, transcribing GRCh37 notation into hg19 notation
+  #call TransformVcfFile {
+  #    input:
+  #      output_vcf_name = sample_id + ".DeepVariant.vcf.gz",
+  #      input_vcf = select_first([upstream_hg19.small_variant_vcf, ""])
+  #}
   }
 
   Map[String, String] hg19_ref_map = read_map(hg19_ref_map_file)
@@ -242,7 +244,7 @@ workflow PacBioUpstream {
       input:
         sample_basename = sample_id,
         output_filename = sample_id + ".DeepVariant.annotated.vcf",
-        input_vcf = select_first([TransformVcfFile.output_vcf, ""]),
+        input_vcf = select_first([upstream_hg19.small_variant_vcf, ""]),
 
         chromosome_list = chromosome_list,
         gnomAD_vcf = gnomAD_vcf,
@@ -367,8 +369,8 @@ workflow PacBioUpstream {
     File? output_small_variant_gvcf       = Rename_files.output_small_variant_gvcf
     File? output_small_variant_gvcf_index = Rename_files.output_small_variant_gvcf_index
 
-    File? deep_variant_vcf_modified           = TransformVcfFile.output_vcf
-    File? deep_variant_vcf_modified_index     = TransformVcfFile.output_vcf_index
+    #File? deep_variant_vcf_modified           = TransformVcfFile.output_vcf
+    #File? deep_variant_vcf_modified_index     = TransformVcfFile.output_vcf_index
     File deep_variant_annotated_vcf           = AnnotateVCF_DeepVariant.output_vcf
     File deep_variant_annotated_vcf_index     = AnnotateVCF_DeepVariant.output_vcf_index
     File vep_deep_variant_annotated_vcf       = VEPDeepVariant.output_vcf
