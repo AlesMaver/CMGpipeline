@@ -438,8 +438,8 @@ task Rename_files {
 	#####cp  ~{aligned_bam_index} ~{sample_id}.aligned.bam.bai
 
   command {
-	cp ~{small_variant_vcf} ~{sample_id}.DeepVariant.GRCh37.vcf.gz
-	cp ~{small_variant_vcf_index} ~{sample_id}.DeepVariant.GRCh37.vcf.gz.tbi
+	cp ~{small_variant_vcf} ~{sample_id}.DeepVariant.vcf.gz
+	cp ~{small_variant_vcf_index} ~{sample_id}.DeepVariant.vcf.gz.tbi
 	cp ~{small_variant_gvcf} ~{sample_id}.DeepVariant.gvcf.gz
 	cp ~{small_variant_gvcf_index} ~{sample_id}.DeepVariant.gvcf.gz.tbi
 	cp ~{sv_vcf} ~{sample_id}.hg19.sawfish.structural_variants.vcf.gz
