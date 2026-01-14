@@ -6,6 +6,10 @@ import "http://10.3.248.96:3500/WDL/HiFi-human-WGS-WDL/workflows/upstream/upstre
 import "../VEP/Vep2.wdl" as VEP
 import "../CRAM_conversions.wdl" as CramConversions
 import "../AnnotationPipeline.wdl" as Annotation
+import "../ROH/ROH_workflow.wdl" as ROH
+import "../ExomeDepth.wdl" as ExomeDepth
+import "../Qualimap.wdl" as Qualimap
+import "../Conifer2.wdl" as Conifer
 
 workflow PacBioWorkflow {
   meta {
@@ -39,6 +43,9 @@ workflow PacBioWorkflow {
     Boolean run_vep_annotation = true
     Boolean run_custom_annotation = true
     Boolean convert_to_cram = true
+    Boolean run_roh_analysis = true
+    Boolean run_exome_depth = true
+    Boolean run_conifer = true
 
     # ========================================
     # VEP Annotation Inputs
@@ -92,6 +99,36 @@ workflow PacBioWorkflow {
     File? pext_bed_index
     File? dbNSFP
     File? dbNSFP_index
+
+    # ========================================
+    # ExomeDepth Analysis Inputs
+    # ========================================
+    String? enrichment
+    File? enrichment_bed
+    Array[File]? reference_counts_files
+
+    # ========================================
+    # Qualimap Coverage Inputs
+    # ========================================
+    File? refSeqFile
+    Int threads = 8
+
+    # ========================================
+    # Conifer Analysis Inputs
+    # ========================================
+    Array[File]? input_reference_rpkms
+    Int? CONIFER_svd
+    Float? CONIFER_threshold
+
+    # ========================================
+    # ROH Analysis Inputs
+    # ========================================
+    File? dbSNPcommon_bed
+    File? dbSNPcommon_bed_index
+    File? gnomAD_maf01_vcf
+    File? gnomAD_maf01_vcf_index
+    File? gnomAD_maf01_tab
+    File? gnomAD_maf01_tab_index
   }
 
   # Read reference map file for CRAM and annotation
@@ -141,6 +178,143 @@ workflow PacBioWorkflow {
         sample_basename = sample_id,
         input_vcf       = pacbio_upstream.small_variant_vcf,
         filename_infix  = vep_filename_infix
+    }
+  }
+
+  # ========================================
+  # ROH Analysis (Optional)
+  # ========================================
+  if (run_roh_analysis) {
+    call ROH.ROHanalysis as ROHanalysis {
+      input:
+        input_bam                = pacbio_upstream.out_bam,
+        input_bam_index          = pacbio_upstream.out_bam_index,
+        sample_basename          = sample_id,
+        enrichment               = select_first([enrichment, "WGS1Mb"]),
+        reference_fa             = ref_map["fasta"],
+        dbSNPcommon_bed          = select_first([dbSNPcommon_bed]),
+        dbSNPcommon_bed_index    = select_first([dbSNPcommon_bed_index]),
+        gnomAD_maf01_vcf         = select_first([gnomAD_maf01_vcf]),
+        gnomAD_maf01_vcf_index   = select_first([gnomAD_maf01_vcf_index]),
+        gnomAD_maf01_tab         = select_first([gnomAD_maf01_tab]),
+        gnomAD_maf01_tab_index   = select_first([gnomAD_maf01_tab_index])
+    }
+  }
+
+  # ========================================
+  # ExomeDepth Analysis (Optional)
+  # ========================================
+  if (run_exome_depth) {
+    if (defined(enrichment_bed)) {
+      call ExomeDepth.ExomeDepth as ExomeDepth {
+        input:
+          sample_name            = sample_id,
+          enrichment             = enrichment,
+          target_bed             = enrichment_bed,
+          input_bam              = pacbio_upstream.out_bam,
+          input_bam_index        = pacbio_upstream.out_bam_index,
+          reference_counts_files = reference_counts_files
+      }
+    }
+  }
+
+  # ========================================
+  # Qualimap Coverage (Optional)
+  # ========================================
+  if (defined(enrichment_bed)) {
+    call Qualimap.bamqc as Qualimap {
+      input:
+        bam             = pacbio_upstream.out_bam,
+        sample_basename = sample_id,
+        enrichment_bed  = enrichment_bed,
+        ncpu            = 8
+    }
+  }
+
+  if (defined(enrichment) && enrichment == "WGS1Mb") {
+    call Qualimap.DownsampleBED as DownsampleBED {
+      input:
+        bed_file      = enrichment_bed,
+        reference_fai = ref_map["fasta_index"]
+    }
+  }
+
+  if (defined(enrichment_bed)) {
+    call Qualimap.DepthOfCoverage34 as DepthOfCoverage {
+      input:
+        input_bam        = pacbio_upstream.out_bam,
+        input_bam_index  = pacbio_upstream.out_bam_index,
+        sample_basename  = sample_id,
+        reference_fa     = ref_map["fasta"],
+        reference_fai    = ref_map["fasta_index"],
+        reference_dict   = ref_map["fasta_dict"],
+        enrichment_bed   = select_first([DownsampleBED.downsampled_bed_file, enrichment_bed]),
+        refSeqFile       = select_first([refSeqFile]),
+        threads          = threads,
+        docker           = "broadinstitute/gatk3:3.8-1",
+        gatk_path        = "/usr/GenomeAnalysisTK.jar"
+    }
+  }
+
+  if (!defined(enrichment_bed)) {
+    call Qualimap.bamqc as QualimapWGS {
+      input:
+        bam             = pacbio_upstream.out_bam,
+        sample_basename = sample_id,
+        ncpu            = 8
+    }
+
+    call Qualimap.DepthOfCoverage34 as DepthOfCoverageWGS {
+      input:
+        input_bam        = pacbio_upstream.out_bam,
+        input_bam_index  = pacbio_upstream.out_bam_index,
+        sample_basename  = sample_id,
+        reference_fa     = ref_map["fasta"],
+        reference_fai    = ref_map["fasta_index"],
+        reference_dict   = ref_map["fasta_dict"],
+        refSeqFile       = select_first([refSeqFile]),
+        threads          = threads,
+        docker           = "broadinstitute/gatk3:3.8-1",
+        gatk_path        = "/usr/GenomeAnalysisTK.jar"
+    }
+  }
+
+  # ========================================
+  # Conifer Analysis (Optional)
+  # ========================================
+  if (run_conifer) {
+    if (defined(input_reference_rpkms)) {
+      call Conifer.Conifer as Conifer {
+        input:
+          input_bam             = pacbio_upstream.out_bam,
+          input_bam_index       = pacbio_upstream.out_bam_index,
+          input_reference_rpkms = input_reference_rpkms,
+          CONIFER_svd           = CONIFER_svd,
+          CONIFER_threshold     = CONIFER_threshold,
+          enrichment            = enrichment,
+          enrichment_bed        = enrichment_bed
+      }
+
+      if (defined(Conifer.output_conifer_calls_wig)) {
+        call Conifer.CONIFER_Annotate as CONIFER_Annotate {
+          input:
+            conifer_calls_wig       = select_first([Conifer.output_conifer_calls_wig]),
+            sample_basename         = sample_id,
+            HPO                     = select_first([HPO]),
+            HPO_index               = select_first([HPO_index]),
+            OMIM                    = select_first([OMIM]),
+            OMIM_index              = select_first([OMIM_index]),
+            gnomadConstraints       = select_first([gnomadConstraints]),
+            gnomadConstraints_index = select_first([gnomadConstraints_index]),
+            CGD                     = select_first([CGD]),
+            CGD_index               = select_first([CGD_index])
+        }
+
+        call Conifer.GenerateAnnotatedIntervalFile as CONIFER_GenerateAnnotatedIntervalFile {
+          input:
+            bedtools_annotated_file = CONIFER_Annotate.conifer_bedtools
+        }
+      }
     }
   }
 
@@ -270,6 +444,51 @@ workflow PacBioWorkflow {
     File mitorsaw_vcf       = pacbio_upstream.mitorsaw_vcf
     File mitorsaw_vcf_index = pacbio_upstream.mitorsaw_vcf_index
     File mitorsaw_hap_stats = pacbio_upstream.mitorsaw_hap_stats
+
+    # ========================================
+    # ROH Analysis Outputs
+    # ========================================
+    File? roh_output_baf                = ROHanalysis.output_BAF
+    File? roh_calls_qual                = ROHanalysis.ROH_calls_qual
+    File? roh_calls_size                = ROHanalysis.ROH_calls_size
+    File? roh_intervals_state           = ROHanalysis.ROH_intervals_state
+    File? roh_intervals_qual            = ROHanalysis.ROH_intervals_qual
+    File? roh_annotSV_tsv               = ROHanalysis.ROH_annotSV_tsv
+
+    # ========================================
+    # ExomeDepth Analysis Outputs
+    # ========================================
+    File? exome_depth_counts                    = ExomeDepth.exome_depth_counts
+    File? exome_depth_cnv_calls_bed             = ExomeDepth.exome_depth_cnv_calls_bed
+    File? exome_depth_cnv_calls_csv             = ExomeDepth.exome_depth_cnv_calls_csv
+    File? exome_depth_ratios_all_wig_gz         = ExomeDepth.exome_depth_ratios_all_wig_gz
+    File? exome_depth_ratios_all_wig_gz_tbi     = ExomeDepth.exome_depth_ratios_all_wig_gz_tbi
+    File? exome_depth_rolling_ratios_wig        = ExomeDepth.exome_depth_rolling_ratios_wig
+    File? exome_depth_rolling_ratios_wig_gz_tbi = ExomeDepth.exome_depth_rolling_ratios_wig_gz_tbi
+    File? exome_depth_ratios_clean_wig_gz       = ExomeDepth.exome_depth_ratios_clean_wig_gz
+    File? exome_depth_ratios_clean_wig_gz_tbi   = ExomeDepth.exome_depth_ratios_clean_wig_gz_tbi
+    File? exome_depth_ratios_nomissing_wig_gz   = ExomeDepth.exome_depth_ratios_nomissing_wig_gz
+    File? exome_depth_ratios_nomissing_wig_gz_tbi = ExomeDepth.exome_depth_ratios_nomissing_wig_gz_tbi
+    File? exome_depth_annotSV_tsv               = ExomeDepth.exome_depth_annotSV_tsv
+
+    # ========================================
+    # Qualimap Coverage Outputs
+    # ========================================
+    File? Qualimap_results           = Qualimap.results
+    File? QualimapWGS_results        = QualimapWGS.results
+    File? DepthOfCoverage_output     = DepthOfCoverage.DepthOfCoverage_output
+    File? DepthOfCoverageWGS_output  = DepthOfCoverageWGS.DepthOfCoverage_output
+
+    # ========================================
+    # Conifer Analysis Outputs
+    # ========================================
+    File? conifer_output_rpkm                   = Conifer.output_rpkm
+    File? conifer_output_calls                  = Conifer.output_conifer_calls
+    File? conifer_output_calls_wig              = Conifer.output_conifer_calls_wig
+    File? conifer_cnv_wig                       = Conifer.CNV_wig
+    File? conifer_calls_annotated               = CONIFER_Annotate.conifer_calls_annotated
+    File? conifer_annotSV_tsv                   = Conifer.annotSV_tsv
+    File? conifer_plots_tar                     = Conifer.conifer_plots_tar
 
     # ========================================
     # QC Messages
