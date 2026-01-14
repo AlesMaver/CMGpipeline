@@ -249,7 +249,7 @@ workflow PacBioWorkflow {
         reference_fai    = ref_map["fasta_index"],
         reference_dict   = ref_map["fasta_dict"],
         enrichment_bed   = select_first([DownsampleBED.downsampled_bed_file, enrichment_bed]),
-        refSeqFile       = select_first([refSeqFile]),
+        refSeqFile       = refSeqFile,
         threads          = threads,
         docker           = "broadinstitute/gatk3:3.8-1",
         gatk_path        = "/usr/GenomeAnalysisTK.jar"
@@ -272,7 +272,7 @@ workflow PacBioWorkflow {
         reference_fa     = ref_map["fasta"],
         reference_fai    = ref_map["fasta_index"],
         reference_dict   = ref_map["fasta_dict"],
-        refSeqFile       = select_first([refSeqFile]),
+        refSeqFile       = refSeqFile,
         threads          = threads,
         docker           = "broadinstitute/gatk3:3.8-1",
         gatk_path        = "/usr/GenomeAnalysisTK.jar"
@@ -283,7 +283,6 @@ workflow PacBioWorkflow {
   # Conifer Analysis (Optional)
   # ========================================
   if (run_conifer) {
-    if (defined(input_reference_rpkms)) {
       call Conifer.Conifer as Conifer {
         input:
           input_bam             = pacbio_upstream.out_bam,
@@ -315,7 +314,6 @@ workflow PacBioWorkflow {
             bedtools_annotated_file = CONIFER_Annotate.conifer_bedtools
         }
       }
-    }
   }
 
   # ========================================

@@ -188,7 +188,7 @@ task DepthOfCoverage34 {
         File reference_dict
         
         File? enrichment_bed
-        File refSeqFile
+        File? refSeqFile
                 
         # Runtime params
         String gatk_path
@@ -212,7 +212,7 @@ task DepthOfCoverage34 {
        -ct 20 \
        -ct 50 \
        -ct 100 \
-       -geneList ~{refSeqFile}
+       ~{if defined(refSeqFile) then "-geneList " + refSeqFile else ""}
 
     cat targetGenes.coverage.sample_interval_summary | grep -v "Target" | awk -F '[\t:-]' '{print $1,$2,$3,$5}' OFS='\t' | sed 's/NaN/0.00/g' > ~{sample_basename}.coverage_mean.wig
     cat targetGenes.coverage.sample_interval_summary | grep -v "Target" | awk -F '[\t:-]' '{print $1,$2,$3,$11}' OFS='\t' | sed 's/NaN/0.00/g' > ~{sample_basename}.coverage.wig
