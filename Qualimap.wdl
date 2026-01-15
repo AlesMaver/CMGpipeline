@@ -188,7 +188,7 @@ task DepthOfCoverage34 {
         File reference_dict
         
         File? enrichment_bed
-        File? refSeqFile
+        File? refSeqFiles
                 
         # Runtime params
         String gatk_path
