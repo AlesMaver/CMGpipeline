@@ -1,7 +1,7 @@
 version 1.0
 
-#import "https://raw.githubusercontent.com/AlesMaver/HiFi-human-WGS-WDL/refs/heads/main/workflows/upstream/upstream.wdl" as Upstream
-import "http://10.3.248.96:3500/WDL/HiFi-human-WGS-WDL/workflows/upstream/upstream.wdl" as Upstream
+import "https://raw.githubusercontent.com/AlesMaver/HiFi-human-WGS-WDL/refs/heads/main/workflows/upstream/upstream.wdl" as Upstream
+#import "http://10.3.248.96:3500/WDL/HiFi-human-WGS-WDL/workflows/upstream/upstream.wdl" as Upstream
 
 import "../VEP/Vep2.wdl" as VEP
 import "../CRAM_conversions.wdl" as CramConversions
