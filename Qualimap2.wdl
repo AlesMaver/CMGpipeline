@@ -205,7 +205,6 @@ task DepthOfCoverage34 {
       -o targetGenes.coverage \
       ~{if defined(enrichment_bed) then "-L " + enrichment_bed else ""} \
        -omitBaseOutput \
-       -nt ~{threads} \
        -ip 2 \
        -allowPotentiallyMisencodedQuals \
        -ct 5 \
