@@ -112,7 +112,7 @@ task GetCounts {
   }
 
   command <<<
-    wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Dockers/ExomeDepth/ExomeDepth.R
+    wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Dockers/ExomeDepth/ExomeDepth.R
 
     Rscript ExomeDepth.R \
         --targets ~{target_bed} \
@@ -189,7 +189,7 @@ task ExomeDepth {
   }
 
   command <<<
-    wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Dockers/ExomeDepth/ExomeDepth.R
+    wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Dockers/ExomeDepth/ExomeDepth.R
 
     Rscript ExomeDepth.R \
         --test-counts-file ~{test_counts_file} \
