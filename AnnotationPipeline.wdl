@@ -588,8 +588,8 @@ task VCFANNO {
     # Write uncompressed output first so we can validate for binary/non-printable data
     vcfanno -lua custom.lua -p 16 conf.toml ~{input_vcf} > ~{sample_basename}.vcf
 
-    # Fail fast if any non-printable bytes sneak into the VCF body
-    if ! cmp ~{sample_basename}.vcf <(strings ~{sample_basename}.vcf); then
+    # Fail fast if any control/non-printable bytes are present (works on the plain VCF)
+    if LC_ALL=C grep -a -n -P '[\x00-\x08\x0B\x0C\x0E-\x1F]' ~{sample_basename}.vcf; then
       echo "ERROR: non-printable characters detected in vcfanno output" >&2
       exit 1
     fi
