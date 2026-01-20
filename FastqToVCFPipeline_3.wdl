@@ -1741,7 +1741,6 @@ task ApplyBQSR {
     docker: gatk_docker
     preemptible: preemptible_tries
     maxRetries: 3
-    memory: "~{memory_size} MiB"
     disks: "local-disk " + disk_size + " HDD"
     requested_memory_mb_per_core: 1000
     cpu: 4
@@ -2246,7 +2245,6 @@ task PairedFastQsToUnmappedBAM {
   }
   runtime {
     docker: docker
-    memory: machine_mem_gb + " GB"
     disks: "local-disk " + disk_space_gb + " HDD"
     preemptible: preemptible_attempts
     maxRetries: 3
