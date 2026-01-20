@@ -83,9 +83,9 @@ task RunExpansionHunter {
     # echo ~{patient_sex}
     echo ' '
     echo "[ PREPARATION ] Downloading variant catalog JSON"
-    wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
+    wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
     unset https_proxy
-    wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
+    wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
 
 
     echo "[ PREPARATION ] Fixing BAI file ending to BAM.BAI as required for the ExpansionHunter"
@@ -131,9 +131,9 @@ task AnnotateExpansionHunter {
     # annotated_vcf = "${sample_id}.annotated.vcf"
 
     echo "[ PREPARATION ] Downloading repeats file JSON"
-    wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
+    wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
     unset https_proxy
-    wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
+    wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
 
     echo "[ RUNNING ] expansion hunter vcf annotation on sample ~{sample_id}"
     stranger \
