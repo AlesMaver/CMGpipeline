@@ -585,7 +585,16 @@ task VCFANNO {
   echo names=[\"metaDome\"] >> conf.toml
 
   wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/common/annotation/custom.lua
-  vcfanno -lua custom.lua -p 16 conf.toml ~{input_vcf} | gzip > ~{sample_basename}.vcf.gz
+    # Write uncompressed output first so we can validate for binary/non-printable data
+    vcfanno -lua custom.lua -p 16 conf.toml ~{input_vcf} > ~{sample_basename}.vcf
+
+    # Fail fast if any non-printable bytes sneak into the VCF body
+    if ! cmp ~{sample_basename}.vcf <(strings ~{sample_basename}.vcf); then
+      echo "ERROR: non-printable characters detected in vcfanno output" >&2
+      exit 1
+    fi
+
+    gzip -c ~{sample_basename}.vcf > ~{sample_basename}.vcf.gz
   }
   
   runtime {
