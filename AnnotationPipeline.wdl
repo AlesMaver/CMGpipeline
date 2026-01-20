@@ -604,7 +604,7 @@ task VCFANNO {
     #requested_memory_mb_per_core: 2000
     #cpu: 4
     #runtime_minutes: 240
-    requested_memory_mb_per_core: 1000
+    requested_memory_mb_per_core: 2000
     cpu: 8
     runtime_minutes: 300
   }
