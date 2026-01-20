@@ -95,7 +95,7 @@ task RenameChrs {
     String file_basename = basename(input_vcf)
 
     command {
-        wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/0490e00417c09d1d988fe4ca3fd2e3659b24e067/references/rename_chrs
+        wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/0490e00417c09d1d988fe4ca3fd2e3659b24e067/references/rename_chrs
         bcftools annotate --rename-chrs rename_chrs ~{input_vcf} -Oz -o renamed.~{file_basename}
     }
 

@@ -77,7 +77,7 @@ task DELLY_call {
   String sample_basename = sub(basename(input_bam), "[\_,\.].*", "" )
 
   command {
-    wget https://raw.githubusercontent.com/dellytools/delly/main/excludeTemplates/human.hg19.excl.tsv
+    wget --no-check-certificate https://raw.githubusercontent.com/dellytools/delly/main/excludeTemplates/human.hg19.excl.tsv
     delly call -g ~{reference_fasta} -o ~{sample_basename}.bcf -x human.hg19.excl.tsv ~{input_bam}
   }
 
@@ -123,7 +123,7 @@ task DELLY_genotype {
   String sample_basename = sub(basename(input_bam), "[\_,\.].*", "" )
 
   command {
-    wget https://raw.githubusercontent.com/dellytools/delly/main/excludeTemplates/human.hg19.excl.tsv
+    wget --no-check-certificate https://raw.githubusercontent.com/dellytools/delly/main/excludeTemplates/human.hg19.excl.tsv
     delly call -g ~{reference_fasta} -v ~{sites_bcf_file} -o ~{sample_basename}.geno.bcf -x human.hg19.excl.tsv ~{input_bam}
   }
 

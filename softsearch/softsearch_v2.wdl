@@ -170,14 +170,14 @@ task SoftSearch {
     touch ~{sample_basename}.softSearch.vcf
 
     # Get population masked regions from the softsearch repository
-    ## wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/svcalling/softsearch/breakpoint_mask.bed
-    wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/breakpoint_mask.bed
-    wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/highly_variable_regions.bed
+    ## wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/svcalling/softsearch/breakpoint_mask.bed
+    wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/breakpoint_mask.bed
+    wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/highly_variable_regions.bed
     # Re-attempt the wget without the https_proxy set
     unset https_proxy 
-    ## wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/svcalling/softsearch/breakpoint_mask.bed
-    wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/breakpoint_mask.bed
-    wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/highly_variable_regions.bed
+    ## wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/svcalling/softsearch/breakpoint_mask.bed
+    wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/breakpoint_mask.bed
+    wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/highly_variable_regions.bed
 
     # Merge population and softsearch masks
     cat breakpoint_mask.bed /softsearch/library/blacklist_fixed.bed highly_variable_regions.bed | sort -k1,1 -k2,2n | bedtools merge -i stdin > blacklist.bed

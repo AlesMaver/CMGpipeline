@@ -155,7 +155,7 @@ task MitoMap {
       if [ "$do_mitomap" = true ]
       then
         #cp /usr/src/app/mitomap.py ./
-        wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/mitomap/mitomap.py
+        wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/mitomap/mitomap.py
         cp ~{mtDNA_fasta} ./
         python mitomap.py > ~{sample_basename}_mitoResults.txt
       else

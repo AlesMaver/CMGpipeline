@@ -79,9 +79,9 @@ task DELLY_call {
   String sample_basename = sub(basename(input_bam), "[\_,\.].*", "" )
 
   command {
-    wget https://raw.githubusercontent.com/dellytools/delly/main/excludeTemplates/human.hg19.excl.tsv
+    wget --no-check-certificate https://raw.githubusercontent.com/dellytools/delly/main/excludeTemplates/human.hg19.excl.tsv
     unset https_proxy
-    wget https://raw.githubusercontent.com/dellytools/delly/main/excludeTemplates/human.hg19.excl.tsv
+    wget --no-check-certificate https://raw.githubusercontent.com/dellytools/delly/main/excludeTemplates/human.hg19.excl.tsv
     delly call -g ~{reference_fasta} -o ~{sample_basename}.unfiltered.bcf -x human.hg19.excl.tsv ~{input_bam}
     bcftools filter -i 'FILTER=="PASS" &&  PRECISE==1' ~{sample_basename}.unfiltered.bcf -Ob -o ~{sample_basename}.delly.call.bcf
   }
@@ -134,9 +134,9 @@ task DELLY_genotype {
   String sample_basename = sub(basename(input_bam), "[\_,\.].*", "" )
 
   command {
-    wget https://raw.githubusercontent.com/dellytools/delly/main/excludeTemplates/human.hg19.excl.tsv
+    wget --no-check-certificate https://raw.githubusercontent.com/dellytools/delly/main/excludeTemplates/human.hg19.excl.tsv
     unset https_proxy
-    wget https://raw.githubusercontent.com/dellytools/delly/main/excludeTemplates/human.hg19.excl.tsv
+    wget --no-check-certificate https://raw.githubusercontent.com/dellytools/delly/main/excludeTemplates/human.hg19.excl.tsv
     delly call -g ~{reference_fasta} -v ~{sites_bcf_file} -o ~{sample_basename}.delly.geno.bcf -x human.hg19.excl.tsv ~{input_bam}
   }
 

@@ -83,12 +83,12 @@ task SoftSearch {
     awk -v OFS='\t' {'print $1,$2'} ~{ref_fasta_index} > hg19.genome
 
     # Get population masked regions from the softsearch repository
-    ## wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/svcalling/softsearch/breakpoint_mask.bed
-    wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/breakpoint_mask.bed
+    ## wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/svcalling/softsearch/breakpoint_mask.bed
+    wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/breakpoint_mask.bed
     # Re-attempt the wget without the https_proxy set
     unset https_proxy 
-    ## wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/svcalling/softsearch/breakpoint_mask.bed
-    wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/breakpoint_mask.bed
+    ## wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/svcalling/softsearch/breakpoint_mask.bed
+    wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/breakpoint_mask.bed
 
     # Merge population and softsearch masks
     cat breakpoint_mask.bed /softsearch/library/blacklist_fixed.bed | sort -k1,1 -k2,2n | bedtools merge -i stdin > blacklist.bed

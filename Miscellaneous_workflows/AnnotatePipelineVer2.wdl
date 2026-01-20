@@ -471,10 +471,10 @@ task VCFANNO {
   command {
   set -e
 
-  wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/references/missenseConstrained_oe.bed.gz
-  wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/references/missenseConstrained_oe.bed.gz.tbi
-  wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/references/missenseConstrained_chisq.bed.gz
-  wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/references/missenseConstrained_chisq.bed.gz.tbi
+  wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/references/missenseConstrained_oe.bed.gz
+  wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/references/missenseConstrained_oe.bed.gz.tbi
+  wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/references/missenseConstrained_chisq.bed.gz
+  wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/references/missenseConstrained_chisq.bed.gz.tbi
 
   echo [[annotation]] > conf.toml
   echo file=\"~{gnomAD_vcf}\" >> conf.toml
@@ -584,7 +584,7 @@ task VCFANNO {
   echo ops=[\"self\"] >> conf.toml
   echo names=[\"metaDome\"] >> conf.toml
 
-  wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/common/annotation/custom.lua
+  wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/common/annotation/custom.lua
   vcfanno -lua custom.lua -p 16 conf.toml ~{input_vcf} | gzip > ~{sample_basename}.vcf.gz
   }
   

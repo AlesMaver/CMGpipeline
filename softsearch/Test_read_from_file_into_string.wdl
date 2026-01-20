@@ -24,11 +24,11 @@ task FileToArray {
     String github_fname = "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/Test_chromosome_interval_list.txt"
     command <<<
         # Get chromosome interval list file
-        ## wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/Test_chromosome_interval_list.txt
+        ## wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/Test_chromosome_interval_list.txt
         wget  ~{github_fname}
         # Re-attempt the wget without the https_proxy set
         unset https_proxy 
-        ##wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/Test_chromosome_interval_list.txt
+        ##wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/softsearch/Test_chromosome_interval_list.txt
         wget  ~{github_fname}     
         ## cat Test_chromosome_interval_list.txt
         cat ~{fname}

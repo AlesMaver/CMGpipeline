@@ -51,7 +51,7 @@ task MitoMap {
     command <<<
     
     #cp /usr/src/app/mitomap.py ./
-    wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/mitomap/mitomap.py
+    wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/mitomap/mitomap.py
     cp ~{mtDNA_fasta} ./
     python mitomap.py > ~{sample_basename}_mitoResults.txt
     cp ~{sample_basename}_mitoResults.txt ~{sample_basename}_mitoResults.xls
