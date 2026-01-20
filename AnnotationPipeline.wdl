@@ -585,7 +585,7 @@ task VCFANNO {
   echo names=[\"metaDome\"] >> conf.toml
 
   wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/common/annotation/custom.lua
-  
+
   # Write uncompressed output first so we can validate for binary/non-printable data
   vcfanno -lua custom.lua -p 8 conf.toml ~{input_vcf} > ~{sample_basename}.vcf
 
@@ -605,7 +605,7 @@ task VCFANNO {
     #cpu: 4
     #runtime_minutes: 240
     requested_memory_mb_per_core: 1000
-    cpu: 32
+    cpu: 8
     runtime_minutes: 300
   }
   output {
