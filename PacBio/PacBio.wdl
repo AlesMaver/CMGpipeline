@@ -10,6 +10,7 @@ import "../ROH/ROH_workflow.wdl" as ROH
 import "../ExomeDepth.wdl" as ExomeDepth
 import "../Qualimap2.wdl" as Qualimap
 import "../Conifer2.wdl" as Conifer
+import "../../manta/manta_workflow.wdl" as manta
 
 workflow PacBioWorkflow {
   meta {
@@ -46,6 +47,7 @@ workflow PacBioWorkflow {
     Boolean run_roh_analysis = true
     Boolean run_exome_depth = true
     Boolean run_conifer = true
+    Boolean run_struct_var_annotation = true
 
     # ========================================
     # VEP Annotation Inputs
@@ -166,6 +168,20 @@ workflow PacBioWorkflow {
         ref_fasta       = ref_map["fasta"],
         ref_fasta_index = ref_map["fasta_index"],
         sample_basename       = sample_id
+    }
+  }
+
+  # ========================================
+  # Annotation on sawfish structural variants (Optional)
+  # ========================================
+  if (run_struct_var_annotation) {
+    if ( defined(pacbio_upstream.sv_vcf) ) {
+      call manta.annotSV as annotSV {
+          input:
+              genome_build = "GRCh37",
+              input_vcf = pacbio_upstream.sv_vcf,
+              output_tsv_name = sample_id + ".sawfish.AnnotSV.tsv"
+      }
     }
   }
 
@@ -418,6 +434,7 @@ workflow PacBioWorkflow {
     File? sv_gc_bias_corrected_depth_bw = pacbio_upstream.sv_gc_bias_corrected_depth_bw
     File? sv_maf_bw                     = pacbio_upstream.sv_maf_bw
     File? sv_copynum_summary            = pacbio_upstream.sv_copynum_summary
+    File? sv_annotsv                    = annotSV.sv_variants_tsv
 
     # ========================================
     # Tandem Repeat Genotyping (TRGT) Outputs
