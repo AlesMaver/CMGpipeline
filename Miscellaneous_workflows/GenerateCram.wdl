@@ -1,6 +1,6 @@
 version 1.0
 
-import "./CRAM_conversions.wdl" as CramConversions 
+import "./CramConversions.wdl" as CramConversions 
 
 # WORKFLOW DEFINITION 
 workflow GenerateCRAM {
