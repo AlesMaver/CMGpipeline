@@ -65,9 +65,9 @@ task ConvertToCram {
 
     samtools index ~{sample_basename}.cram
     
-    mv ~{sample_basename}.cram ~{sample_basename}.{genome_assembly}.cram
-    mv ~{sample_basename}.cram.crai ~{sample_basename}.{genome_assembly}.cram.crai
-    mv ~{sample_basename}.cram.md5 ~{sample_basename}.{genome_assembly}.cram.md5
+    mv ~{sample_basename}.cram ~{sample_basename}.~{genome_assembly}.cram
+    mv ~{sample_basename}.cram.crai ~{sample_basename}.~{genome_assembly}.cram.crai
+    mv ~{sample_basename}.cram.md5 ~{sample_basename}.~{genome_assembly}.cram.md5
   >>>
   runtime {
     docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.3-1564508330"
@@ -77,8 +77,8 @@ task ConvertToCram {
     runtime_minutes: 360
   }
   output {
-    File output_cram = "~{sample_basename}.{genome_assembly}.cram"
-    File output_cram_index = "~{sample_basename}.{genome_assembly}.cram.crai"
-    File output_cram_md5 = "~{sample_basename}.{genome_assembly}.cram.md5"
+    File output_cram = "~{sample_basename}.~{genome_assembly}.cram"
+    File output_cram_index = "~{sample_basename}.~{genome_assembly}.cram.crai"
+    File output_cram_md5 = "~{sample_basename}.~{genome_assembly}.cram.md5"
   }
 }
