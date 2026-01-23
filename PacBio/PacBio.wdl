@@ -179,7 +179,7 @@ workflow PacBioWorkflow {
       call manta.annotSV as annotSV {
           input:
               genome_build = "GRCh37",
-              input_vcf = pacbio_upstream.sv_vcf,
+              input_vcf = select_first([pacbio_upstream.sv_vcf, ""]),
               output_tsv_name = sample_id + ".sawfish.AnnotSV.tsv"
       }
     }
