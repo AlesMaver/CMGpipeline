@@ -10,7 +10,7 @@ import "../ROH/ROH_workflow.wdl" as ROH
 import "../ExomeDepth.wdl" as ExomeDepth
 import "../Qualimap2.wdl" as Qualimap
 import "../Conifer2.wdl" as Conifer
-import "../../manta/manta_workflow.wdl" as manta
+import "../manta/manta_workflow.wdl" as manta
 
 workflow PacBioWorkflow {
   meta {
