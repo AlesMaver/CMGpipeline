@@ -50,7 +50,7 @@ workflow PacBioWorkflow {
     # ========================================
     # VEP Annotation Inputs
     # ========================================
-    String vep_filename_infix = ""
+    String vep_filename_infix = ".DeepVariant"
 
     # ========================================
     # Custom Annotation Pipeline Inputs
@@ -325,6 +325,7 @@ workflow PacBioWorkflow {
       input:
         input_vcf                      = pacbio_upstream.small_variant_vcf,
         sample_basename                = sample_id,
+        output_filename                = sample_id + ".DeepVariant.annotated.vcf",
         chromosome_list                = select_first([chromosome_list]),
         gnomAD_vcf                     = select_first([gnomAD_vcf]),
         gnomAD_vcf_index               = select_first([gnomAD_vcf_index]),
@@ -379,8 +380,8 @@ workflow PacBioWorkflow {
     # ========================================
     # Alignment Outputs
     # ========================================
-    File out_bam                = pacbio_upstream.out_bam
-    File out_bam_index          = pacbio_upstream.out_bam_index
+    #File out_bam                = pacbio_upstream.out_bam
+    #File out_bam_index          = pacbio_upstream.out_bam_index
     File? out_cram              = ConvertToCram.output_cram
     File? out_cram_index        = ConvertToCram.output_cram_index
 
@@ -408,7 +409,7 @@ workflow PacBioWorkflow {
     # ========================================
     # Structural Variant Outputs
     # ========================================
-    File  discover_tar                  = pacbio_upstream.discover_tar
+    #File  discover_tar                  = pacbio_upstream.discover_tar
     File? sv_vcf                        = pacbio_upstream.sv_vcf
     File? sv_vcf_index                  = pacbio_upstream.sv_vcf_index
     File? sv_supporting_reads           = pacbio_upstream.sv_supporting_reads
