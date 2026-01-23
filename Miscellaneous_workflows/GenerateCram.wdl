@@ -17,7 +17,8 @@ call CramConversions.ConvertToCram as ConvertToCram {
       input_bam = input_bam,
       ref_fasta = reference_fa,
       ref_fasta_index = reference_fai,
-      sample_basename = sample_basename
+      sample_basename = sample_basename,
+      genome_assembly = genome_assembly
   }
   
   
