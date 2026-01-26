@@ -67,7 +67,7 @@ task ConvertToCram {
     
     mv ~{sample_basename}.cram ~{sample_basename}.~{genome_assembly}.cram
     mv ~{sample_basename}.cram.crai ~{sample_basename}.~{genome_assembly}.cram.crai
-    mv ~{sample_basename}.cram.md5 ~{sample_basename}.~{genome_assembly}.md5
+    mv ~{sample_basename}.cram.md5 ~{sample_basename}.~{genome_assembly}.cram.md5
   >>>
   runtime {
     docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.3-1564508330"
