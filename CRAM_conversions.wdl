@@ -47,6 +47,7 @@ task ConvertToCram {
     File ref_fasta
     File ref_fasta_index
     String sample_basename
+    String genome_assembly = "hg19"
   }
 
   command <<<
@@ -64,9 +65,9 @@ task ConvertToCram {
 
     samtools index ~{sample_basename}.cram
     
-    mv ~{sample_basename}.cram ~{sample_basename}.hg19.cram
-    mv ~{sample_basename}.cram.crai ~{sample_basename}.hg19.cram.crai
-    mv ~{sample_basename}.cram.md5 ~{sample_basename}.hg19.cram.md5
+    mv ~{sample_basename}.cram ~{sample_basename}.~{genome_assembly}.cram
+    mv ~{sample_basename}.cram.crai ~{sample_basename}.~{genome_assembly}.cram.crai
+    mv ~{sample_basename}.cram.md5 ~{sample_basename}.~{genome_assembly}.md5
   >>>
   runtime {
     docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.3-1564508330"
@@ -76,8 +77,8 @@ task ConvertToCram {
     runtime_minutes: 360
   }
   output {
-    File output_cram = "~{sample_basename}.hg19.cram"
-    File output_cram_index = "~{sample_basename}.hg19.cram.crai"
-    File output_cram_md5 = "~{sample_basename}.hg19.cram.md5"
+    File output_cram = "~{sample_basename}.~{genome_assembly}.cram"
+    File output_cram_index = "~{sample_basename}.~{genome_assembly}.cram.crai"
+    File output_cram_md5 = "~{sample_basename}.~{genome_assembly}.cram.md5"
   }
 }
