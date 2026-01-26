@@ -9,6 +9,7 @@ workflow GenerateCRAM {
     File reference_fa
     File reference_fai
     String sample_basename
+    String genome_assembly = "hg19"
   }
   
 call CramConversions.ConvertToCram as ConvertToCram {
@@ -16,7 +17,8 @@ call CramConversions.ConvertToCram as ConvertToCram {
       input_bam = input_bam,
       ref_fasta = reference_fa,
       ref_fasta_index = reference_fai,
-      sample_basename = sample_basename
+      sample_basename = sample_basename,
+      genome_assembly = genome_assembly
   }
   
   
