@@ -21,7 +21,7 @@ workflow ExomeDepth {
   }
 
   if (defined(enrichment)) {
-    String test_type = if (enrichment == "WGS1Mb") then "WGS" else "WES"
+    String test_type = if (enrichment == "WGS1Mb" || enrichment == "WGS1Mb_PacBio") then "WGS" else "WES"
   }
 
   # If the input has not yet been counted, convert the CRAM to BAM and count the reads
