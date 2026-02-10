@@ -55,6 +55,7 @@ workflow ExomeDepth {
     call GetCounts_Bedtools {
       input:
           sample_name = sample_name,
+          enrichment = enrichment,
           target_bed = target_bed,
           input_bam = select_first([input_cram, input_bam]),
           input_bam_index = select_first([input_cram_index, input_bam_index]),
@@ -137,6 +138,7 @@ task GetCounts {
 task GetCounts_Bedtools {
   input {
     String sample_name
+    String? enrichment
     File? target_bed
     File input_bam
     File input_bam_index
@@ -157,7 +159,7 @@ task GetCounts_Bedtools {
     awk 'NR==FNR {order[$1]=NR; next} $1 in order {print order[$1], $0}' bam_chrom_order.txt ~{target_bed} | sort -k1,1n -k3,3n | cut -d' ' -f2- > bam_sorted.bed
 
     # Calculate coverage using bedtools
-    samtools view -@ ~{samtools_threads} -h -F 3852 -f 3 -q 30 ~{if defined(reference_fa) then "-T " + reference_fa else ""} ~{input_bam} | \
+    samtools view -@ ~{samtools_threads} -h -F 3852 ~{if enrichment != "WGS1Mb_PacBio" then "-f 3" else ""} -q 30 ~{if defined(reference_fa) then "-T " + reference_fa else ""} ~{input_bam} | \
     awk '$1 ~ /^@/ || $9 > 0' | \
     samtools view -@ ~{samtools_threads} -O BAM -h | \
     bedtools bamtobed -i stdin | \
