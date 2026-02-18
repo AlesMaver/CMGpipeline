@@ -163,6 +163,7 @@ task GetCounts_Bedtools {
     awk '$1 ~ /^@/ || $9 > 0' | \
     samtools view -@ ~{samtools_threads} -O BAM -h | \
     bedtools bamtobed -i stdin | \
+    awk 'NR==FNR {keep[$1]=1; next} $1 in keep' bed_chrom_order.txt - | \
     bedtools coverage -a bam_sorted.bed -b stdin -counts -sorted > bam_sorted_counts.bed
 
     awk 'NR==FNR {order[$1]=NR; next} $1 in order {print order[$1], $0}' bed_chrom_order.txt bam_sorted_counts.bed | sort -k1,1n -k3,3n | cut -d' ' -f2- > bed_sorted_counts.bed
