@@ -50,7 +50,7 @@ task run_stripy {
         echo "[ PREPARATION ] Downloading variant catalog JSON"
         #wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
         unset https_proxy
-        wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
+        wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
 
         echo "[ PREPARATION ] Preparing LOCI"
         loci=$(jq -r '[.[] | .LocusId] | join(",")' ./variant_catalog.json)
