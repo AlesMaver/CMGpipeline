@@ -11,8 +11,8 @@ import "../ExomeDepth.wdl" as ExomeDepth
 import "../Qualimap2.wdl" as Qualimap
 import "../Conifer2.wdl" as Conifer
 import "../manta/manta_workflow.wdl" as manta
-import "../MitochondriaPipeline/MitochondriaPipeline.wdl" as MitochondriaPipeline
 import "../AnnotateExpansionHunterVCF.wdl" as AnnotateExpansionHunterVCF
+import "../Stripy/Stripy_v2.wdl" as Stripy
 
 workflow PacBioWorkflow {
   meta {
@@ -50,8 +50,8 @@ workflow PacBioWorkflow {
     Boolean run_exome_depth = true
     Boolean run_conifer = true
     Boolean run_struct_var_annotation = true
-    Boolean do_MitochondriaPipeline = true
     Boolean run_expansion_hunter_annotation = true
+    Boolean run_stripy = true
 
     # ========================================
     # VEP Annotation Inputs
@@ -135,33 +135,6 @@ workflow PacBioWorkflow {
     File? gnomAD_maf01_vcf_index
     File? gnomAD_maf01_tab
     File? gnomAD_maf01_tab_index
-
-    # ========================================
-    # Mitochondria Pipeline Inputs
-    # ========================================
-    File mt_fasta
-    File mt_fasta_index
-    File mt_dict
-    File mt_amb
-    File mt_ann
-    File mt_bwt
-    File mt_pac
-    File mt_sa
-    File blacklisted_sites
-    File blacklisted_sites_index
-    File mt_shifted_dict
-    File mt_shifted_fasta
-    File mt_shifted_fasta_index
-    File mt_shifted_amb
-    File mt_shifted_ann
-    File mt_shifted_bwt
-    File mt_shifted_pac
-    File mt_shifted_sa
-    File shift_back_chain
-    File control_region_shifted_reference_interval_list
-    File non_control_region_interval_list
-    File gnomad_mito_sites_vcf
-    File gnomad_mito_sites_vcf_index
 
     # ========================================
     # ExpansionHunter Annotation Inputs
@@ -371,44 +344,6 @@ workflow PacBioWorkflow {
   }
 
   # ========================================
-  # Mitochondria Pipeline (Optional)
-  # ========================================
-  if (do_MitochondriaPipeline) {
-    call MitochondriaPipeline.MitochondriaPipeline as MitochondriaPipeline {
-      input:
-        sample_basename = sample_id,
-        wgs_aligned_input_bam_or_cram = pacbio_upstream.out_bam,
-        wgs_aligned_input_bam_or_cram_index = pacbio_upstream.out_bam_index,
-        ref_fasta = ref_map["fasta"],
-        ref_fasta_index = ref_map["fasta_index"],
-        ref_dict = ref_map["fasta_dict"],
-        mt_fasta = mt_fasta,
-        mt_fasta_index = mt_fasta_index,
-        mt_dict = mt_dict,
-        mt_amb = mt_amb,
-        mt_ann = mt_ann,
-        mt_bwt = mt_bwt,
-        mt_pac = mt_pac,
-        mt_sa = mt_sa,
-        blacklisted_sites = blacklisted_sites,
-        blacklisted_sites_index = blacklisted_sites_index,
-        mt_shifted_dict = mt_shifted_dict,
-        mt_shifted_fasta = mt_shifted_fasta,
-        mt_shifted_fasta_index = mt_shifted_fasta_index,
-        mt_shifted_amb = mt_shifted_amb,
-        mt_shifted_ann = mt_shifted_ann,
-        mt_shifted_bwt = mt_shifted_bwt,
-        mt_shifted_pac = mt_shifted_pac,
-        mt_shifted_sa = mt_shifted_sa,
-        shift_back_chain = shift_back_chain,
-        control_region_shifted_reference_interval_list = control_region_shifted_reference_interval_list,
-        non_control_region_interval_list = non_control_region_interval_list,
-        gnomad_mito_sites_vcf = gnomad_mito_sites_vcf,
-        gnomad_mito_sites_vcf_index = gnomad_mito_sites_vcf_index
-    }
-  }
-
-  # ========================================
   # ExpansionHunter/TRGT VCF Annotation (Optional)
   # ========================================
   if (run_expansion_hunter_annotation) {
@@ -419,6 +354,17 @@ workflow PacBioWorkflow {
         expansion_hunter_docker = expansion_hunter_docker,
         trgt = trgt,
         custom_catalog_file = custom_catalog_file
+    }
+  }
+
+  if (run_stripy) {
+    call Stripy.Stripy as Stripy {
+      input:
+        sample_basename = sample_id,
+        input_bam_or_cram = select_first([ConvertToCram.output_cram, pacbio_upstream.out_bam]),
+        input_bam_or_cram_index = select_first([ConvertToCram.output_cram_index, pacbio_upstream.out_bam_index]),
+        reference_fasta = ref_map["fasta"],
+        sex = select_first([sex, "male"])
     }
   }
 
@@ -536,6 +482,8 @@ workflow PacBioWorkflow {
     String stat_trgt_genotyped_count = pacbio_upstream.stat_trgt_genotyped_count
     String stat_trgt_uncalled_count  = pacbio_upstream.stat_trgt_uncalled_count
     File? trgt_vcf_annotated         = AnnotateExpansionHunterVCF.expansion_hunter_vcf_annotated
+    File? stripy_tsv                 = Stripy.stripy_tsv
+    File? stripy_html                = Stripy.stripy_html
 
     # ========================================
     # Paraphase Outputs (Pharmacogenes)
@@ -551,19 +499,6 @@ workflow PacBioWorkflow {
     File mitorsaw_vcf       = pacbio_upstream.mitorsaw_vcf
     File mitorsaw_vcf_index = pacbio_upstream.mitorsaw_vcf_index
     File mitorsaw_hap_stats = pacbio_upstream.mitorsaw_hap_stats
-    File? mt_aligned_bam = MitochondriaPipeline.mt_aligned_bam
-    File? mt_aligned_bai = MitochondriaPipeline.mt_aligned_bai
-    File? split_vcf = MitochondriaPipeline.split_vcf
-    File? split_vcf_index = MitochondriaPipeline.split_vcf_index
-    File? input_vcf_for_haplochecker = MitochondriaPipeline.input_vcf_for_haplochecker
-    File? duplicate_metrics = MitochondriaPipeline.duplicate_metrics
-    File? coverage_metrics = MitochondriaPipeline.coverage_metrics
-    File? coverage_mean_metrics = MitochondriaPipeline.coverage_mean_metrics
-    File? coverage_median_metrics = MitochondriaPipeline.coverage_median_metrics
-    File? major_haplogroup_file = MitochondriaPipeline.major_haplogroup_file
-    File? base_level_coverage_metrics = MitochondriaPipeline.base_level_coverage_metrics
-    File? filterVCF_output_vcf = MitochondriaPipeline.filterVCF_output_vcf
-    File? filterVCF_mito_table = MitochondriaPipeline.filterVCF_mito_table
 
     # ========================================
     # ROH Analysis Outputs
