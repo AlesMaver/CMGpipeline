@@ -118,27 +118,36 @@ task AnnotateExpansionHunter {
     String sample_id
     String expansion_hunter_docker
     File expansion_hunter_vcf
+    Boolean trgt = false
+    File? custom_catalog_file
   }
   
   output {
-    File expansion_hunter_vcf_annotated = "~{sample_id}.ExpansionHunter.annotated.vcf"
+    File expansion_hunter_vcf_annotated = "~{sample_id}.~{if trgt then "TRGT" else "ExpansionHunter"}.annotated.vcf"
   }
   
   command <<<
 
     export LC_ALL=C.UTF-8
     export LANG=C.UTF-8
-    # annotated_vcf = "${sample_id}.annotated.vcf"
 
-    echo "[ PREPARATION ] Downloading repeats file JSON"
-    wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
-    unset https_proxy
-    wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
+    # Determine which catalog file to use
+    if [ -n "~{custom_catalog_file}" ]; then
+      echo "[ PREPARATION ] Using provided custom catalog file"
+      CATALOG_FILE="~{custom_catalog_file}"
+    else
+      echo "[ PREPARATION ] Downloading repeats file JSON"
+      wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
+      unset https_proxy
+      wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
+      CATALOG_FILE="variant_catalog_hg19.json"
+    fi
 
     echo "[ RUNNING ] expansion hunter vcf annotation on sample ~{sample_id}"
     stranger \
-      --repeats-file variant_catalog_hg19.json \
-      ~{expansion_hunter_vcf} > ~{sample_id}.ExpansionHunter.annotated.vcf
+      --repeats-file "$CATALOG_FILE" \
+      ~{if trgt then "-t" else ""} \
+      ~{expansion_hunter_vcf} > ~{sample_id}.~{if trgt then "TRGT" else "ExpansionHunter"}.annotated.vcf
 
   >>>
 
