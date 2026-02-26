@@ -57,7 +57,7 @@ task calculateBAF {
   runtime {
     docker: docker
     requested_memory_mb_per_core: 1000
-    cpu: 8
+    cpu: 20
     runtime_minutes: 1200
   }
   output {
@@ -108,7 +108,7 @@ task CallROH {
   runtime {
     docker: docker
     requested_memory_mb_per_core: 1000
-    cpu: 8
+    cpu: 20
     runtime_minutes: 1200
     continueOnReturnCode: true
   }
