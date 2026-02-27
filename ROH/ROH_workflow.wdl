@@ -191,7 +191,7 @@ task CallROH {
   runtime {
     docker: docker
     requested_memory_mb_per_core: 1000
-    cpu: 20
+    cpu: 40
     runtime_minutes: 1200
   }
   output {
