@@ -148,7 +148,7 @@ workflow PacBioWorkflow {
     # ========================================
     # Full TRGT Workflow Inputs (Optional)
     # ========================================
-    String? trgt_full_docker_smrttools
+    String trgt_full_docker_smrttools = "quay.io/pacbio/ptcp:3.2"
   }
 
   # Read reference map file for CRAM and annotation
