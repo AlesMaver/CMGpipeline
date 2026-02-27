@@ -141,7 +141,7 @@ workflow PacBioWorkflow {
     # ========================================
     # ExpansionHunter Annotation Inputs
     # ========================================
-    String expansion_hunter_docker = "gbergant/expansionhunter:latest"
+    String expansion_hunter_docker = "alesmaver/stranger"
     Boolean trgt = true
     File? custom_catalog_file
 

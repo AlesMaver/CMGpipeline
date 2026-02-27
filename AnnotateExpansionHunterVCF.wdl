@@ -6,7 +6,7 @@ workflow AnnotateExpansionHunterVCF {
   input {
     String sample_id
     File expansion_hunter_vcf
-    String expansion_hunter_docker = "gbergant/expansionhunter:latest"
+    String expansion_hunter_docker = "alesmaver/stranger"
     Boolean trgt = false
     File? custom_catalog_file
   }
