@@ -51,7 +51,7 @@ workflow PacBioWorkflow {
     Boolean run_conifer = true
     Boolean run_struct_var_annotation = true
     Boolean run_expansion_hunter_annotation = true
-    Boolean run_stripy = true
+    Boolean run_stripy = false
 
     # ========================================
     # VEP Annotation Inputs
