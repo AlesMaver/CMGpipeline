@@ -137,9 +137,9 @@ task AnnotateExpansionHunter {
       CATALOG_FILE="~{custom_catalog_file}"
     else
       echo "[ PREPARATION ] Downloading repeats file JSON"
-      wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
+      wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
       unset https_proxy
-      wget "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
+      wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
       CATALOG_FILE="variant_catalog_hg19.json"
     fi
 
