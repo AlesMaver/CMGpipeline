@@ -178,7 +178,7 @@ task CallROH {
   
   command <<<
   set -e
-  bcftools mpileup -q 15 -Q20 -f ~{reference_fa} -T ~{dbSNPcommon_bed} ~{input_bam} | bcftools call -m | bcftools view -i 'DP>10 && QUAL>100' -V indels -Oz -o ~{sample_basename}.dbSNP.vcf.gz
+  bcftools mpileup -q 15 -Q20 --no-BAQ --threads 10 -f ~{reference_fa} -T ~{dbSNPcommon_bed} ~{input_bam} | bcftools call -m --threads 10 | bcftools view -i 'DP>10 && QUAL>100' -V indels -Oz -o ~{sample_basename}.dbSNP.vcf.gz
   bcftools index -t ~{sample_basename}.dbSNP.vcf.gz
   bcftools roh --AF-file ~{gnomAD_maf01_tab} -G30 -I ~{sample_basename}.dbSNP.vcf.gz ~{sample_basename}.dbSNP.vcf.gz > ~{sample_basename}.bcftoolsROH.output
   cat ~{sample_basename}.bcftoolsROH.output | grep "^[^#]" | grep "^RG" | awk -F'\t' '{if($7>20 && $8>30 && $6>1000000)print $3,$4,$5,$8}' OFS='\t' > ~{sample_basename}.ROHcalls.qual.wig
