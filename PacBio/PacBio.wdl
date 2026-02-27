@@ -13,6 +13,7 @@ import "../Conifer2.wdl" as Conifer
 import "../manta/manta_workflow.wdl" as manta
 import "../AnnotateExpansionHunterVCF.wdl" as AnnotateExpansionHunterVCF
 import "../Stripy/Stripy_v2.wdl" as Stripy
+import "trgt_full.wdl" as TRGTFull
 
 workflow PacBioWorkflow {
   meta {
@@ -52,6 +53,7 @@ workflow PacBioWorkflow {
     Boolean run_struct_var_annotation = true
     Boolean run_expansion_hunter_annotation = true
     Boolean run_stripy = false
+    Boolean run_trgt_full = true
 
     # ========================================
     # VEP Annotation Inputs
@@ -142,6 +144,11 @@ workflow PacBioWorkflow {
     String expansion_hunter_docker = "gbergant/expansionhunter:latest"
     Boolean trgt = true
     File? custom_catalog_file
+
+    # ========================================
+    # Full TRGT Workflow Inputs (Optional)
+    # ========================================
+    String? trgt_full_docker_smrttools
   }
 
   # Read reference map file for CRAM and annotation
@@ -369,6 +376,25 @@ workflow PacBioWorkflow {
   }
 
   # ========================================
+  # Full TRGT Workflow (Optional)
+  # ========================================
+  if (run_trgt_full) {
+    if (defined(trgt_full_docker_smrttools)) {
+      call TRGTFull.trgt as TRGTFull {
+        input:
+          sample_name       = sample_id,
+          sex               = select_first([sex, "F"]),
+          mapped_bam        = pacbio_upstream.out_bam,
+          mapped_bam_bai    = pacbio_upstream.out_bam_index,
+          ref_fasta         = ref_map["fasta"],
+          ref_index         = ref_map["fasta_index"],
+          trgt_bed          = trgt_catalog,
+          docker_smrttools  = select_first([trgt_full_docker_smrttools])
+      }
+    }
+  }
+
+  # ========================================
   # Custom Annotation on Small Variants (Optional)
   # ========================================
   if (run_custom_annotation) {
@@ -481,6 +507,15 @@ workflow PacBioWorkflow {
     File   trgt_spanning_reads_index = pacbio_upstream.trgt_spanning_reads_index
     String stat_trgt_genotyped_count = pacbio_upstream.stat_trgt_genotyped_count
     String stat_trgt_uncalled_count  = pacbio_upstream.stat_trgt_uncalled_count
+    File?  trgt_full_vcf                         = TRGTFull.vcf
+    File?  trgt_full_spanning_bam                = TRGTFull.spanning_bam
+    File?  trgt_full_spanning_bam_bai            = TRGTFull.spanning_bam_bai
+    File?  trgt_full_images_motifs_allele        = TRGTFull.images_motifs_allele
+    File?  trgt_full_images_meth_allele          = TRGTFull.images_meth_allele
+    File?  trgt_full_images_motifs_waterfall     = TRGTFull.images_motifs_waterfall
+    File?  trgt_full_images_meth_waterfall       = TRGTFull.images_meth_waterfall
+    File?  trgt_full_reads_overlapping_repeats   = TRGTFull.reads_overlapping_repeats
+    File?  trgt_full_reads_overlapping_repeats_bai = TRGTFull.reads_overlapping_repeats_bai
     File? trgt_vcf_annotated         = AnnotateExpansionHunterVCF.expansion_hunter_vcf_annotated
     File? stripy_tsv                 = Stripy.stripy_tsv
     File? stripy_html                = Stripy.stripy_html
