@@ -587,7 +587,7 @@ task VCFANNO {
   wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/common/annotation/custom.lua
   
   # Write uncompressed output first so we can validate for binary/non-printable data
-  vcfanno -lua custom.lua -p 8 conf.toml ~{input_vcf} > ~{sample_basename}.vcf
+  vcfanno -lua custom.lua -p 4 conf.toml ~{input_vcf} > ~{sample_basename}.vcf
 
   # Fail fast if any control/non-printable bytes are present (works on the plain VCF)
   if LC_ALL=C grep -a -n -P '[\x00-\x08\x0B\x0C\x0E-\x1F]' ~{sample_basename}.vcf; then
