@@ -595,6 +595,12 @@ task VCFANNO {
     exit 1
   fi
 
+  # 2. Detect Go fmt formatting artefacts (parallel race symptoms)
+  if grep -n '%![a-zA-Z]' ~{sample_basename}.vcf; then
+    echo "ERROR: Go fmt formatting error detected in vcfanno output" >&2
+    exit 1
+  fi
+
     gzip -c ~{sample_basename}.vcf > ~{sample_basename}.vcf.gz
   }
   
