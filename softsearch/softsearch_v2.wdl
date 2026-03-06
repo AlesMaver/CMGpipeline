@@ -131,17 +131,16 @@ task FileToArray {
 
     command <<<
         # Get chromosome interval list file
-        wget  ~{github_fname}
+        wget  --no-check-certificate ~{github_fname}
         # Re-attempt the wget without the https_proxy set
         unset https_proxy 
-        wget  ~{github_fname}     
+        wget  --no-check-certificate ~{github_fname}     
         
         cat ~{fname}
     >>>
       
     runtime {
-        ## docker: "alesmaver/softsearch"  # old container, wget from github does not work anymore
-        docker: "gbergant/stripy_prod:2.5"
+        docker: "alesmaver/softsearch"
         runtime_minutes: 5
     }
     output {
