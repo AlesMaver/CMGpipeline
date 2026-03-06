@@ -140,7 +140,8 @@ task FileToArray {
     >>>
       
     runtime {
-        docker: "alesmaver/softsearch"
+        ## docker: "alesmaver/softsearch"  # old container, wget from github does not work anymore
+        docker: "gbergant/stripy_prod:2.5"
         runtime_minutes: 5
     }
     output {
