@@ -1617,7 +1617,7 @@ task CreateSequenceGroupingTSV {
   runtime {
     preemptible: preemptible_tries
     docker: "us.gcr.io/broad-gotc-prod/python:2.7"
-    #memory: "2 GiB"
+    memory: "2 GiB"
     requested_memory_mb_per_core: 1000
     cpu: 1
     runtime_minutes: 20
@@ -1741,7 +1741,7 @@ task ApplyBQSR {
     docker: gatk_docker
     preemptible: preemptible_tries
     maxRetries: 3
-    #memory: "~{memory_size} MiB"
+    memory: "~{memory_size} MiB"
     disks: "local-disk " + disk_size + " HDD"
     requested_memory_mb_per_core: 1000
     cpu: 4
@@ -1810,7 +1810,7 @@ task GatherSortedBamFiles {
     docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.3-1564508330"
     preemptible: preemptible_tries
     maxRetries: 3
-    #memory: "3 GiB"
+    memory: "3 GiB"
     disks: "local-disk " + disk_size + " HDD"
     requested_memory_mb_per_core: 1000
     cpu: 4
@@ -2246,7 +2246,7 @@ task PairedFastQsToUnmappedBAM {
   }
   runtime {
     docker: docker
-    #memory: machine_mem_gb + " GB"
+    memory: machine_mem_gb + " GB"
     disks: "local-disk " + disk_space_gb + " HDD"
     preemptible: preemptible_attempts
     maxRetries: 3
@@ -2291,7 +2291,7 @@ task SamSplitter {
     docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.3-1564508330"
     preemptible: preemptible_tries
     maxRetries: 3
-    #memory: "3.75 GiB"
+    memory: "3.75 GiB"
     disks: "local-disk " + disk_size + " HDD"
     requested_memory_mb_per_core: 1000
     cpu: 8
