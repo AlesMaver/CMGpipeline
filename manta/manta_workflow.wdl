@@ -143,8 +143,8 @@ workflow SVcalling {
 ###
 task DownloadFiles {
   command {
-    wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/references/blacklisted_regions/callable_regions.hg19.bed.gz
-    wget https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/references/blacklisted_regions/callable_regions.hg19.bed.gz.tbi
+    wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/references/blacklisted_regions/callable_regions.hg19.bed.gz
+    wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/references/blacklisted_regions/callable_regions.hg19.bed.gz.tbi
   }
   output {
     File callRegions = "callable_regions.hg19.bed.gz"
