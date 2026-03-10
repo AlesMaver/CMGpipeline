@@ -131,10 +131,10 @@ task FileToArray {
 
     command <<<
         # Get chromosome interval list file
-        wget  ~{github_fname}
+        wget  --no-check-certificate ~{github_fname}
         # Re-attempt the wget without the https_proxy set
         unset https_proxy 
-        wget  ~{github_fname}     
+        wget  --no-check-certificate ~{github_fname}     
         
         cat ~{fname}
     >>>
