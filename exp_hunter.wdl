@@ -80,13 +80,13 @@ task RunExpansionHunter {
 
   command <<<
     echo ~{sample_id}
-    # echo ~{patient_sex}
+    echo ~{patient_sex}
     echo ' '
     echo "[ PREPARATION ] Downloading variant catalog JSON"
     wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
     unset https_proxy
     wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog.json"
-
+    echo "wget done"
 
     echo "[ PREPARATION ] Fixing BAI file ending to BAM.BAI as required for the ExpansionHunter"
     BAIFILE=~{bai_file}
