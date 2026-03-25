@@ -134,7 +134,7 @@ task calculateBAF {
           print("$chr\t$start\t$end\t$varAlleleFreq\n");
           }''' > mpileupToWig.pl
 
-  samtools mpileup -q 15 -Q20 --no-BAQ --threads 10 -f ~{reference_fa} -l ~{dbSNPcommon_bed} ~{input_bam} | perl mpileupToWig.pl --min-reads=20 > ~{sample_basename}.BAF.wig  
+  samtools mpileup -q 15 -Q20 --no-BAQ -f ~{reference_fa} -l ~{dbSNPcommon_bed} ~{input_bam} | perl mpileupToWig.pl --min-reads=20 > ~{sample_basename}.BAF.wig  
   >>>
 
   runtime {
