@@ -72,7 +72,7 @@ task RunVEP {
         requested_memory_mb_per_core: 1000
         cpu: 64
         # 60 minutes is enough for an exome and genome. plus a little save margine (90). increased time and cpus due to long-reads
-        runtime_minutes: 240
+        runtime_minutes: 120
     }
 
     output {
