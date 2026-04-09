@@ -176,6 +176,7 @@ workflow MitochondriaPipeline {
 
   call variantEffectPredictor {
     input: 
+      base_name = sample_basename,
       chromosomeVCF = SplitMultiAllelicSites.split_vcf,
       assembly = "GRCh38",
       bufferSize = 100000,
@@ -210,7 +211,7 @@ workflow MitochondriaPipeline {
     # unnecessary: File contamination_metrics = AlignAndCall.contamination_metrics
     File major_haplogroup_file = AlignAndCall.major_haplogroup_file
     File base_level_coverage_metrics = CoverageAtEveryBase.table
-    
+    File vep_file = variantEffectPredictor.out
     File filterVCF_output_vcf = FilterVCF.output_vcf
     File filterVCF_mito_table = FilterVCF.mito_table
     
@@ -473,6 +474,7 @@ task FilterVCF {
 
 task  variantEffectPredictor {
     input {
+        String base_name
         File chromosomeVCF
         String assembly
         Int bufferSize
@@ -521,10 +523,10 @@ task  variantEffectPredictor {
         --fork 8 \
         --dir_plugins /opt/vep/plugins/loftee/ \
         --custom ~{gnomad_mito_sites_vcf},gnomADmito,vcf,exact,0,AC_het,AF_het,AC_hom,AF_hom \
-        -o variantEP.vcf.gz
+        -o {base_name}.variantEP.vcf.gz
     >>>
     output {
-        File out = "variantEP.vcf.gz"
+        File out = "{base_name}.variantEP.vcf.gz"
     }
     runtime {
         #docker: "ensemblorg/ensembl-vep:release_95.1"
