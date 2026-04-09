@@ -523,10 +523,10 @@ task  variantEffectPredictor {
         --fork 8 \
         --dir_plugins /opt/vep/plugins/loftee/ \
         --custom ~{gnomad_mito_sites_vcf},gnomADmito,vcf,exact,0,AC_het,AF_het,AC_hom,AF_hom \
-        -o {base_name}.variantEP.vcf.gz
+        -o ~{base_name}.variantEP.vcf.gz
     >>>
     output {
-        File out = "{base_name}.variantEP.vcf.gz"
+        File out = "~{base_name}.variantEP.vcf.gz"
     }
     runtime {
         #docker: "ensemblorg/ensembl-vep:release_95.1"
