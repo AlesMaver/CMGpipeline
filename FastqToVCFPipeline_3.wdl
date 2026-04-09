@@ -1350,7 +1350,10 @@ workflow FastqToVCF {
     File? base_level_coverage_metrics = MitochondriaPipeline.base_level_coverage_metrics
     File? filterVCF_output_vcf = MitochondriaPipeline.filterVCF_output_vcf
     File? filterVCF_mito_table = MitochondriaPipeline.filterVCF_mito_table
-	File? vep_file = MitochondriaPipeline.vep_file
+    File? vep_file = MitochondriaPipeline.vep_file
+    File? vep_file_index = MitochondriaPipeline.vep_file_index
+    File? vep_file_most_severe = MitochondriaPipeline.vep_file_most_severe
+    File? vep_file_most_severe_index = MitochondriaPipeline.vep_file_most_severe_index
 
     # Exome depth
     File? exome_depth_counts = ExomeDepth.exome_depth_counts

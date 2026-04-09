@@ -212,6 +212,9 @@ workflow MitochondriaPipeline {
     File major_haplogroup_file = AlignAndCall.major_haplogroup_file
     File base_level_coverage_metrics = CoverageAtEveryBase.table
     File vep_file = variantEffectPredictor.out
+    File vep_file_index = variantEffectPredictor.out_index
+    File vep_file_most_severe = variantEffectPredictor.out_most_severe
+    File vep_file_most_severe_index = variantEffectPredictor.out_most_severe_index
     File filterVCF_output_vcf = FilterVCF.output_vcf
     File filterVCF_mito_table = FilterVCF.mito_table
     
@@ -485,7 +488,12 @@ task  variantEffectPredictor {
         #File lofteeDir
     }
 
+      String output_vcf = base_name + ".variantEP.vcf.gz"
+      String output_vcf_most_severe = base_name + ".variantEP.mostSevere.vcf.gz"
+
     command <<<
+        set -e
+
         PERL5LIB=$PERL5LIB:/opt/vep/plugins/loftee/
 
         vep -i ~{chromosomeVCF} \
@@ -523,10 +531,55 @@ task  variantEffectPredictor {
         --fork 8 \
         --dir_plugins /opt/vep/plugins/loftee/ \
         --custom ~{gnomad_mito_sites_vcf},gnomADmito,vcf,exact,0,AC_het,AF_het,AC_hom,AF_hom \
-        -o ~{base_name}.variantEP.vcf.gz
+        -o ~{output_vcf}
+
+        tabix -p vcf ~{output_vcf}
+
+        vep -i ~{chromosomeVCF} \
+        --plugin LoF,loftee_path:/opt/vep/plugins/loftee/,human_ancestor_fa:/opt/vep/plugins/loftee/data/human_ancestor.fa.gz,conservation_file:/opt/vep/plugins/loftee/data/phylocsf_gerp.sql  \
+        --dir_cache /opt/vep/.vep/ \
+        --fasta ~{referenceFasta} \
+        --assembly ~{assembly} \
+        --cache \
+        --offline \
+        --vcf \
+        --sift b \
+        --polyphen b \
+        --ccds \
+        --uniprot \
+        --hgvs \
+        --symbol \
+        --numbers \
+        --domains \
+        --regulatory \
+        --canonical \
+        --mane \
+        --mane_select \
+        --protein \
+        --biotype \
+        --af \
+        --af_1kg \
+        --pubmed \
+        --shift_hgvs 0 \
+        --allele_number \
+        --pick \
+        --format vcf \
+        --force \
+        --buffer_size ~{bufferSize} \
+        --compress_output bgzip \
+        --no_stats \
+        --fork 8 \
+        --dir_plugins /opt/vep/plugins/loftee/ \
+        --custom ~{gnomad_mito_sites_vcf},gnomADmito,vcf,exact,0,AC_het,AF_het,AC_hom,AF_hom \
+        -o ~{output_vcf_most_severe}
+
+        tabix -p vcf ~{output_vcf_most_severe}
     >>>
     output {
-        File out = "~{base_name}.variantEP.vcf.gz"
+        File out = "~{output_vcf}"
+        File out_index = "~{output_vcf}.tbi"
+        File out_most_severe = "~{output_vcf_most_severe}"
+        File out_most_severe_index = "~{output_vcf_most_severe}.tbi"
     }
     runtime {
         #docker: "ensemblorg/ensembl-vep:release_95.1"
