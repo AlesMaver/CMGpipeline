@@ -28,7 +28,7 @@ import "./SCRAMBLE/scramble_v2.wdl" as Scramble
 import "./softsearch/softsearch_v2.wdl" as Softsearch
 import "./bigWig/wigToBigWig_conversion" as BigWig
 import "https://raw.githubusercontent.com/AlesMaver/gatk/master/scripts/mutect2_wdl/mutect2.wdl" as Mutect2
-import "./MitochondriaPipeline/MitochondriaPipeline.wdl" as MitochondriaPipeline
+import "./MitochondriaPipeline/MitochondriaPipelineV2.wdl" as MitochondriaPipeline
 ### import "./Exomiser.wdl" as Exomiser
 import "./ExomeDepth.wdl" as ExomeDepth
 import "./Stripy/Stripy_v2.wdl" as Stripy
@@ -1354,6 +1354,10 @@ workflow FastqToVCF {
     File? vep_file_index = MitochondriaPipeline.vep_file_index
     File? vep_file_most_severe = MitochondriaPipeline.vep_file_most_severe
     File? vep_file_most_severe_index = MitochondriaPipeline.vep_file_most_severe_index
+    File? mitovep_output_vcf = MitochondriaPipeline.mitovep_output_vcf
+    File? mitovep_output_vcf_index = MitochondriaPipeline.mitovep_output_vcf_index
+    File? mitovep_output_vcf_most_severe = MitochondriaPipeline.mitovep_output_vcf_most_severe
+    File? mitovep_output_vcf_most_severe_index = MitochondriaPipeline.mitovep_output_vcf_most_severe_index
 
     # Exome depth
     File? exome_depth_counts = ExomeDepth.exome_depth_counts
