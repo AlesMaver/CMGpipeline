@@ -199,8 +199,8 @@ workflow MitochondriaPipeline {
       reference_fasta = mt_fasta,
       gnomad_mito_sites_vcf = gnomad_mito_sites_vcf,
       gnomad_mito_sites_vcf_index = gnomad_mito_sites_vcf_index,
-      assembly = "GRCh38"
-      output_filename = sample_basename + "." + assembly + ".mutect_mitochondria.VEP.vcf.gz"
+      assembly = "GRCh38",
+      output_filename = sample_basename + "." + assembly + ".mutect_mitochondria.VEP.vcf.gz",
       output_filename_most_severe = sample_basename + "." + assembly + ".mutect_mitochondria.VEP.mostSevere.vcf.gz"
   }
 
