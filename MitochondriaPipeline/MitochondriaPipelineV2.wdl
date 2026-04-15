@@ -419,6 +419,8 @@ task CoverageAtEveryBase {
     memory: "1200 MB"
     docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.2-1552931386"
     preemptible: select_first([preemptible_tries, 5])
+    requested_memory_mb_per_core: 1000
+    cpu: 16
   }
   output {
     File table = "~{sample_basename}.per_base_coverage.tsv"
@@ -460,6 +462,8 @@ task SplitMultiAllelicSites {
       memory: "3 MB"
       disks: "local-disk 20 HDD"
       preemptible: select_first([preemptible_tries, 5])
+      requested_memory_mb_per_core: 1000
+      cpu: 8
   } 
 }
 
