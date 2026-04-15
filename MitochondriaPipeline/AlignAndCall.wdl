@@ -332,6 +332,8 @@ task GetContamination {
     memory: "3 GB"
     disks: "local-disk " + disk_size + " HDD"
     docker: "us.gcr.io/broad-dsde-methods/haplochecker:haplochecker-0124"
+    requested_memory_mb_per_core: 1000
+    cpu: 16
   }
   output {
     File major_haplogroup_file = "~{base_name}.major_hg.txt"
