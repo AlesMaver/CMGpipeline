@@ -137,7 +137,7 @@ workflow FastqToVCF {
     File refSeqFile
     
     Boolean make_bamout = false
-    Boolean do_SoftSearch = true
+    Boolean do_SoftSearch = false
 
     String? enrichment
     File? enrichment_bed
