@@ -55,7 +55,8 @@ task RunVEP {
             --cache --dir_cache /opt/vep/.vep \
             --plugin AlphaMissense,file=/opt/vep/.vep/Plugins/AlphaMissense/AlphaMissense_hg19.tsv.gz \
             --nearest symbol \
-            --shift_hgvs 0 \
+            --shift_hgvs 1 \
+            --hgvs \
             --allele_number \
             --assembly GRCh37 \
             --everything \
