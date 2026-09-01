@@ -136,11 +136,19 @@ task AnnotateExpansionHunter {
       echo "[ PREPARATION ] Using provided custom catalog file"
       CATALOG_FILE="~{custom_catalog_file}"
     else
-      echo "[ PREPARATION ] Downloading repeats file JSON"
-      wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
-      unset https_proxy
-      wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
-      CATALOG_FILE="variant_catalog_hg19.json"
+      if ~{if trgt then "true" else "false"}; then
+        echo "[ PREPARATION ] Downloading TRGT repeats file JSON"
+        wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/refs/heads/PacBio_testing_ales/ExpansionHunter_configuration/variant_catalog_hg19_trgt.json"
+        unset https_proxy
+        wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/refs/heads/PacBio_testing_ales/ExpansionHunter_configuration/variant_catalog_hg19_trgt.json"
+        CATALOG_FILE="variant_catalog_hg19_trgt.json"
+      else
+        echo "[ PREPARATION ] Downloading repeats file JSON"
+        wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
+        unset https_proxy
+        wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
+        CATALOG_FILE="variant_catalog_hg19.json"
+      fi
     fi
 
     echo "[ RUNNING ] expansion hunter vcf annotation on sample ~{sample_id}"
