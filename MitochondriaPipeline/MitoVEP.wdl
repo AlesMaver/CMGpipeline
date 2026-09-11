@@ -63,7 +63,7 @@ task RunMitoVEP {
       --dir_cache /opt/vep/.vep \
       --assembly ~{assembly} \
       --nearest symbol \
-      --shift_hgvs 0 \
+      --shift_hgvs 1 \
       --allele_number \
       --no_stats \
       --symbol \
@@ -105,7 +105,7 @@ task RunMitoVEP {
       --dir_cache /opt/vep/.vep \
       --assembly ~{assembly} \
       --nearest symbol \
-      --shift_hgvs 0 \
+      --shift_hgvs 1 \
       --allele_number \
       --no_stats \
       --symbol \

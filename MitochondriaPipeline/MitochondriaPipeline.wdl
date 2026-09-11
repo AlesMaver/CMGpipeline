@@ -511,7 +511,7 @@ task  variantEffectPredictor {
         --af \
         --af_1kg \
         --pubmed \
-        --shift_hgvs 0 \
+        --shift_hgvs 1 \
         --allele_number \
         --format vcf \
         --force \
