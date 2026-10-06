@@ -1,0 +1,1840 @@
+[
+  {
+    "LocusId": "HMNR7_VWA1",
+    "ReferenceRegion": "chr1:1371178-1371198",
+    "LocusStructure": "(AGCGGCGCGG)*",
+    "VariantType": "Repeat",
+    "InheritanceMode": "AR",
+    "DisplayRU": "GGCGCGGAGC",
+    "Disease": "HMNR7",
+    "NormalMax": 2,
+    "PathologicMin": 3,
+    "Gene": "VWA1",
+    "TRID": "HMNR7_VWA1",
+    "Motifs": [
+      "GGCGCGGAGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "HMNR7_VWA1"
+  },
+  {
+    "LocusId": "SCA37_DAB1",
+    "ReferenceRegion": [
+      "chr1:57832715-57832750",
+      "chr1:57832750-57832793"
+    ],
+    "LocusStructure": "(AAAAT)*(GAAAT)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "SCA37_DAB1_AAAAT",
+      "SCA37_DAB1"
+    ],
+    "PathologicRegion": "chr1:57832750-57832793",
+    "HGNCId": 2661,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GAAAT",
+    "Disease": "SCA37",
+    "NormalMax": 30,
+    "PathologicMin": 31,
+    "Gene": "DAB1",
+    "TRID": "SCA37_DAB1",
+    "Motifs": [
+      "AAAAT",
+      "GAAAT"
+    ],
+    "PathologicStruc": [
+      1
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA37_DAB1"
+  },
+  {
+    "LocusId": "OPDM5_ABCD3",
+    "ReferenceRegion": "chr1:94883977-94884000",
+    "LocusStructure": "(CCG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 67,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GCC",
+    "Disease": "OPDM5",
+    "NormalMax": 44,
+    "PathologicMin": 118,
+    "Gene": "ABCD3",
+    "TRID": "OPDM5_ABCD3",
+    "Motifs": [
+      "GCC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "OPDM5_ABCD3"
+  },
+  {
+    "LocusId": "NIID_NOTCH2NLC",
+    "ReferenceRegion": "chr1:145209323-145209354",
+    "LocusStructure": "(CGG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 9179,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GGC",
+    "Disease": "NIID",
+    "NormalMax": 37,
+    "PathologicMin": 66,
+    "Gene": "NOTCH2NLC",
+    "TRID": "NIID_NOTCH2NLC",
+    "Motifs": [
+      "GGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "NIID_NOTCH2NLC"
+  },
+  {
+    "LocusId": "NME_NAXE",
+    "ReferenceRegion": "chr1:156561557-156561575",
+    "LocusStructure": "(CCGGG)*",
+    "VariantType": "Repeat",
+    "InheritanceMode": "AR",
+    "DisplayRU": "GGGCC",
+    "Disease": "NME",
+    "NormalMax": 7,
+    "PathologicMin": 200,
+    "Gene": "NAXE",
+    "TRID": "NME_NAXE",
+    "Motifs": [
+      "GGGCC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "NME_NAXE"
+  },
+  {
+    "LocusId": "FAME2_STARD7",
+    "ReferenceRegion": [
+      "chr2:96862804-96862807",
+      "chr2:96862807-96862862"
+    ],
+    "LocusStructure": "(AAATG)*(AAAAT)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "FAME2_STARD7",
+      "FAME2_STARD7_AAAAT"
+    ],
+    "PathologicRegion": "chr2:96862804-96862807",
+    "HGNCId": 9179,
+    "InheritanceMode": "AD",
+    "DisplayRU": "AAATG",
+    "Disease": "FAME2",
+    "NormalMax": 273,
+    "PathologicMin": 274,
+    "Gene": "STARD7",
+    "TRID": "FAME2_STARD7",
+    "Motifs": [
+      "AAATG",
+      "AAAAT"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "FAME2_STARD7"
+  },
+  {
+    "LocusId": "FRA2A_AFF3",
+    "ReferenceRegion": "chr2:100721260-100721286",
+    "LocusStructure": "(CCG)*",
+    "VariantType": "Repeat",
+    "InheritanceMode": "AD",
+    "DisplayRU": "GCC",
+    "Disease": "FRA2A",
+    "NormalMax": 20,
+    "PathologicMin": 300,
+    "Gene": "AFF3",
+    "TRID": "FRA2A_AFF3",
+    "Motifs": [
+      "GCC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "FRA2A_AFF3"
+  },
+  {
+    "LocusId": "SD5_HOXD13",
+    "ReferenceRegion": "chr2:176957786-176957831",
+    "LocusStructure": "(GCN)*",
+    "VariantType": "Repeat",
+    "HGNCId": 5136,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GCN",
+    "Disease": "SD5",
+    "NormalMax": 15,
+    "PathologicMin": 22,
+    "Gene": "HOXD13",
+    "TRID": "SD5_HOXD13",
+    "Motifs": [
+      "GCN"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SD5_HOXD13"
+  },
+  {
+    "LocusId": "GDPAG_GLS",
+    "ReferenceRegion": "chr2:191745598-191745646",
+    "LocusStructure": "(CAG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 4331,
+    "InheritanceMode": "AR",
+    "DisplayRU": "GCA",
+    "Disease": "GDPAG",
+    "NormalMax": 38,
+    "PathologicMin": 680,
+    "Gene": "GLS",
+    "TRID": "GDPAG_GLS",
+    "Motifs": [
+      "GCA"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "GDPAG_GLS"
+  },
+  {
+    "LocusId": "SCA7_ATXN7",
+    "ReferenceRegion": [
+      "chr3:63898360-63898391",
+      "chr3:63898391-63898403"
+    ],
+    "LocusStructure": "(CAG)*(CCG)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "SCA7_ATXN7",
+      "SCA7_ATXN7_CCG"
+    ],
+    "PathologicRegion": "chr3:63898360-63898391",
+    "HGNCId": 10560,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CAG",
+    "Disease": "SCA7",
+    "NormalMax": 27,
+    "PathologicMin": 37,
+    "Gene": "ATXN7",
+    "TRID": "SCA7_ATXN7",
+    "Motifs": [
+      "CAG",
+      "CCG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA7_ATXN7"
+  },
+  {
+    "LocusId": "DM2_CNBP",
+    "ReferenceRegion": [
+      "chr3:128891419-128891499",
+      "chr3:128891499-128891539",
+      "chr3:128891539-128891577"
+    ],
+    "LocusStructure": "(CAGG)*(CAGA)*(CA)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "DM2_CNBP",
+      "DM2_CNBP_CAGA",
+      "DM2_CNBP_CA"
+    ],
+    "PathologicRegion": "chr3:128891419-128891499",
+    "HGNCId": 13164,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CAGG",
+    "Disease": "DM2",
+    "NormalMax": 26,
+    "PathologicMin": 75,
+    "Gene": "CNBP",
+    "TRID": "DM2_CNBP",
+    "Motifs": [
+      "CAGG",
+      "CAGA",
+      "CA"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "DM2_CNBP"
+  },
+  {
+    "LocusId": "BPES_FOXL2",
+    "ReferenceRegion": "chr3:138664861-138664904",
+    "LocusStructure": "(NGC)*",
+    "VariantType": "Repeat",
+    "HGNCId": 1092,
+    "InheritanceMode": "AD/AR",
+    "DisplayRU": "NGC",
+    "Disease": "BPES",
+    "NormalMax": 14,
+    "PathologicMin": 15,
+    "Gene": "FOXL2",
+    "TRID": "BPES_FOXL2",
+    "Motifs": [
+      "NGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "BPES_FOXL2"
+  },
+  {
+    "LocusId": "FAME4_YEATS2",
+    "ReferenceRegion": [
+      "chr3:183429975-183430010",
+      "chr3:183430010-183430014"
+    ],
+    "LocusStructure": "(TTTTA)*(TTTCA)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "FAME4_YEATS2_TTTTA",
+      "FAME4_YEATS2"
+    ],
+    "PathologicRegion": "chr3:183430010-183430014",
+    "HGNCId": 9179,
+    "InheritanceMode": "AD",
+    "DisplayRU": "TTTCA",
+    "Disease": "FAME4",
+    "NormalMax": 999,
+    "PathologicMin": 1000,
+    "Gene": "YEATS2",
+    "TRID": "FAME4_YEATS2",
+    "Motifs": [
+      "TTTTA",
+      "TTTCA"
+    ],
+    "PathologicStruc": [
+      1
+    ],
+    "Source": "STRchive",
+    "SourceId": "FAME4_YEATS2"
+  },
+  {
+    "LocusId": "HD_HTT",
+    "ReferenceRegion": [
+      "chr4:3076603-3076654",
+      "chr4:3076660-3076696"
+    ],
+    "LocusStructure": "(CAG)*CAACAG(CCG)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "HD_HTT",
+      "HD_HTT_CCG"
+    ],
+    "PathologicRegion": "chr4:3076603-3076654",
+    "HGNCId": 4851,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CAG",
+    "Disease": "HD",
+    "NormalMax": 26,
+    "PathologicMin": 36,
+    "Gene": "HTT",
+    "TRID": "HD_HTT",
+    "Motifs": [
+      "CAG",
+      "CCG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "HD_HTT"
+  },
+  {
+    "LocusId": "CANVAS_RFC1",
+    "ReferenceRegion": [
+      "chr4:39350044-39350099",
+      "chr4:39350099-39350103"
+    ],
+    "LocusStructure": "(AAAAG)*(AAGGG)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "CANVAS_RFC1_AAAAG",
+      "CANVAS_RFC1"
+    ],
+    "PathologicRegion": "chr4:39350099-39350103",
+    "HGNCId": 9969,
+    "InheritanceMode": "AR",
+    "DisplayRU": "AAGGG",
+    "Disease": "CANVAS",
+    "NormalMax": 11,
+    "PathologicMin": 400,
+    "Gene": "RFC1",
+    "TRID": "CANVAS_RFC1",
+    "Motifs": [
+      "AAAAG",
+      "AAGGG",
+      "ACAGG",
+      "AAAGG",
+      "AGGGC",
+      "AAAGGG"
+    ],
+    "PathologicStruc": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "Source": "STRchive",
+    "SourceId": "CANVAS_RFC1"
+  },
+  {
+    "LocusId": "CCHS_PHOX2B",
+    "ReferenceRegion": "chr4:41747989-41748049",
+    "LocusStructure": "(NGC)*",
+    "VariantType": "Repeat",
+    "HGNCId": 9143,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GCN",
+    "Disease": "CCHS",
+    "NormalMax": 20,
+    "PathologicMin": 26,
+    "Gene": "PHOX2B",
+    "TRID": "CCHS_PHOX2B",
+    "Motifs": [
+      "GCN"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "CCHS_PHOX2B"
+  },
+  {
+    "LocusId": "FAME7_RAPGEF2",
+    "ReferenceRegion": [
+      "chr4:160263678-160263763",
+      "chr4:160263763-160263770"
+    ],
+    "LocusStructure": "(TTTTA)*(TTTCA)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "FAME7_RAPGEF2_TTTTA",
+      "FAME7_RAPGEF2"
+    ],
+    "PathologicRegion": "chr4:160263763-160263770",
+    "HGNCId": 16854,
+    "InheritanceMode": "AD",
+    "DisplayRU": "TTTCA",
+    "Disease": "FAME7",
+    "NormalMax": 59,
+    "PathologicMin": 60,
+    "Gene": "RAPGEF2",
+    "TRID": "FAME7_RAPGEF2",
+    "Motifs": [
+      "TTTTA",
+      "TTTCA"
+    ],
+    "PathologicStruc": [
+      1
+    ],
+    "Source": "STRchive",
+    "SourceId": "FAME7_RAPGEF2"
+  },
+  {
+    "LocusId": "FAME3_MARCHF6",
+    "ReferenceRegion": [
+      "chr5:10356455-10356515",
+      "chr5:10356515-10356523"
+    ],
+    "LocusStructure": "(TTTTA)*(TTTCA)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "FAME3_MARCHF6_TTTTA",
+      "FAME3_MARCHF6"
+    ],
+    "PathologicRegion": "chr5:10356515-10356523",
+    "HGNCId": 9179,
+    "InheritanceMode": "AD",
+    "DisplayRU": "TTTCA",
+    "Disease": "FAME3",
+    "NormalMax": 649,
+    "PathologicMin": 650,
+    "Gene": "MARCHF6",
+    "TRID": "FAME3_MARCHF6",
+    "Motifs": [
+      "TTTTA",
+      "TTTCA"
+    ],
+    "PathologicStruc": [
+      1
+    ],
+    "Source": "STRchive",
+    "SourceId": "FAME3_MARCHF6"
+  },
+  {
+    "LocusId": "SCA12_PPP2R2B",
+    "ReferenceRegion": "chr5:146258290-146258322",
+    "LocusStructure": "(CTG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 9305,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GCT",
+    "Disease": "SCA12",
+    "NormalMax": 32,
+    "PathologicMin": 51,
+    "Gene": "PPP2R2B",
+    "TRID": "SCA12_PPP2R2B",
+    "Motifs": [
+      "GCT"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA12_PPP2R2B"
+  },
+  {
+    "LocusId": "SCA1_ATXN1",
+    "ReferenceRegion": "chr6:16327864-16327955",
+    "LocusStructure": "(CTG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 10548,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CTG",
+    "Disease": "SCA1",
+    "NormalMax": 35,
+    "PathologicMin": 39,
+    "Gene": "ATXN1",
+    "TRID": "SCA1_ATXN1",
+    "Motifs": [
+      "CTG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA1_ATXN1"
+  },
+  {
+    "LocusId": "CCD_RUNX2",
+    "ReferenceRegion": [
+      "chr6:45390418-45390487",
+      "chr6:45390487-45390538"
+    ],
+    "LocusStructure": "(CAG)*(GCN)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "CCD_RUNX2_CAG",
+      "CCD_RUNX2"
+    ],
+    "PathologicRegion": "chr6:45390487-45390538",
+    "HGNCId": 10472,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GCN",
+    "Disease": "CCD",
+    "NormalMax": 17,
+    "PathologicMin": 20,
+    "Gene": "RUNX2",
+    "TRID": "CCD_RUNX2",
+    "Motifs": [
+      "GCN"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "CCD_RUNX2"
+  },
+  {
+    "LocusId": "SCA17_TBP",
+    "ReferenceRegion": "chr6:170870994-170871105",
+    "LocusStructure": "(CAG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 11588,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GCA",
+    "Disease": "SCA17",
+    "NormalMax": 40,
+    "PathologicMin": 49,
+    "Gene": "TBP",
+    "TRID": "SCA17_TBP",
+    "Motifs": [
+      "GCA"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA17_TBP"
+  },
+  {
+    "LocusId": "HFG_HOXA13-III",
+    "ReferenceRegion": "chr7:27239297-27239351",
+    "LocusStructure": "(NGC)*",
+    "VariantType": "Repeat",
+    "HGNCId": 5102,
+    "InheritanceMode": "AD",
+    "DisplayRU": "NGC",
+    "Disease": "HFG-III",
+    "NormalMax": 18,
+    "PathologicMin": 22,
+    "Gene": "HOXA13",
+    "TRID": "HFG_HOXA13-III",
+    "Motifs": [
+      "NGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "HFG_HOXA13-III"
+  },
+  {
+    "LocusId": "HFG_HOXA13-II",
+    "ReferenceRegion": "chr7:27239444-27239480",
+    "LocusStructure": "(NGC)*",
+    "VariantType": "Repeat",
+    "HGNCId": 5102,
+    "InheritanceMode": "AD",
+    "DisplayRU": "NGC",
+    "Disease": "HFG-II",
+    "NormalMax": 12,
+    "PathologicMin": 18,
+    "Gene": "HOXA13",
+    "TRID": "HFG_HOXA13-II",
+    "Motifs": [
+      "NGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "HFG_HOXA13-II"
+  },
+  {
+    "LocusId": "HFG_HOXA13-I",
+    "ReferenceRegion": "chr7:27239543-27239585",
+    "LocusStructure": "(NGC)*",
+    "VariantType": "Repeat",
+    "HGNCId": 5102,
+    "InheritanceMode": "AD",
+    "DisplayRU": "NGC",
+    "Disease": "HFG-I",
+    "NormalMax": 14,
+    "PathologicMin": 22,
+    "Gene": "HOXA13",
+    "TRID": "HFG_HOXA13-I",
+    "Motifs": [
+      "NGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "HFG_HOXA13-I"
+  },
+  {
+    "LocusId": "FRA7A_ZNF713",
+    "ReferenceRegion": "chr7:55955293-55955332",
+    "LocusStructure": "(CGG)*",
+    "VariantType": "Repeat",
+    "InheritanceMode": "AD",
+    "DisplayRU": "GCG",
+    "Disease": "FRA7A",
+    "NormalMax": 22,
+    "PathologicMin": 450,
+    "Gene": "ZNF713",
+    "TRID": "FRA7A_ZNF713",
+    "Motifs": [
+      "GCG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "FRA7A_ZNF713"
+  },
+  {
+    "LocusId": "OPDM1_LRP12",
+    "ReferenceRegion": "chr8:105601198-105601227",
+    "LocusStructure": "(CCG)*",
+    "VariantType": "Repeat",
+    "InheritanceMode": "AD",
+    "DisplayRU": "CGC",
+    "Disease": "OPDM1",
+    "NormalMax": 45,
+    "PathologicMin": 85,
+    "Gene": "LRP12",
+    "TRID": "OPDM1_LRP12",
+    "Motifs": [
+      "CGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "OPDM1_LRP12"
+  },
+  {
+    "LocusId": "FAME1_SAMD12",
+    "ReferenceRegion": [
+      "chr8:119379051-119379151",
+      "chr8:119379151-119379157"
+    ],
+    "LocusStructure": "(TAAAA)*(TGAAA)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "FAME1_SAMD12_TAAAA",
+      "FAME1_SAMD12"
+    ],
+    "PathologicRegion": "chr8:119379151-119379157",
+    "HGNCId": 31750,
+    "InheritanceMode": "AD",
+    "DisplayRU": "TGAAA",
+    "Disease": "FAME1",
+    "NormalMax": 104,
+    "PathologicMin": 105,
+    "Gene": "SAMD12",
+    "TRID": "FAME1_SAMD12",
+    "Motifs": [
+      "TAAAA",
+      "TGAAA"
+    ],
+    "PathologicStruc": [
+      1
+    ],
+    "Source": "STRchive",
+    "SourceId": "FAME1_SAMD12"
+  },
+  {
+    "LocusId": "FTDALS1_C9orf72",
+    "ReferenceRegion": "chr9:27573482-27573544",
+    "LocusStructure": "(CCCCGG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 28337,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GGCCCC",
+    "Disease": "FTDALS1",
+    "NormalMax": 23,
+    "PathologicMin": 31,
+    "Gene": "C9orf72",
+    "TRID": "FTDALS1_C9orf72",
+    "Motifs": [
+      "GGCCCC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "FTDALS1_C9orf72"
+  },
+  {
+    "LocusId": "FRDA_FXN",
+    "ReferenceRegion": [
+      "chr9:71652186-71652202",
+      "chr9:71652202-71652220"
+    ],
+    "LocusStructure": "(A)*(GAA)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "FRDA_FXN_A",
+      "FRDA_FXN"
+    ],
+    "PathologicRegion": "chr9:71652202-71652220",
+    "HGNCId": 3951,
+    "InheritanceMode": "AR",
+    "DisplayRU": "GAA",
+    "Disease": "FRDA",
+    "NormalMax": 33,
+    "PathologicMin": 56,
+    "Gene": "FXN",
+    "TRID": "FRDA_FXN",
+    "Motifs": [
+      "A",
+      "GAA"
+    ],
+    "PathologicStruc": [
+      1
+    ],
+    "Source": "STRchive",
+    "SourceId": "FRDA_FXN"
+  },
+  {
+    "LocusId": "HSAN-VIII_PRDM12",
+    "ReferenceRegion": "chr9:133556992-133557028",
+    "LocusStructure": "(CCG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 9179,
+    "InheritanceMode": "AR",
+    "DisplayRU": "GCC",
+    "Disease": "HSAN VIII",
+    "NormalMax": 14,
+    "PathologicMin": 18,
+    "Gene": "PRDM12",
+    "TRID": "HSAN-VIII_PRDM12",
+    "Motifs": [
+      "GCC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "HSAN-VIII_PRDM12"
+  },
+  {
+    "LocusId": "OPML1_NUTM2B-AS1",
+    "ReferenceRegion": "chr10:81586139-81586160",
+    "LocusStructure": "(CGG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 9179,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GGC",
+    "Disease": "OPML1",
+    "NormalMax": 16,
+    "PathologicMin": 161,
+    "Gene": "NUTM2B-AS1",
+    "TRID": "OPML1_NUTM2B-AS1",
+    "Motifs": [
+      "GGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "OPML1_NUTM2B-AS1"
+  },
+  {
+    "LocusId": "JBS_CBL",
+    "ReferenceRegion": "chr11:119076999-119077033",
+    "LocusStructure": "(CGG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 1541,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CGG",
+    "Disease": "JBS",
+    "NormalMax": 79,
+    "PathologicMin": 101,
+    "Gene": "CBL",
+    "TRID": "JBS_CBL",
+    "Motifs": [
+      "CGG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "JBS_CBL"
+  },
+  {
+    "LocusId": "DRPLA_ATN1",
+    "ReferenceRegion": "chr12:7045879-7045938",
+    "LocusStructure": "(CAG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 3033,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CAG",
+    "Disease": "DRPLA",
+    "NormalMax": 35,
+    "PathologicMin": 48,
+    "Gene": "ATN1",
+    "TRID": "DRPLA_ATN1",
+    "Motifs": [
+      "CAG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "DRPLA_ATN1"
+  },
+  {
+    "LocusId": "FRA12A_DIP2B",
+    "ReferenceRegion": "chr12:50898784-50898807",
+    "LocusStructure": "(CGG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 29284,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GGC",
+    "Disease": "FRA12A",
+    "NormalMax": 23,
+    "PathologicMin": 273,
+    "Gene": "DIP2B",
+    "TRID": "FRA12A_DIP2B",
+    "Motifs": [
+      "GGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "FRA12A_DIP2B"
+  },
+  {
+    "LocusId": "SCA2_ATXN2",
+    "ReferenceRegion": "chr12:112036753-112036823",
+    "LocusStructure": "(CTG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 10555,
+    "InheritanceMode": "AD/AR",
+    "DisplayRU": "CTG",
+    "Disease": "SCA2",
+    "NormalMax": 28,
+    "PathologicMin": 35,
+    "Gene": "ATXN2",
+    "TRID": "SCA2_ATXN2",
+    "Motifs": [
+      "CTG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA2_ATXN2"
+  },
+  {
+    "LocusId": "OPDM4_RILPL1",
+    "ReferenceRegion": "chr12:124018267-124018297",
+    "LocusStructure": "(CGG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 26814,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GGC",
+    "Disease": "OPDM4",
+    "NormalMax": 16,
+    "PathologicMin": 120,
+    "Gene": "RILPL1",
+    "TRID": "OPDM4_RILPL1",
+    "Motifs": [
+      "GGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "OPDM4_RILPL1"
+  },
+  {
+    "LocusId": "SCA8_ATXN8OS",
+    "ReferenceRegion": [
+      "chr13:70713485-70713515",
+      "chr13:70713515-70713561"
+    ],
+    "LocusStructure": "(CTA)*(CTG)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "SCA8_ATXN8OS_CTA",
+      "SCA8_ATXN8OS"
+    ],
+    "PathologicRegion": "chr13:70713515-70713561",
+    "HGNCId": 10561,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CTG",
+    "Disease": "SCA8",
+    "NormalMax": 50,
+    "PathologicMin": 71,
+    "Gene": "ATXN8OS",
+    "TRID": "SCA8_ATXN8OS",
+    "Motifs": [
+      "CTA",
+      "CTG"
+    ],
+    "PathologicStruc": [
+      1
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA8_ATXN8OS"
+  },
+  {
+    "LocusId": "HPE5_ZIC2",
+    "ReferenceRegion": "chr13:100637702-100637748",
+    "LocusStructure": "(GCN)*",
+    "VariantType": "Repeat",
+    "HGNCId": 12873,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GCN",
+    "Disease": "HPE5",
+    "NormalMax": 15,
+    "PathologicMin": 25,
+    "Gene": "ZIC2",
+    "TRID": "HPE5_ZIC2",
+    "Motifs": [
+      "GCN"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "HPE5_ZIC2"
+  },
+  {
+    "LocusId": "SCA27B_FGF14",
+    "ReferenceRegion": "chr13:102813924-102814076",
+    "LocusStructure": "(AAG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 3671,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GAA",
+    "Disease": "SCA27B",
+    "NormalMax": 179,
+    "PathologicMin": 320,
+    "Gene": "FGF14",
+    "TRID": "SCA27B_FGF14",
+    "Motifs": [
+      "GAA",
+      "GGA",
+      "GCA"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA27B_FGF14"
+  },
+  {
+    "LocusId": "OPMD_PABPN1",
+    "ReferenceRegion": "chr14:23790681-23790712",
+    "LocusStructure": "(GCN)*",
+    "VariantType": "Repeat",
+    "HGNCId": 8565,
+    "InheritanceMode": "AD/AR",
+    "DisplayRU": "GCN",
+    "Disease": "OPMD",
+    "NormalMax": 10,
+    "PathologicMin": 12,
+    "Gene": "PABPN1",
+    "TRID": "OPMD_PABPN1",
+    "Motifs": [
+      "GCN"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "OPMD_PABPN1"
+  },
+  {
+    "LocusId": "SCA3_ATXN3",
+    "ReferenceRegion": "chr14:92537354-92537396",
+    "LocusStructure": "(CTG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 7106,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CTG",
+    "Disease": "SCA3, MJD",
+    "NormalMax": 44,
+    "PathologicMin": 60,
+    "Gene": "ATXN3",
+    "TRID": "SCA3_ATXN3",
+    "Motifs": [
+      "CTG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA3_ATXN3"
+  },
+  {
+    "LocusId": "ALS1_NIPA1",
+    "ReferenceRegion": "chr15:23086363-23086389",
+    "LocusStructure": "(CGG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 17043,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GCG",
+    "Disease": "ALS1",
+    "NormalMax": 10,
+    "PathologicMin": 11,
+    "Gene": "NIPA1",
+    "TRID": "ALS1_NIPA1",
+    "Motifs": [
+      "GCG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "ALS1_NIPA1"
+  },
+  {
+    "LocusId": "MIR7-2_CHNG3",
+    "ReferenceRegion": "chr15:89112664-89112683",
+    "LocusStructure": "(GTTT)*",
+    "VariantType": "Repeat",
+    "InheritanceMode": "AD",
+    "DisplayRU": "TTTG",
+    "Disease": "CHNG3",
+    "NormalMax": 4,
+    "PathologicMin": 5,
+    "Gene": "MIR7-2",
+    "TRID": "MIR7-2_CHNG3",
+    "Motifs": [
+      "TTTG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "CHNG3_MIR7-2"
+  },
+  {
+    "LocusId": "DBQD2_XYLT1",
+    "ReferenceRegion": [
+      "chr16:17564764-17564764",
+      "chr16:17564764-17564779"
+    ],
+    "LocusStructure": "(GCC)*(GCC)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "DBQD2_XYLT1_GCC",
+      "DBQD2_XYLT1"
+    ],
+    "PathologicRegion": "chr16:17564764-17564779",
+    "HGNCId": 15516,
+    "InheritanceMode": "AR",
+    "DisplayRU": "GCC",
+    "Disease": "DBQD2, BSS",
+    "NormalMax": 20,
+    "PathologicMin": 72,
+    "Gene": "XYLT1",
+    "TRID": "DBQD2_XYLT1",
+    "Motifs": [
+      "GCC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "DBQD2_XYLT1"
+  },
+  {
+    "LocusId": "FAME6_TNRC6A",
+    "ReferenceRegion": [
+      "chr16:24624759-24624809",
+      "chr16:24624809-24624853"
+    ],
+    "LocusStructure": "(TTTTA)*(TTTCA)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "FAME6_TNRC6A_TTTTA",
+      "FAME6_TNRC6A"
+    ],
+    "PathologicRegion": "chr16:24624809-24624853",
+    "HGNCId": 11969,
+    "InheritanceMode": "AD",
+    "DisplayRU": "TTTCA",
+    "Disease": "FAME6",
+    "NormalMax": 1099,
+    "PathologicMin": 1100,
+    "Gene": "TNRC6A",
+    "TRID": "FAME6_TNRC6A",
+    "Motifs": [
+      "TTTTA",
+      "TTTCA"
+    ],
+    "PathologicStruc": [
+      1
+    ],
+    "Source": "STRchive",
+    "SourceId": "FAME6_TNRC6A"
+  },
+  {
+    "LocusId": "SCA31_BEAN1",
+    "ReferenceRegion": "chr16:66524299-66524369",
+    "LocusStructure": "(AATGG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 24160,
+    "InheritanceMode": "AD",
+    "DisplayRU": "TGGAA",
+    "Disease": "SCA31",
+    "NormalMax": 109,
+    "PathologicMin": 110,
+    "Gene": "BEAN1",
+    "TRID": "SCA31_BEAN1",
+    "Motifs": [
+      "TGGAA",
+      "TAGAA",
+      "AATAA"
+    ],
+    "PathologicStruc": [
+      0,
+      1
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA31_BEAN1"
+  },
+  {
+    "LocusId": "SCA_THAP11",
+    "ReferenceRegion": "chr16:67876765-67876853",
+    "LocusStructure": "(CAG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 23194,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CAG",
+    "Disease": "SCA51",
+    "NormalMax": 38,
+    "PathologicMin": 45,
+    "Gene": "THAP11",
+    "TRID": "SCA_THAP11",
+    "Motifs": [
+      "CAG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA51_THAP11"
+  },
+  {
+    "LocusId": "SCA4_ZFHX3",
+    "ReferenceRegion": "chr16:72821593-72821657",
+    "LocusStructure": "(CCG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 777,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GCC",
+    "Disease": "SCA4",
+    "NormalMax": 26,
+    "PathologicMin": 46,
+    "Gene": "ZFHX3",
+    "TRID": "SCA4_ZFHX3",
+    "Motifs": [
+      "GCC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA4_ZFHX3"
+  },
+  {
+    "LocusId": "HDL2_JPH3",
+    "ReferenceRegion": "chr16:87637888-87637935",
+    "LocusStructure": "(CTG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 14203,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CTG",
+    "Disease": "HDL2",
+    "NormalMax": 28,
+    "PathologicMin": 40,
+    "Gene": "JPH3",
+    "TRID": "HDL2_JPH3",
+    "Motifs": [
+      "CTG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "HDL2_JPH3"
+  },
+  {
+    "LocusId": "FAME8_RAI1",
+    "ReferenceRegion": [
+      "chr17:17711672-17711762",
+      "chr17:17711762-17711774"
+    ],
+    "LocusStructure": "(TTTTA)*(TTTCA)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "FAME8_RAI1_TTTTA",
+      "FAME8_RAI1"
+    ],
+    "PathologicRegion": "chr17:17711762-17711774",
+    "InheritanceMode": "AD",
+    "DisplayRU": "TTTCA",
+    "Disease": "FAME8",
+    "NormalMax": 8,
+    "PathologicMin": 9,
+    "Gene": "RAI1",
+    "TRID": "FAME8_RAI1",
+    "Motifs": [
+      "TTTTA",
+      "TTTCA"
+    ],
+    "PathologicStruc": [
+      1
+    ],
+    "Source": "STRchive",
+    "SourceId": "FAME8_RAI1"
+  },
+  {
+    "LocusId": "RCPS_EIF4A3",
+    "ReferenceRegion": "chr17:78120808-78120938",
+    "LocusStructure": "(GCCGCTGCCGACCTCGCTGT)*",
+    "VariantType": "Repeat",
+    "HGNCId": 18683,
+    "InheritanceMode": "AR",
+    "DisplayRU": "CCTCGCTGTGCCGCTGCCGA",
+    "Disease": "RCPS",
+    "NormalMax": 12,
+    "PathologicMin": 14,
+    "Gene": "EIF4A3",
+    "TRID": "RCPS_EIF4A3",
+    "Motifs": [
+      "CCTCGCTGTGCCGCTGCCGA"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "RCPS_EIF4A3"
+  },
+  {
+    "LocusId": "CPUM_TYMS",
+    "ReferenceRegion": "chr18:666891-667632",
+    "LocusStructure": "(GATGGT)*",
+    "VariantType": "Repeat",
+    "InheritanceMode": "AR",
+    "DisplayRU": "GATGGT",
+    "Disease": "CPUM",
+    "NormalMax": 172,
+    "PathologicMin": 210,
+    "Gene": "TYMS",
+    "TRID": "CPUM_TYMS",
+    "Motifs": [
+      "GATGGT"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "CPUM_TYMS"
+  },
+  {
+    "LocusId": "FECD3_TCF4",
+    "ReferenceRegion": "chr18:53253384-53253460",
+    "LocusStructure": "(CAG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 11634,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CAG",
+    "Disease": "FECD3",
+    "NormalMax": 39,
+    "PathologicMin": 51,
+    "Gene": "TCF4",
+    "TRID": "FECD3_TCF4",
+    "Motifs": [
+      "CAG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "FECD3_TCF4"
+  },
+  {
+    "LocusId": "MRUPAV_PLIN4",
+    "ReferenceRegion": "chr19:4510739-4513671",
+    "LocusStructure": "(GGCCACATTCATGGCACCAGTCACCCCACTACAGACGGTGTCCTTGGTACCTGTTAGGACAGTCTTACTGGTGTCCACGCCGGTCTGGATGGTTCCTTT)*",
+    "VariantType": "Repeat",
+    "InheritanceMode": "AD",
+    "DisplayRU": "TGGTGTCCACGCCGGTCTGGATGGTTCCTTTGGCCACATTCATGGCACCAGTCACCCCACTACAGACGGTGTCCTTGGTACCTGTTAGGACAGTCTTAC",
+    "Disease": "MRUPAV",
+    "NormalMax": 31,
+    "PathologicMin": 37,
+    "Gene": "PLIN4",
+    "TRID": "MRUPAV_PLIN4",
+    "Motifs": [
+      "TGGTGTCCACGCCGGTCTGGATGGTTCCTTTGGCCACATTCATGGCACCAGTCACCCCACTACAGACGGTGTCCTTGGTACCTGTTAGGACAGTCTTAC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "MRUPAV_PLIN4"
+  },
+  {
+    "LocusId": "SCA6_CACNA1A",
+    "ReferenceRegion": "chr19:13318672-13318712",
+    "LocusStructure": "(CTG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 1388,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CTG",
+    "Disease": "SCA6",
+    "NormalMax": 18,
+    "PathologicMin": 21,
+    "Gene": "CACNA1A",
+    "TRID": "SCA6_CACNA1A",
+    "Motifs": [
+      "CTG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA6_CACNA1A"
+  },
+  {
+    "LocusId": "OPDM2_GIPC1",
+    "ReferenceRegion": "chr19:14606853-14606887",
+    "LocusStructure": "(CCG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 1226,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CCG",
+    "Disease": "OPDM2",
+    "NormalMax": 32,
+    "PathologicMin": 73,
+    "Gene": "GIPC1",
+    "TRID": "OPDM2_GIPC1",
+    "Motifs": [
+      "CCG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "OPDM2_GIPC1"
+  },
+  {
+    "LocusId": "EDM1-PSACH_COMP",
+    "ReferenceRegion": "chr19:18896844-18896860",
+    "LocusStructure": "(CGT)*",
+    "VariantType": "Repeat",
+    "InheritanceMode": "AD",
+    "DisplayRU": "GTC",
+    "Disease": "EDM1, PSACH",
+    "NormalMax": 5,
+    "PathologicMin": 6,
+    "Gene": "COMP",
+    "TRID": "EDM1-PSACH_COMP",
+    "Motifs": [
+      "GTC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "EDM1-PSACH_COMP"
+  },
+  {
+    "LocusId": "DM1_DMPK",
+    "ReferenceRegion": "chr19:46273462-46273524",
+    "LocusStructure": "(CAG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 2933,
+    "InheritanceMode": "AD",
+    "DisplayRU": "CAG",
+    "Disease": "DM1",
+    "NormalMax": 34,
+    "PathologicMin": 50,
+    "Gene": "DMPK",
+    "TRID": "DM1_DMPK",
+    "Motifs": [
+      "CAG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "DM1_DMPK"
+  },
+  {
+    "LocusId": "SCA36_NOP56",
+    "ReferenceRegion": [
+      "chr20:2633378-2633403",
+      "chr20:2633403-2633421"
+    ],
+    "LocusStructure": "(GGCCTG)*(CGCCTG)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "SCA36_NOP56",
+      "SCA36_NOP56_CGCCTG"
+    ],
+    "PathologicRegion": "chr20:2633378-2633403",
+    "HGNCId": 15911,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GGCCTG",
+    "Disease": "SCA36",
+    "NormalMax": 14,
+    "PathologicMin": 650,
+    "Gene": "NOP56",
+    "TRID": "SCA36_NOP56",
+    "Motifs": [
+      "GGCCTG",
+      "CGCCTG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA36_NOP56"
+  },
+  {
+    "LocusId": "CJD_PRNP",
+    "ReferenceRegion": [
+      "chr20:4680016-4680043",
+      "chr20:4680043-4680139"
+    ],
+    "LocusStructure": "(CCTCAGGGCGGTGGTGGCTGGGGGCAG)*(CCTCATGGTGGTGGCTGGGGGCAG)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "CJD_PRNP_CCTCAGGGCGGTGGTGGCTGGGGGCAG",
+      "CJD_PRNP"
+    ],
+    "PathologicRegion": "chr20:4680043-4680139",
+    "InheritanceMode": "AD",
+    "DisplayRU": "CCTCATGGTGGTGGCTGGGGGCAG",
+    "Disease": "CJD",
+    "NormalMax": 4,
+    "PathologicMin": 5,
+    "Gene": "PRNP",
+    "TRID": "CJD_PRNP",
+    "Motifs": [
+      "CCTCAGGGCGGTGGTGGCTGGGGGCAG",
+      "CCTCATGGTGGTGGCTGGGGGCAG",
+      "GGTGGTGGCTGGGGGCAGCCTCAT"
+    ],
+    "PathologicStruc": [
+      1,
+      2
+    ],
+    "Source": "STRchive",
+    "SourceId": "CJD_PRNP",
+    "HGNCId": 9449
+  },
+  {
+    "LocusId": "EPM1_CSTB",
+    "ReferenceRegion": "chr21:45196323-45196360",
+    "LocusStructure": "(CGCGGGGCGGGG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 2482,
+    "InheritanceMode": "AR",
+    "DisplayRU": "CGCGGGGCGGGG",
+    "Disease": "EPM1",
+    "NormalMax": 3,
+    "PathologicMin": 30,
+    "Gene": "CSTB",
+    "TRID": "EPM1_CSTB",
+    "Motifs": [
+      "CGCGGGGCGGGG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "EPM1_CSTB"
+  },
+  {
+    "LocusId": "TOF_TBX1",
+    "ReferenceRegion": "chr22:19754285-19754330",
+    "LocusStructure": "(GCN)*",
+    "VariantType": "Repeat",
+    "HGNCId": 11592,
+    "InheritanceMode": "AD",
+    "DisplayRU": "GCN",
+    "Disease": "TOF",
+    "NormalMax": 15,
+    "PathologicMin": 25,
+    "Gene": "TBX1",
+    "TRID": "TOF_TBX1",
+    "Motifs": [
+      "GCN"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "TOF_TBX1"
+  },
+  {
+    "LocusId": "SCA10_ATXN10",
+    "ReferenceRegion": "chr22:46191234-46191304",
+    "LocusStructure": "(ATTCT)*",
+    "VariantType": "Repeat",
+    "HGNCId": 10549,
+    "InheritanceMode": "AD",
+    "DisplayRU": "ATTCT",
+    "Disease": "SCA10",
+    "NormalMax": 32,
+    "PathologicMin": 800,
+    "Gene": "ATXN10",
+    "TRID": "SCA10_ATXN10",
+    "Motifs": [
+      "ATTCT"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SCA10_ATXN10"
+  },
+  {
+    "LocusId": "PRTS_ARX",
+    "ReferenceRegion": "chrX:25031646-25031682",
+    "LocusStructure": "(NGC)*",
+    "VariantType": "Repeat",
+    "HGNCId": 18060,
+    "InheritanceMode": "XR",
+    "DisplayRU": "NGC",
+    "Disease": "PRTS",
+    "NormalMax": 12,
+    "PathologicMin": 20,
+    "Gene": "ARX",
+    "TRID": "PRTS_ARX",
+    "Motifs": [
+      "NGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "PRTS_ARX"
+  },
+  {
+    "LocusId": "EIEE1_ARX",
+    "ReferenceRegion": "chrX:25031766-25031814",
+    "LocusStructure": "(NGC)*",
+    "VariantType": "Repeat",
+    "HGNCId": 18060,
+    "InheritanceMode": "XR",
+    "DisplayRU": "NGC",
+    "Disease": "EIEE1",
+    "NormalMax": 16,
+    "PathologicMin": 17,
+    "Gene": "ARX",
+    "TRID": "EIEE1_ARX",
+    "Motifs": [
+      "NGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "EIEE1_ARX"
+  },
+  {
+    "LocusId": "DMD_DMD",
+    "ReferenceRegion": [
+      "chrX:31302674-31302722",
+      "chrX:31302722-31302730"
+    ],
+    "LocusStructure": "(TTC)*(T)*",
+    "VariantType": [
+      "Repeat",
+      "Repeat"
+    ],
+    "VariantId": [
+      "DMD_DMD",
+      "DMD_DMD_T"
+    ],
+    "PathologicRegion": "chrX:31302674-31302722",
+    "InheritanceMode": "XR",
+    "DisplayRU": "TTC",
+    "Disease": "DMD",
+    "NormalMax": 33,
+    "PathologicMin": 59,
+    "Gene": "DMD",
+    "TRID": "DMD_DMD",
+    "Motifs": [
+      "TTC",
+      "T"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "DMD_DMD"
+  },
+  {
+    "LocusId": "SBMA_AR",
+    "ReferenceRegion": "chrX:66765158-66765261",
+    "LocusStructure": "(CAG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 644,
+    "InheritanceMode": "XR",
+    "DisplayRU": "GCA",
+    "Disease": "SBMA",
+    "NormalMax": 34,
+    "PathologicMin": 38,
+    "Gene": "AR",
+    "TRID": "SBMA_AR",
+    "Motifs": [
+      "GCA"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "SBMA_AR"
+  },
+  {
+    "LocusId": "XDP_TAF1",
+    "ReferenceRegion": "chrX:70672904-70672981",
+    "LocusStructure": "(AGAGGG)*",
+    "VariantType": "Repeat",
+    "InheritanceMode": "XR",
+    "DisplayRU": "AGAGGG",
+    "Disease": "XDP",
+    "NormalMax": 34,
+    "PathologicMin": 35,
+    "Gene": "TAF1",
+    "TRID": "XDP_TAF1",
+    "Motifs": [
+      "AGAGGG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "XDP_TAF1"
+  },
+  {
+    "LocusId": "VACTERLX_ZIC3",
+    "ReferenceRegion": "chrX:136648985-136649015",
+    "LocusStructure": "(GCN)*",
+    "VariantType": "Repeat",
+    "HGNCId": 12874,
+    "InheritanceMode": "XR",
+    "DisplayRU": "GCN",
+    "Disease": "VACTERLX",
+    "NormalMax": 10,
+    "PathologicMin": 12,
+    "Gene": "ZIC3",
+    "TRID": "VACTERLX_ZIC3",
+    "Motifs": [
+      "GCN"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "VACTERLX_ZIC3"
+  },
+  {
+    "LocusId": "XLID_SOX3",
+    "ReferenceRegion": "chrX:139586481-139586526",
+    "LocusStructure": "(NGC)*",
+    "VariantType": "Repeat",
+    "HGNCId": 11199,
+    "InheritanceMode": "XR",
+    "DisplayRU": "NGC",
+    "Disease": "XLID, PHPX",
+    "NormalMax": 15,
+    "PathologicMin": 22,
+    "Gene": "SOX3",
+    "TRID": "XLID_SOX3",
+    "Motifs": [
+      "NGC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "XLID_SOX3"
+  },
+  {
+    "LocusId": "FXS_FMR1",
+    "ReferenceRegion": "chrX:146993567-146993629",
+    "LocusStructure": "(CGG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 3775,
+    "InheritanceMode": "XD",
+    "DisplayRU": "CGG",
+    "Disease": "FXS, FXTAS, POF1",
+    "NormalMax": 44,
+    "PathologicMin": 201,
+    "Gene": "FMR1",
+    "TRID": "FXS_FMR1",
+    "Motifs": [
+      "CGG"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "FXS_FMR1"
+  },
+  {
+    "LocusId": "FRAXE_AFF2",
+    "ReferenceRegion": "chrX:147582124-147582273",
+    "LocusStructure": "(CCG)*",
+    "VariantType": "Repeat",
+    "HGNCId": 3776,
+    "InheritanceMode": "XR",
+    "DisplayRU": "GCC",
+    "Disease": "FRAXE",
+    "NormalMax": 39,
+    "PathologicMin": 201,
+    "Gene": "AFF2",
+    "TRID": "FRAXE_AFF2",
+    "Motifs": [
+      "GCC"
+    ],
+    "PathologicStruc": [
+      0
+    ],
+    "Source": "STRchive",
+    "SourceId": "FRAXE_AFF2"
+  }
+]
