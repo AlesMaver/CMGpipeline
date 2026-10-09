@@ -91,6 +91,7 @@ workflow AnnotateAndTable {
   }
 
   String final_output_xlsx = sample_basename + ".IMPORTVARIANT.FinalReportNew.xlsx"
+  String final_output_vcf = sample_basename + ".IMPORTVARIANT.annotated.vcf.gz"
 
   call CreateVCFfromString {
       input:
@@ -210,9 +211,24 @@ workflow AnnotateAndTable {
       new_name = final_output_xlsx
   }
 
+  # Distinct names so the annotated VCF does not clash with the main pipeline's {sample}.annotated.vcf.gz
+  call RenameFile as RenameAnnotatedVCF {
+    input:
+      input_file = AnnotateVCF.output_vcf,
+      new_name = final_output_vcf
+  }
+
+  call RenameFile as RenameAnnotatedVCFIndex {
+    input:
+      input_file = AnnotateVCF.output_vcf_index,
+      new_name = final_output_vcf + ".tbi"
+  }
+
   # Outputs that will be retained when execution is complete
   output {
     File XLSX_OUTPUT = RenameFile.renamed_file
+    File ANNOTATED_VCF = RenameAnnotatedVCF.renamed_file
+    File ANNOTATED_VCF_INDEX = RenameAnnotatedVCFIndex.renamed_file
   }
 }
 
