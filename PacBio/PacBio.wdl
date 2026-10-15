@@ -13,6 +13,7 @@ import "../Conifer2.wdl" as Conifer
 import "../manta/manta_workflow.wdl" as manta
 import "../AnnotateExpansionHunterVCF.wdl" as AnnotateExpansionHunterVCF
 import "../Stripy/Stripy_v2.wdl" as Stripy
+import "../SVTopo.wdl" as SVTopo
 import "trgt_full.wdl" as TRGTFull
 
 workflow PacBioWorkflow {
@@ -54,6 +55,7 @@ workflow PacBioWorkflow {
     Boolean run_expansion_hunter_annotation = true
     Boolean run_stripy = false
     Boolean run_trgt_full = true
+    Boolean run_svtopo = false
 
     # ========================================
     # VEP Annotation Inputs
@@ -376,6 +378,23 @@ workflow PacBioWorkflow {
   }
 
   # ========================================
+  # SVTopo Structural Variant Analysis (Optional)
+  # ========================================
+  if (run_svtopo) {
+    call SVTopo.SVTopo as SVTopoAnalysis {
+      input:
+        sample_id = sample_id,
+        bam = pacbio_upstream.out_bam,
+        bam_index = pacbio_upstream.out_bam_index,
+        vcf = pacbio_upstream.sv_vcf,
+        supporting_reads_json = pacbio_upstream.sv_supporting_reads,
+        reference_fasta = ref_map["fasta"],
+        assembly = ref_map["name"],
+        threads = 4
+    }
+  }
+
+  # ========================================
   # Full TRGT Workflow (Optional)
   # ========================================
   if (run_trgt_full) {
@@ -519,6 +538,7 @@ workflow PacBioWorkflow {
     File? trgt_vcf_annotated         = AnnotateExpansionHunterVCF.expansion_hunter_vcf_annotated
     File? stripy_tsv                 = Stripy.stripy_tsv
     File? stripy_html                = Stripy.stripy_html
+    File? svtopo_archive             = SVTopoAnalysis.svtopo_archive
 
     # ========================================
     # Paraphase Outputs (Pharmacogenes)

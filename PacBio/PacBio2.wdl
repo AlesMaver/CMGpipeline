@@ -46,6 +46,7 @@ workflow PacBioWorkflow {
     Boolean run_roh_analysis = true
     Boolean run_exome_depth = true
     Boolean run_conifer = true
+    Boolean run_svtopo = true
 
     # ========================================
     # VEP Annotation Inputs
