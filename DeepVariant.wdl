@@ -20,7 +20,6 @@ version 1.0
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import "./CRAM_conversions.wdl" as CramConversions
 import "./VEP/Vep2.wdl" as VEP
 
 workflow DeepVariant {
@@ -50,25 +49,14 @@ workflow DeepVariant {
       email: "cmg.kimg@kclj.si"
   }
 
-  if (defined(inputCram)) {
-    call CramConversions.CramToBam as CramToBam {
-        input:
-          sample_name = sample_basename,
-          input_cram = inputCram,
-          ref_fasta = referenceFasta,
-          ref_fasta_index = referenceFastaIndex,
-          ref_dict = referenceDictionary,
-          docker = "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817",
-          samtools_path = "samtools"
-    }
-  }
-
+  # DeepVariant reads CRAM directly (decoded with referenceFasta, which must be the CRAM's reference),
+  # so no CRAM->BAM conversion is needed. The index must be localised next to the reads as <file>.crai/.bai.
   call RunDeepVariant {
       input:
         referenceFasta = referenceFasta,
         referenceFastaIndex = referenceFastaIndex,
-        inputBam=select_first([inputBam, CramToBam.output_bam]),
-        inputBamIndex=select_first([inputBamIndex, CramToBam.output_bai]),
+        inputReads = select_first([inputCram, inputBam]),
+        inputReadsIndex = select_first([inputCramIndex, inputBamIndex]),
         modelType = modelType,
         # outputVcf = outputVcf,
         outputVcf = sample_basename + ".DeepVariant.vcf.gz",
@@ -98,8 +86,8 @@ task RunDeepVariant {
     input {
         File referenceFasta
         File referenceFastaIndex
-        File inputBam
-        File inputBamIndex
+        File inputReads
+        File inputReadsIndex
         String modelType
         String outputVcf
         String? postprocessVariantsExtraArgs
@@ -120,7 +108,7 @@ task RunDeepVariant {
         set -e
         /opt/deepvariant/bin/run_deepvariant \
         --ref ~{referenceFasta} \
-        --reads ~{inputBam} \
+        --reads ~{inputReads} \
         --model_type ~{modelType} \
         --output_vcf ~{outputVcf} \
         ~{"--output_gvcf " + outputGVcf} \
@@ -156,8 +144,8 @@ task RunDeepVariant {
         # inputs
         referenceFasta: {description: "Genome reference to use.", category: "required"}
         referenceFastaIndex: {description: "Index for the genome reference file.", category: "required"}
-        inputBam: {description: "Aligned, sorted, indexed BAM file containing the reads we want to call.", category: "required"}
-        inputBamIndex: {description: "Index for the input bam file.", category: "required"}
+        inputReads: {description: "Aligned, sorted, indexed BAM or CRAM file containing the reads we want to call.", category: "required"}
+        inputReadsIndex: {description: "Index for the input BAM/CRAM file.", category: "required"}
         modelType: {description: "<WGS|WES|PACBIO>. Type of model to use for variant calling. Each model_type has an associated default model, which can be overridden by the --customized_model flag.", category: "required"}
         outputVcf: {description: "Path where we should write VCF file.", category: "required"}
         postprocessVariantsExtraArgs: {description: "A comma-separated list of flag_name=flag_value. 'flag_name' has to be valid flags for calpostprocess_variants.py.", category: "advanced"}
