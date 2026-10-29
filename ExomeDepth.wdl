@@ -18,6 +18,10 @@ workflow ExomeDepth {
     File? reference_dict
     File? exome_depth_counts_input
     Array[File]? reference_counts_files
+    # Optional overrides (testing): local ExomeDepth.R / CBS blacklist instead of the GitHub master copies
+    File? exomedepth_script
+    File? cbs_blacklist
+    String exomedepth_docker = "alesmaver/exome_depth"
   }
 
   if (defined(enrichment)) {
@@ -74,7 +78,10 @@ workflow ExomeDepth {
         target_bed = target_bed,
         # old: test_counts_file = select_first([exome_depth_counts_input, exome_depth_counts_calculated]),
         test_counts_file = select_first([exome_depth_counts_input, GetCounts.exome_depth_counts, GetCounts_Bedtools.exome_depth_counts]),
-        reference_counts_files = select_first([reference_counts_files])
+        reference_counts_files = select_first([reference_counts_files]),
+        exomedepth_script = exomedepth_script,
+        cbs_blacklist = cbs_blacklist,
+        docker = exomedepth_docker
     }
 
     call Manta.annotSV as annotSV {
@@ -98,6 +105,7 @@ workflow ExomeDepth {
     File? exome_depth_ratios_clean_wig_gz_tbi = ExomeDepth.exome_depth_ratios_clean_wig_gz_tbi
     File? exome_depth_ratios_nomissing_wig_gz = ExomeDepth.exome_depth_ratios_nomissing_wig_gz
     File? exome_depth_ratios_nomissing_wig_gz_tbi = ExomeDepth.exome_depth_ratios_nomissing_wig_gz_tbi
+    File? exome_depth_cbs_segments = ExomeDepth.exome_depth_cbs_segments
     File? exome_depth_annotSV_tsv = annotSV.sv_variants_tsv
   }
 }
@@ -186,19 +194,24 @@ task ExomeDepth {
     File? target_bed
     File test_counts_file
     Array[File] reference_counts_files
+    File? exomedepth_script
+    File? cbs_blacklist
+    String docker = "alesmaver/exome_depth"
   }
 
   command <<<
-    wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Dockers/ExomeDepth/ExomeDepth.R
+    ~{if defined(exomedepth_script) then "cp " + exomedepth_script + " ExomeDepth.R" else "wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Dockers/ExomeDepth/ExomeDepth.R"}
+    ~{if defined(cbs_blacklist) then "cp " + cbs_blacklist + " ExomeDepth_CBS_blacklist.hg19.bed" else "wget --no-check-certificate https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/Dockers/ExomeDepth/ExomeDepth_CBS_blacklist.hg19.bed"}
 
     Rscript ExomeDepth.R \
         --test-counts-file ~{test_counts_file} \
         --reference-counts-file-list ~{write_lines(reference_counts_files)} \
-        --targets ~{target_bed}
+        --targets ~{target_bed} \
+        --cbs-blacklist ExomeDepth_CBS_blacklist.hg19.bed
     >>>
 
     runtime {
-        docker: "alesmaver/exome_depth"
+        docker: docker
         maxRetries: 3
         requested_memory_mb_per_core: 1000
         cpu: 16
@@ -222,5 +235,7 @@ task ExomeDepth {
 
       File exome_depth_ratios_nomissing_wig_gz = "~{sample_name}_ExomeDepth_ratios_nomissing.wig.gz"
       File exome_depth_ratios_nomissing_wig_gz_tbi = "~{sample_name}_ExomeDepth_ratios_nomissing.wig.gz.tbi"
+
+      File exome_depth_cbs_segments = "~{sample_name}_ExomeDepth_CBS_segments.tsv"
     }
 }
