@@ -48,7 +48,7 @@ task run_svtopo {
   String results_dir = sample_id + ".svtopo"
   String tarball_name = sample_id + ".svtopo.tar.gz"
 
-  command <<<<
+  command <<<
     set -euo pipefail
 
     mkdir -p "~{results_dir}"
