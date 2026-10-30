@@ -108,9 +108,19 @@ process_wig_files <- function(working_directory, sample_name) {
 # Large / mosaic CNV calling by circular binary segmentation (DNAcopy) of the ExomeDepth ratios.
 # The HMM in CallCNVs assumes ratios of 0.5/1.5 and fragments low-level mosaic events; CBS
 # segments the observed/expected log2 ratios instead. Calls are returned in the CNV.calls format.
+# Sample ID from a counts column or file name (PX12345.marked.bam, PX12345_ExomeDepth_counts.tsv)
+sample_id <- function(x) sub("[._].*$", "", basename(x))
+
+# chrX/chrY counts including MAPQ 0 reads: named vector (chromosome:end) of read counts
+readXYCounts <- function(file) {
+  d <- read.table(file, header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+  setNames(d[, 4], paste(d[, 1], d[, 3], sep = ":"))
+}
+
 callCBS <- function(test, reference_set, reference_choice, coords, blacklist = NULL,
                     min_references = 10, max_sd = 0.13, min_targets = 15, min_abs_log2 = 0.2,
-                    min_abs_z = 8, max_blacklist_fraction = 0.5, segments_file = NULL) {
+                    min_abs_z = 8, max_blacklist_fraction = 0.5, segments_file = NULL,
+                    xy_test = NULL, xy_reference = NULL) {
   library(DNAcopy)
   empty <- data.frame(start.p = integer(), end.p = integer(), type = character(), nexons = integer(),
                       start = integer(), end = integer(), chromosome = character(), id = character(),
@@ -145,6 +155,28 @@ callCBS <- function(test, reference_set, reference_choice, coords, blacklist = N
   lr_all[keep] <- log2(ratio[keep])
   lr_all <- lr_all - median(lr_all[keep & auto])
   noise <- mad(lr_all[keep & auto])
+
+  # chrX/chrY from counts that include MAPQ 0 reads (repeat regions such as AZF), when enough of the
+  # selected references have them; normalised to each sample's autosomal read total
+  if (!is.null(xy_test) && !is.null(xy_reference) && sex_ok) {
+    ref_ids <- sample_id(refs)
+    xr <- refs[ref_ids %in% colnames(xy_reference)]
+    if (length(xr) >= min_references) {
+      key <- paste(coords$chromosome, coords$end, sep = ":")
+      sx <- !auto & (chrom == "X" | test_male) & key %in% names(xy_test) & key %in% rownames(xy_reference)
+      rr <- xy_reference[key[sx], sample_id(xr), drop = FALSE]
+      r_norm <- rowMeans(sweep(rr, 2, colSums(reference_set[auto, xr, drop = FALSE]), "/"))
+      t_norm <- xy_test[key[sx]] / sum(test[auto])
+      ok <- rowSums(rr) >= 5 * length(xr) & t_norm > 0
+      keep[!auto] <- FALSE
+      lr_all[!auto] <- NA
+      keep[which(sx)[ok]] <- TRUE
+      lr_all[which(sx)[ok]] <- log2(t_norm[ok] / r_norm[ok])
+      cat("CBS: chrX/chrY from MAPQ>=0 counts,", length(xr), "references,", sum(ok), "targets\n")
+    } else {
+      cat("CBS: only", length(xr), "references with chrX/chrY MAPQ>=0 counts, using standard counts\n")
+    }
+  }
   cat("CBS: references", length(refs), "targets", sum(keep), "log2 SD", round(noise, 3), "\n")
   if (noise > max_sd) {
     cat("CBS: sample too noisy (log2 SD >", max_sd, "), CBS calls suppressed\n")
@@ -204,7 +236,8 @@ callCBS <- function(test, reference_set, reference_choice, coords, blacklist = N
 }
 
 # CNV calling function
-callCNVs <- function(targets, annotation, test_counts_file, reference_counts_files, probes_variance = NULL, probes_variance_cutoff=1, cbs_blacklist = NULL) {
+callCNVs <- function(targets, annotation, test_counts_file, reference_counts_files, probes_variance = NULL, probes_variance_cutoff=1, cbs_blacklist = NULL,
+                     test_xy_counts_file = NULL, reference_xy_counts_files = NULL) {
   sample_name = gsub("_(.*)", "", basename(test_counts_file))
 
   ########################
@@ -346,10 +379,21 @@ callCNVs <- function(targets, annotation, test_counts_file, reference_counts_fil
   } else {
     print("CBS blacklist not found, segmenting without it")
   }
+  xy_test <- NULL
+  xy_reference <- NULL
+  if (!is.null(test_xy_counts_file) && length(reference_xy_counts_files) > 0) {
+    xy_test <- readXYCounts(test_xy_counts_file)
+    xy_list <- lapply(reference_xy_counts_files, readXYCounts)
+    xy_keys <- Reduce(intersect, lapply(xy_list, names))
+    xy_reference <- sapply(xy_list, function(v) v[xy_keys])
+    rownames(xy_reference) <- xy_keys
+    colnames(xy_reference) <- sample_id(reference_xy_counts_files)
+  }
   cbs_calls <- tryCatch(
     callCBS(test = my.test, reference_set = my.reference.set, reference_choice = my.choice,
             coords = reference_counts[, c("chromosome", "start", "end")], blacklist = blacklist,
-            segments_file = file.path(working_directory, paste0(sample_name, "_ExomeDepth_CBS_segments.tsv"))),
+            segments_file = file.path(working_directory, paste0(sample_name, "_ExomeDepth_CBS_segments.tsv")),
+            xy_test = xy_test, xy_reference = xy_reference),
     error = function(e) { print(paste("CBS segmentation failed:", e$message)); NULL })
   if (!is.null(cbs_calls) && nrow(cbs_calls) > 0) {
     cbs_calls$algorithm <- "CBS"
@@ -481,7 +525,9 @@ option_list <- list(
   make_option("--test-counts-file", dest="test_counts_file", type="character", default=NULL),
   make_option("--reference-counts-file-list", dest="reference_counts_file_list", type="character", default=NULL),
   make_option("--reference-logratios-file-list", dest="reference_logratios_file_list", type="character", default=NULL),
-  make_option("--cbs-blacklist", dest="cbs_blacklist", type="character", default="/home/exome_depth/ExomeDepth_CBS_blacklist.hg19.bed")
+  make_option("--cbs-blacklist", dest="cbs_blacklist", type="character", default="/home/exome_depth/ExomeDepth_CBS_blacklist.hg19.bed"),
+  make_option("--test-xy-counts-file", dest="test_xy_counts_file", type="character", default=NULL),
+  make_option("--reference-xy-counts-file-list", dest="reference_xy_counts_file_list", type="character", default=NULL)
 )
 
 opt_parser <- OptionParser(option_list = option_list)
@@ -524,7 +570,13 @@ if (!is.null(opt$test_counts_file) & !is.null(opt$reference_counts_file_list)){
   }
 
   reference_counts_files <- read.table(opt$reference_counts_file_list, col.names = "baseline_sample_path")[,1]
-  callCNVs(targets=opt$targets, annotation= NULL, test_counts_file=opt$test_counts_file, reference_counts_files = reference_counts_files, probes_variance = reference_sd, probes_variance_cutoff=0.2, cbs_blacklist = opt$cbs_blacklist)
+  reference_xy_counts_files <- NULL
+  if (!is.null(opt$reference_xy_counts_file_list) && file.exists(opt$reference_xy_counts_file_list) &&
+      file.info(opt$reference_xy_counts_file_list)$size > 0) {
+    reference_xy_counts_files <- read.table(opt$reference_xy_counts_file_list, col.names = "path")[,1]
+  }
+  callCNVs(targets=opt$targets, annotation= NULL, test_counts_file=opt$test_counts_file, reference_counts_files = reference_counts_files, probes_variance = reference_sd, probes_variance_cutoff=0.2, cbs_blacklist = opt$cbs_blacklist,
+           test_xy_counts_file = opt$test_xy_counts_file, reference_xy_counts_files = reference_xy_counts_files)
   print("Exome Depth analysis completed.")
 }
 

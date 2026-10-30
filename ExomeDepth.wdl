@@ -18,6 +18,9 @@ workflow ExomeDepth {
     File? reference_dict
     File? exome_depth_counts_input
     Array[File]? reference_counts_files
+    # chrX/chrY counts including MAPQ 0 reads, used by CBS for the sex chromosomes
+    File? exome_depth_xy_counts_input
+    Array[File]? reference_xy_counts_files
     # Optional overrides (testing): local ExomeDepth.R / CBS blacklist instead of the GitHub master copies
     File? exomedepth_script
     File? cbs_blacklist
@@ -68,6 +71,20 @@ workflow ExomeDepth {
       }
     }
 
+  # chrX/chrY counts without the MAPQ filter, straight from the BAM/CRAM
+  if (!defined(exome_depth_xy_counts_input) && test_type == "WES" && (defined(input_bam) || defined(input_cram))) {
+    call GetCountsXY {
+      input:
+        sample_name = sample_name,
+        target_bed = target_bed,
+        input_alignment = select_first([input_bam, input_cram]),
+        input_alignment_index = select_first([input_bam_index, input_cram_index]),
+        reference_fa = reference_fa,
+        reference_fai = reference_fai
+    }
+  }
+  File? xy_counts = if defined(exome_depth_xy_counts_input) then exome_depth_xy_counts_input else GetCountsXY.exome_depth_xy_counts
+
   ## Select the output from either GetCounts or GetCounts_Bedtools
   # old: File exome_depth_counts_calculated = select_first([GetCounts.exome_depth_counts, GetCounts_Bedtools.exome_depth_counts])
 
@@ -79,6 +96,8 @@ workflow ExomeDepth {
         # old: test_counts_file = select_first([exome_depth_counts_input, exome_depth_counts_calculated]),
         test_counts_file = select_first([exome_depth_counts_input, GetCounts.exome_depth_counts, GetCounts_Bedtools.exome_depth_counts]),
         reference_counts_files = select_first([reference_counts_files]),
+        test_xy_counts_file = xy_counts,
+        reference_xy_counts_files = reference_xy_counts_files,
         exomedepth_script = exomedepth_script,
         cbs_blacklist = cbs_blacklist,
         docker = exomedepth_docker
@@ -106,6 +125,7 @@ workflow ExomeDepth {
     File? exome_depth_ratios_nomissing_wig_gz = ExomeDepth.exome_depth_ratios_nomissing_wig_gz
     File? exome_depth_ratios_nomissing_wig_gz_tbi = ExomeDepth.exome_depth_ratios_nomissing_wig_gz_tbi
     File? exome_depth_cbs_segments = ExomeDepth.exome_depth_cbs_segments
+    File? exome_depth_xy_counts = xy_counts
     File? exome_depth_annotSV_tsv = annotSV.sv_variants_tsv
   }
 }
@@ -188,12 +208,46 @@ task GetCounts_Bedtools {
   }
 }
 
+task GetCountsXY {
+  input {
+    String sample_name
+    File? target_bed
+    File input_alignment
+    File input_alignment_index
+    File? reference_fa
+    File? reference_fai
+  }
+
+  command <<<
+    set -e
+    awk -F'\t' '$1=="chrX" || $1=="chrY"' ~{target_bed} | cut -f1-3 > xy_targets.bed
+    # All primary, non-duplicate reads regardless of MAPQ (repeat regions such as AZF have MAPQ 0)
+    samtools bedcov -Q 0 -c -G 3844 ~{if defined(reference_fa) then "--reference " + reference_fa else ""} \
+      xy_targets.bed ~{input_alignment} | cut -f1-3,5 > xy_counts.tsv
+    (echo -e "chromosome\tstart\tend\t~{sample_name}"; cat xy_counts.tsv) > ~{sample_name}_ExomeDepth_counts_XY.tsv
+  >>>
+
+  runtime {
+    docker: "quay.io/biocontainers/samtools:1.21--h50ea8bc_0"
+    maxRetries: 3
+    requested_memory_mb_per_core: 1000
+    cpu: 1
+    runtime_minutes: 60
+  }
+
+  output {
+    File exome_depth_xy_counts = "~{sample_name}_ExomeDepth_counts_XY.tsv"
+  }
+}
+
 task ExomeDepth {
   input {
     String sample_name
     File? target_bed
     File test_counts_file
     Array[File] reference_counts_files
+    File? test_xy_counts_file
+    Array[File]? reference_xy_counts_files
     File? exomedepth_script
     File? cbs_blacklist
     String docker = "alesmaver/exome_depth"
@@ -207,7 +261,9 @@ task ExomeDepth {
         --test-counts-file ~{test_counts_file} \
         --reference-counts-file-list ~{write_lines(reference_counts_files)} \
         --targets ~{target_bed} \
-        --cbs-blacklist ExomeDepth_CBS_blacklist.hg19.bed
+        --cbs-blacklist ExomeDepth_CBS_blacklist.hg19.bed \
+        ~{"--test-xy-counts-file " + test_xy_counts_file} \
+        ~{if defined(reference_xy_counts_files) then "--reference-xy-counts-file-list " + write_lines(select_first([reference_xy_counts_files])) else ""}
     >>>
 
     runtime {
