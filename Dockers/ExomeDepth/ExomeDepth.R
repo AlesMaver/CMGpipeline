@@ -132,20 +132,33 @@ callCBS <- function(test, reference_set, reference_choice, coords, blacklist = N
   if (length(refs) < min_references) {
     refs <- head(as.character(reference_choice$summary.stats$ref.samples), min_references)
   }
+  # Sex from the chrY read fraction; references of the other sex (e.g. mislabelled samples) are dropped
+  chrom <- sub("^chr", "", coords$chromosome)
+  auto <- !chrom %in% c("X", "Y")
+  is_y <- chrom == "Y"
+  test_male <- sum(test[is_y]) / sum(test) > 0.0003
+  refs_male <- colSums(reference_set[is_y, refs, drop = FALSE]) / colSums(reference_set[, refs, drop = FALSE]) > 0.0003
+  if (any(refs_male != test_male)) {
+    cat("CBS: dropping", sum(refs_male != test_male), "references of the other sex:", refs[refs_male != test_male], "\n")
+  }
+  refs <- refs[refs_male == test_male]
+  if (length(refs) < min_references) {
+    # Top up with the next best-correlated references of the same sex
+    ranked <- as.character(reference_choice$summary.stats$ref.samples)
+    ranked_male <- colSums(reference_set[is_y, ranked, drop = FALSE]) / colSums(reference_set[, ranked, drop = FALSE]) > 0.0003
+    refs <- head(union(refs, ranked[ranked_male == test_male]), min_references)
+  }
+  sex_ok <- length(refs) >= min_references
+  if (!sex_ok) refs <- head(as.character(reference_choice$summary.stats$ref.samples), min_references)
+  ref_male <- if (sex_ok) test_male else !test_male
+
   reference <- rowSums(as.matrix(reference_set[, refs, drop = FALSE]))
   fit <- new('ExomeDepth', test = test, reference = reference, formula = 'cbind(test, reference) ~ 1')
 
   ratio <- (test / (test + reference)) / fit@expected
-  chrom <- sub("^chr", "", coords$chromosome)
-  auto <- !chrom %in% c("X", "Y")
   keep <- is.finite(ratio) & ratio > 0 & (test + reference) >= 5 * (length(refs) + 1)
 
-  # Sex chromosomes are only segmented when test and references agree on sex (chrY read fraction);
-  # chrY only for males
-  is_y <- chrom == "Y"
-  test_male <- sum(test[is_y]) / sum(test) > 0.0003
-  ref_male <- sum(reference_set[is_y, refs, drop = FALSE]) / sum(reference_set[, refs, drop = FALSE]) > 0.0003
-  sex_ok <- test_male == ref_male
+  # Sex chromosomes are only segmented with enough same-sex references; chrY only for males
   keep <- keep & (auto | (sex_ok & (chrom == "X" | test_male)))
   cat("CBS: test", ifelse(test_male, "male", "female"), "references", ifelse(ref_male, "male", "female"),
       ifelse(sex_ok, "", "- sex chromosomes skipped"), "\n")
