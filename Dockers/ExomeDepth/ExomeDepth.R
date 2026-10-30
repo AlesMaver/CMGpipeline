@@ -126,18 +126,35 @@ callCBS <- function(test, reference_set, reference_choice, coords, blacklist = N
   fit <- new('ExomeDepth', test = test, reference = reference, formula = 'cbind(test, reference) ~ 1')
 
   ratio <- (test / (test + reference)) / fit@expected
-  auto <- !coords$chromosome %in% c("chrX", "chrY", "X", "Y")
-  keep <- auto & is.finite(ratio) & ratio > 0 & (test + reference) >= 5 * (length(refs) + 1)
-  lr <- log2(ratio[keep])
-  lr <- lr - median(lr)
-  noise <- mad(lr)
+  chrom <- sub("^chr", "", coords$chromosome)
+  auto <- !chrom %in% c("X", "Y")
+  keep <- is.finite(ratio) & ratio > 0 & (test + reference) >= 5 * (length(refs) + 1)
+
+  # Sex chromosomes are only segmented when test and references agree on sex (chrY read fraction);
+  # chrY only for males
+  is_y <- chrom == "Y"
+  test_male <- sum(test[is_y]) / sum(test) > 0.0003
+  ref_male <- sum(reference_set[is_y, refs, drop = FALSE]) / sum(reference_set[, refs, drop = FALSE]) > 0.0003
+  sex_ok <- test_male == ref_male
+  keep <- keep & (auto | (sex_ok & (chrom == "X" | test_male)))
+  cat("CBS: test", ifelse(test_male, "male", "female"), "references", ifelse(ref_male, "male", "female"),
+      ifelse(sex_ok, "", "- sex chromosomes skipped"), "\n")
+
+  # Centre and estimate noise on autosomes only, so whole sex-chromosome changes stay visible
+  lr_all <- rep(NA_real_, length(ratio))
+  lr_all[keep] <- log2(ratio[keep])
+  lr_all <- lr_all - median(lr_all[keep & auto])
+  noise <- mad(lr_all[keep & auto])
   cat("CBS: references", length(refs), "targets", sum(keep), "log2 SD", round(noise, 3), "\n")
   if (noise > max_sd) {
     cat("CBS: sample too noisy (log2 SD >", max_sd, "), CBS calls suppressed\n")
     return(empty)
   }
+  # Sex chromosomes have fewer targets and noisier coverage: use their own SD when larger
+  chr_noise <- sapply(split(lr_all[keep], coords$chromosome[keep]), function(x) max(noise, mad(x)))
 
   idx <- which(keep)
+  lr <- lr_all[idx]
   cna <- CNA(lr, coords$chromosome[idx], coords$start[idx], data.type = "logratio", sampleid = "test")
   set.seed(1)
   seg <- segment(smooth.CNA(cna), alpha = 0.001, min.width = 5, undo.splits = "sdundo", undo.SD = 2, verbose = 0)$output
@@ -147,7 +164,7 @@ callCBS <- function(test, reference_set, reference_choice, coords, blacklist = N
   })
   seg$start.p <- sapply(in_seg, min)
   seg$end.p <- sapply(in_seg, max)
-  seg$z <- seg$seg.mean / (noise / sqrt(seg$num.mark))
+  seg$z <- seg$seg.mean / (ifelse(sub("^chr", "", seg$chrom) %in% c("X", "Y"), chr_noise[seg$chrom], noise) / sqrt(seg$num.mark))
 
   seg$blacklisted <- 0
   if (!is.null(blacklist) && nrow(blacklist) > 0) {
