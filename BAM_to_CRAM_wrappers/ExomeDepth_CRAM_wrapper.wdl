@@ -20,6 +20,7 @@ workflow ExomeDepth_CRAM_wrapper {
     File? target_bed
     File? exome_depth_counts_input
     Array[File]? reference_counts_files
+    Array[File]? reference_xy_counts_files
 
     File? input_bam
   } 
@@ -43,7 +44,8 @@ workflow ExomeDepth_CRAM_wrapper {
         sample_name = sample_basename,
         target_bed = target_bed,
         exome_depth_counts_input = exome_depth_counts_input,
-        reference_counts_files = reference_counts_files
+        reference_counts_files = reference_counts_files,
+        reference_xy_counts_files = reference_xy_counts_files
     }
   }
 
@@ -55,7 +57,13 @@ workflow ExomeDepth_CRAM_wrapper {
         sample_name = sample_basename,
         target_bed = target_bed,
         exome_depth_counts_input = exome_depth_counts_input,
-        reference_counts_files = reference_counts_files
+        reference_counts_files = reference_counts_files,
+        reference_xy_counts_files = reference_xy_counts_files,
+        # The chrX/chrY counts (MAPQ 0 included) are taken directly from the CRAM
+        input_cram = input_cram,
+        input_cram_index = input_cram_index,
+        reference_fa = reference_fa,
+        reference_fai = reference_fai
     }    
   }
 
@@ -72,8 +80,12 @@ workflow ExomeDepth_CRAM_wrapper {
     File? exome_depth_ratios_nomissing_wig_gz_1 = ExomeDepthWithoutBAM.exome_depth_ratios_nomissing_wig_gz
     File? exome_depth_ratios_nomissing_wig_gz_tbi_1 = ExomeDepthWithoutBAM.exome_depth_ratios_nomissing_wig_gz_tbi
     File? exome_depth_annotSV_tsv_1 = ExomeDepthWithoutBAM.exome_depth_annotSV_tsv
+    File? exome_depth_cbs_segments_1 = ExomeDepthWithoutBAM.exome_depth_cbs_segments
+    File? exome_depth_xy_counts_1 = ExomeDepthWithoutBAM.exome_depth_xy_counts
 
     File? exome_depth_counts = ExomeDepth.exome_depth_counts
+    File? exome_depth_cbs_segments = ExomeDepth.exome_depth_cbs_segments
+    File? exome_depth_xy_counts = ExomeDepth.exome_depth_xy_counts
     File? exome_depth_cnv_calls_bed = ExomeDepth.exome_depth_cnv_calls_bed
     File? exome_depth_cnv_calls_csv = ExomeDepth.exome_depth_cnv_calls_csv
     File? exome_depth_ratios_all_wig_gz = ExomeDepth.exome_depth_ratios_all_wig_gz

@@ -158,6 +158,7 @@ workflow FastqToVCF {
     # ExomeDepth
     Boolean do_ExomeDepth = true
     Array[File]? reference_counts_files
+    Array[File]? reference_xy_counts_files
 
     ## Boolean GenerateCRAM = false
     Boolean? GenerateCRAM
@@ -956,7 +957,8 @@ workflow FastqToVCF {
         target_bed = enrichment_bed,
         input_bam = SortSam.output_bam,
         input_bam_index = SortSam.output_bam_index,
-        reference_counts_files = reference_counts_files
+        reference_counts_files = reference_counts_files,
+        reference_xy_counts_files = reference_xy_counts_files
       }
     }
   }
@@ -1372,6 +1374,8 @@ workflow FastqToVCF {
     File? exome_depth_ratios_nomissing_wig_gz = ExomeDepth.exome_depth_ratios_nomissing_wig_gz
     File? exome_depth_ratios_nomissing_wig_gz_tbi = ExomeDepth.exome_depth_ratios_nomissing_wig_gz_tbi
     File? exome_depth_annotSV_tsv = ExomeDepth.exome_depth_annotSV_tsv
+    File? exome_depth_cbs_segments = ExomeDepth.exome_depth_cbs_segments
+    File? exome_depth_xy_counts = ExomeDepth.exome_depth_xy_counts
 
     # VEP annotated vcf files
     File VEPannotatedVCF = VEP_AnnotateVCF.output_vcf
