@@ -198,15 +198,27 @@ callCBS <- function(test, reference_set, reference_choice, coords, blacklist = N
   seg$end.p <- sapply(in_seg, max)
   seg$z <- seg$seg.mean / (ifelse(sub("^chr", "", seg$chrom) %in% c("X", "Y"), chr_noise[seg$chrom], noise) / sqrt(seg$num.mark))
 
-  seg$blacklisted <- 0
-  if (!is.null(blacklist) && nrow(blacklist) > 0) {
-    bl <- GenomicRanges::reduce(GRanges(blacklist[, 1], IRanges(blacklist[, 2] + 1, blacklist[, 3])))
+  # Blacklist rows with a 4th column give a minimum |log2| for that region (variable regions such as
+  # AZFc) instead of excluding it
+  overlap_fraction <- function(regions) {
+    if (nrow(regions) == 0) return(rep(0, nrow(seg)))
+    bl <- GenomicRanges::reduce(GRanges(regions[, 1], IRanges(regions[, 2] + 1, regions[, 3])))
     sg <- GRanges(seg$chrom, IRanges(coords$start[seg$start.p], coords$end[seg$end.p]))
     hits <- findOverlaps(sg, bl)
     ov <- width(pintersect(sg[queryHits(hits)], bl[subjectHits(hits)]))
-    seg$blacklisted <- as.numeric(tapply(ov, factor(queryHits(hits), levels = seq_along(sg)), sum, default = 0)) / width(sg)
+    as.numeric(tapply(ov, factor(queryHits(hits), levels = seq_along(sg)), sum, default = 0)) / width(sg)
   }
-  seg$pass <- seg$num.mark >= min_targets & abs(seg$seg.mean) >= min_abs_log2 &
+  seg$blacklisted <- 0
+  seg$min_log2 <- min_abs_log2
+  if (!is.null(blacklist) && nrow(blacklist) > 0) {
+    region_log2 <- if (ncol(blacklist) >= 4) suppressWarnings(as.numeric(blacklist[, 4])) else rep(NA, nrow(blacklist))
+    seg$blacklisted <- overlap_fraction(blacklist[is.na(region_log2), , drop = FALSE])
+    for (v in unique(region_log2[!is.na(region_log2)])) {
+      strict <- overlap_fraction(blacklist[which(region_log2 == v), , drop = FALSE]) >= max_blacklist_fraction
+      seg$min_log2[strict] <- pmax(seg$min_log2[strict], v)
+    }
+  }
+  seg$pass <- seg$num.mark >= min_targets & abs(seg$seg.mean) >= seg$min_log2 &
     abs(seg$z) >= min_abs_z & seg$blacklisted < max_blacklist_fraction
 
   if (!is.null(segments_file)) {
@@ -375,7 +387,8 @@ callCNVs <- function(targets, annotation, test_counts_file, reference_counts_fil
   print("Calling large CNVs by circular binary segmentation")
   blacklist <- NULL
   if (!is.null(cbs_blacklist) && file.exists(cbs_blacklist)) {
-    blacklist <- read.table(cbs_blacklist, header = FALSE, sep = "\t", stringsAsFactors = FALSE)
+    blacklist <- read.table(cbs_blacklist, header = FALSE, sep = "\t", stringsAsFactors = FALSE, fill = TRUE,
+                            col.names = c("chrom", "start", "end", "min_abs_log2"))
   } else {
     print("CBS blacklist not found, segmenting without it")
   }
