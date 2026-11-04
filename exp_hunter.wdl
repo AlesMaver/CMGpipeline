@@ -138,10 +138,10 @@ task AnnotateExpansionHunter {
     else
       if ~{if trgt then "true" else "false"}; then
         echo "[ PREPARATION ] Downloading TRGT repeats file JSON"
-        wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/refs/heads/PacBio_testing_ales/ExpansionHunter_configuration/variant_catalog_hg19_trgt.json"
+        wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/refs/heads/PacBio_testing_ales/ExpansionHunter_configuration/variant_catalog_hg19_trgt.supplemented.json"
         unset https_proxy
-        wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/refs/heads/PacBio_testing_ales/ExpansionHunter_configuration/variant_catalog_hg19_trgt.json"
-        CATALOG_FILE="variant_catalog_hg19_trgt.json"
+        wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/refs/heads/PacBio_testing_ales/ExpansionHunter_configuration/variant_catalog_hg19_trgt.supplemented.json"
+        CATALOG_FILE="variant_catalog_hg19_trgt.supplemented.json"
       else
         echo "[ PREPARATION ] Downloading repeats file JSON"
         wget --no-check-certificate "https://raw.githubusercontent.com/AlesMaver/CMGpipeline/master/ExpansionHunter_configuration/variant_catalog_hg19.json"
