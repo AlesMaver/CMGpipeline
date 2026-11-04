@@ -602,10 +602,12 @@
     "Gene": "TBP",
     "TRID": "SCA17_TBP",
     "Motifs": [
-      "GCA"
+      "GCA",
+      "ACA"
     ],
     "PathologicStruc": [
-      0
+      0,
+      1
     ],
     "Source": "STRchive",
     "SourceId": "SCA17_TBP"
