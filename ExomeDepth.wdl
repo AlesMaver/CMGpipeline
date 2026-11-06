@@ -89,7 +89,7 @@ workflow ExomeDepth {
   # old: File exome_depth_counts_calculated = select_first([GetCounts.exome_depth_counts, GetCounts_Bedtools.exome_depth_counts])
 
   if(defined(reference_counts_files)) {
-    call ExomeDepth as RunExomeDepth {
+    call ExomeDepthTask as RunExomeDepth {
       input:
         sample_name = sample_name,
         target_bed = target_bed,
@@ -240,7 +240,7 @@ task GetCountsXY {
   }
 }
 
-task ExomeDepth {
+task ExomeDepthTask {
   input {
     String sample_name
     File? target_bed
