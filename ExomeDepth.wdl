@@ -89,7 +89,7 @@ workflow ExomeDepth {
   # old: File exome_depth_counts_calculated = select_first([GetCounts.exome_depth_counts, GetCounts_Bedtools.exome_depth_counts])
 
   if(defined(reference_counts_files)) {
-    call ExomeDepth {
+    call ExomeDepth as RunExomeDepth {
       input:
         sample_name = sample_name,
         target_bed = target_bed,
@@ -106,7 +106,7 @@ workflow ExomeDepth {
     call Manta.annotSV as annotSV {
       input:
         genome_build = "GRCh37",
-        input_vcf = ExomeDepth.exome_depth_cnv_calls_csv,
+        input_vcf = RunExomeDepth.exome_depth_cnv_calls_csv,
         output_tsv_name = sample_name + ".ExomeDepth.annotSV.tsv"
     }
   }
@@ -114,17 +114,17 @@ workflow ExomeDepth {
   output {
     ## File? exome_depth_counts = exome_depth_counts_calculated
     File? exome_depth_counts = select_first([exome_depth_counts_input, GetCounts.exome_depth_counts, GetCounts_Bedtools.exome_depth_counts])
-    File? exome_depth_cnv_calls_bed = ExomeDepth.exome_depth_cnv_calls_bed
-    File? exome_depth_cnv_calls_csv = ExomeDepth.exome_depth_cnv_calls_csv
-    File? exome_depth_ratios_all_wig_gz = ExomeDepth.exome_depth_ratios_all_wig_gz
-    File? exome_depth_ratios_all_wig_gz_tbi = ExomeDepth.exome_depth_ratios_all_wig_gz_tbi
-    File? exome_depth_rolling_ratios_wig = ExomeDepth.exome_depth_rolling_ratios_wig
-    File? exome_depth_rolling_ratios_wig_gz_tbi = ExomeDepth.exome_depth_rolling_ratios_wig_gz_tbi
-    File? exome_depth_ratios_clean_wig_gz = ExomeDepth.exome_depth_ratios_clean_wig_gz
-    File? exome_depth_ratios_clean_wig_gz_tbi = ExomeDepth.exome_depth_ratios_clean_wig_gz_tbi
-    File? exome_depth_ratios_nomissing_wig_gz = ExomeDepth.exome_depth_ratios_nomissing_wig_gz
-    File? exome_depth_ratios_nomissing_wig_gz_tbi = ExomeDepth.exome_depth_ratios_nomissing_wig_gz_tbi
-    File? exome_depth_cbs_segments = ExomeDepth.exome_depth_cbs_segments
+    File? exome_depth_cnv_calls_bed = RunExomeDepth.exome_depth_cnv_calls_bed
+    File? exome_depth_cnv_calls_csv = RunExomeDepth.exome_depth_cnv_calls_csv
+    File? exome_depth_ratios_all_wig_gz = RunExomeDepth.exome_depth_ratios_all_wig_gz
+    File? exome_depth_ratios_all_wig_gz_tbi = RunExomeDepth.exome_depth_ratios_all_wig_gz_tbi
+    File? exome_depth_rolling_ratios_wig = RunExomeDepth.exome_depth_rolling_ratios_wig
+    File? exome_depth_rolling_ratios_wig_gz_tbi = RunExomeDepth.exome_depth_rolling_ratios_wig_gz_tbi
+    File? exome_depth_ratios_clean_wig_gz = RunExomeDepth.exome_depth_ratios_clean_wig_gz
+    File? exome_depth_ratios_clean_wig_gz_tbi = RunExomeDepth.exome_depth_ratios_clean_wig_gz_tbi
+    File? exome_depth_ratios_nomissing_wig_gz = RunExomeDepth.exome_depth_ratios_nomissing_wig_gz
+    File? exome_depth_ratios_nomissing_wig_gz_tbi = RunExomeDepth.exome_depth_ratios_nomissing_wig_gz_tbi
+    File? exome_depth_cbs_segments = RunExomeDepth.exome_depth_cbs_segments
     File? exome_depth_xy_counts = xy_counts
     File? exome_depth_annotSV_tsv = annotSV.sv_variants_tsv
   }
