@@ -27,12 +27,12 @@ workflow ExomeDepth {
     String exomedepth_docker = "alesmaver/exome_depth"
   }
 
-  if (defined(enrichment)) {
-    String test_type = if (enrichment == "WGS1Mb") then "WGS" else "WES"
-  }
+  # Derived from enrichment when given (WGS1Mb -> WGS, otherwise WES), else the test_type input.
+  # Must not reuse the name test_type: a duplicate declaration makes Cromwell drop outputs nondeterministically.
+  String effective_test_type = if defined(enrichment) then (if select_first([enrichment]) == "WGS1Mb" then "WGS" else "WES") else test_type
 
   # If the input has not yet been counted, convert the CRAM to BAM and count the reads
-  if(!defined(exome_depth_counts_input) && test_type == "WES") {
+  if(!defined(exome_depth_counts_input) && effective_test_type == "WES") {
 
     if (defined(input_cram)) {
       call CramConversions.CramToBam as CramToBam {
@@ -58,7 +58,7 @@ workflow ExomeDepth {
     }
   }
 
-  if(!defined(exome_depth_counts_input) && test_type == "WGS") {
+  if(!defined(exome_depth_counts_input) && effective_test_type == "WGS") {
     call GetCounts_Bedtools {
       input:
           sample_name = sample_name,
@@ -72,7 +72,7 @@ workflow ExomeDepth {
     }
 
   # chrX/chrY counts without the MAPQ filter, straight from the BAM/CRAM
-  if (!defined(exome_depth_xy_counts_input) && test_type == "WES" && (defined(input_bam) || defined(input_cram))) {
+  if (!defined(exome_depth_xy_counts_input) && effective_test_type == "WES" && (defined(input_bam) || defined(input_cram))) {
     call GetCountsXY {
       input:
         sample_name = sample_name,
