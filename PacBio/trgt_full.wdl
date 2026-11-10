@@ -346,7 +346,8 @@ task trgt_genotype {
   }
 
   String out_prefix = "~{sample_name}.trgt"
-  String karyotype = if select_first([sex, "F"]) == "M" then "XY" else "XX"
+  # Accept both the reported ("M"/"F") and upstream-inferred ("MALE"/"FEMALE") sex labels.
+  String karyotype = if (select_first([sex, "F"]) == "M" || select_first([sex, "F"]) == "MALE") then "XY" else "XX"
 
   Int disk_size = ceil((size(mapped_bam, 'GB') + size(ref_fasta, 'GB')) * 2 + 20)
 

@@ -402,7 +402,8 @@ workflow PacBioWorkflow {
       call TRGTFull.trgt as TRGTFull {
         input:
           sample_name       = sample_id,
-          sex               = select_first([sex, "F"]),
+          # Reported sex, else the sex inferred from coverage upstream; "F" made every sample XX.
+          sex               = select_first([sex, pacbio_upstream.inferred_sex]),
           mapped_bam        = pacbio_upstream.out_bam,
           mapped_bam_bai    = pacbio_upstream.out_bam_index,
           ref_fasta         = ref_map["fasta"],
