@@ -116,13 +116,13 @@ task run_svtopo {
     svtopo "${svtopo_args[@]}"
 
     echo "[run_svtopo] Running: svtopovz --svtopo-dir ~{results_dir}" >&2
-    svtopovz --svtopo-dir "~{results_dir}"
+    svtopovz --svtopo-dir "~{results_dir}" || echo "[run_svtopo] WARNING: svtopovz failed; continuing without (all) images" >&2
 
     tar -czf "~{tarball_name}" "~{results_dir}"
   >>>
 
   runtime {
-    docker: "alesmaver/svtopo"
+    docker: "alesmaver/svtopo:0.3.1_mpl3.10"
     requested_memory_mb_per_core: 2000
     cpu: 4
     runtime_minutes: 720
