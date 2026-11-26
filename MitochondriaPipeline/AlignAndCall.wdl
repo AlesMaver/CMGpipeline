@@ -265,7 +265,6 @@ workflow AlignAndCall {
     File coverage_metrics = CollectWgsMetrics.metrics
     File coverage_mean_metrics = CollectWgsMetrics.metrics_mean_coverage
     File coverage_median_metrics = CollectWgsMetrics.metrics_median_coverage
-    File theoretical_sensitivity_metrics = CollectWgsMetrics.theoretical_sensitivity
     File contamination_metrics = GetContamination.contamination_file
     File major_haplogroup_file = GetContamination.major_haplogroup_file
     Int mean_coverage = CollectWgsMetrics.mean_coverage
@@ -382,8 +381,9 @@ task CollectWgsMetrics {
       USE_FAST_ALGORITHM=true \
       READ_LENGTH=~{read_length_for_optimization} \
       ~{"COVERAGE_CAP=" + coverage_cap} \
-      INCLUDE_BQ_HISTOGRAM=true \
-      THEORETICAL_SENSITIVITY_OUTPUT=theoretical_sensitivity.txt
+      INCLUDE_BQ_HISTOGRAM=true
+      # THEORETICAL_SENSITIVITY_OUTPUT removed: report-only, single-threaded and
+      # scales ~quadratically with depth (>17 h at ~3800x chrM).
 
     R --vanilla <<CODE
       df = read.table("metrics.txt",skip=6,header=TRUE,stringsAsFactors=FALSE,sep='\t',nrows=1)
@@ -400,15 +400,15 @@ task CollectWgsMetrics {
     memory: "3 GB"
     disks: "local-disk " + disk_size + " HDD"
     docker: "us.gcr.io/broad-gotc-prod/genomes-in-the-cloud:2.4.2-1552931386"
-    requested_memory_mb_per_core: 1000
-    cpu: 32
+    requested_memory_mb_per_core: 2000
+    cpu: 2
+    runtime_minutes: 60
   }
   output {
     File metrics = "~{base_name}.coverage_metrics.txt"
     File metrics_mean_coverage = "~{base_name}.coverage_metrics.mean.txt"
     File metrics_median_coverage = "~{base_name}.coverage_metrics.median.txt"
-    
-    File theoretical_sensitivity = "theoretical_sensitivity.txt"
+
     Int mean_coverage = read_int("mean_coverage.txt")
     Float median_coverage = read_float("median_coverage.txt")
   }
