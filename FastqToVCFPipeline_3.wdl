@@ -1495,8 +1495,8 @@ task PrepareMaskedGenomeFasta {
 
   runtime {
     docker: docker
-    requested_memory_mb_per_core: 4000
-    cpu: 4
+    requested_memory_mb_per_core: 2000
+    cpu: 8
     runtime_minutes: 800
   }
   output {
@@ -1523,8 +1523,8 @@ task PrepareMaskedBWAIndex {
   }
   runtime {
     docker: docker
-    requested_memory_mb_per_core: 5000
-    cpu: 4
+    requested_memory_mb_per_core: 2000
+    cpu: 16
     runtime_minutes: 800
   }
   output {
@@ -2003,9 +2003,9 @@ task MergeBamOuts {
 
   runtime {
 	    docker: docker
-	    maxRetries: 3
-	    requested_memory_mb_per_core: 4000
-	    cpu: 1
+	    maxRetries: 1
+	    requested_memory_mb_per_core: 1000
+	    cpu: 8
 	    runtime_minutes: 60 
   }
   output {
