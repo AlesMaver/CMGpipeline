@@ -5,7 +5,9 @@ version 1.0
 # prints out the error message, but the program "runs" further. The whole container is then stopped by the system schedular
 # when the time-limit is reached. 
 # If this happens, the VEP annotated vcf index file is missing and the corresponding vcf.gz file is only partially built.
-# In this case the Cleanup task is called to remove the partial file and to create a new wdl formatted file (just for the record).
+# Previously a Cleanup task then replaced the partial file with a header-only VCF, so a timeout looked like a successful
+# run with 0 variants (PX15640, 2026-11). Removed: RunVEP now fails on timeout or when output record count != input,
+# is retried once, and otherwise fails the workflow.
 
 
 workflow VEP {
@@ -23,16 +25,9 @@ workflow VEP {
         annotated_vcf = sample_basename + filename_infix + filename_suffix
   }
 
-  if ( !defined(RunVEP.output_vcf_index)) {
-        call Cleanup as Cleanup {
-            input: 
-              input_vcf = RunVEP.output_vcf,
-              output_filename = select_first([basename(RunVEP.output_vcf), ""])
-        }
-  }
   output {
-      File output_vcf = select_first([Cleanup.output_vcf, RunVEP.output_vcf]) 
-      File output_vcf_index = select_first([Cleanup.output_vcf_index, RunVEP.output_vcf_index])
+      File output_vcf = RunVEP.output_vcf
+      File output_vcf_index = RunVEP.output_vcf_index
   }
 
 }
@@ -63,58 +58,32 @@ task RunVEP {
             --hgvsg \
             --no_stats 
         tabix -p vcf ~{annotated_vcf}
+
+        # VEP --vcf writes every input record, so the counts must match. A mismatch means
+        # VEP died or hung part-way (truncated output); fail so the run cannot pass silently.
+        # An input with 0 records legitimately gives 0 output records.
+        n_in=$(zcat -f ~{input_vcf} | grep -vc '^#' || true)
+        n_out=$(zcat -f ~{annotated_vcf} | grep -vc '^#' || true)
+        echo "Input records: $n_in, annotated records: $n_out"
+        if [ "$n_in" -ne "$n_out" ]; then
+            echo "ERROR: VEP output has $n_out records, input has $n_in" >&2
+            exit 1
+        fi
         echo "Finishing VEP analysis."
         ls -ls ~{annotated_vcf}*
     }
 
     runtime {
         docker: "alesmaver/vep_grch37"
-        continueOnReturnCode: [0, 79]
         requested_memory_mb_per_core: 1000
         cpu: 64
-        # 60 minutes is enough for an exome and genome. plus a little save margine (90). increased time and cpus due to long-reads
-        runtime_minutes: 120
+        # Most runs take 0:37-1:42; PX15640 (2026-11) exceeded 2 h and silently fell through to Cleanup (header-only VCF).
+        runtime_minutes: 240
+        maxRetries: 1
     }
 
     output {
         File  output_vcf = annotated_vcf
-        File? output_vcf_index = annotated_vcf + ".tbi"
+        File  output_vcf_index = annotated_vcf + ".tbi"
     }
-}
-
-task Cleanup {
-    input {
-      File? input_vcf
-      String? output_filename
-    }
-
-    command {
-        ## don't use. zgrep on a corrupted file returns code 2 .... set -e
-        echo "Running cleanup..."
-
-        ## remove the file and create a new completely empty file and its index
-        # rm ~{input_vcf}
-        # touch ~{output_filename}
-        # touch ~{output_filename}.tbi
-
-        ## grep out all commented lines and put them into a temp file, gzip it and index it.
-        zgrep "#" ~{input_vcf} > temp.vcf 
-        bgzip -c temp.vcf > ~{output_filename}
-        tabix -p vcf ~{output_filename}
-
-        ls -ls ~{output_filename}*
-    }
-
-    runtime {
-        docker: "alesmaver/vep_grch37"
-        requested_memory_mb_per_core: 1000
-        cpu: 1
-        runtime_minutes: 5
-    }
-
-    output {
-        File output_vcf = output_filename
-        File output_vcf_index = output_filename + ".tbi"
-    }
-
 }

@@ -183,7 +183,7 @@ task MergeMantaFiles {
     docker: "quay.io/biocontainers/survivor:1.0.6--h6bb024c_0"
     requested_memory_mb_per_core: 1000
     cpu: 6
-    runtime_minutes: 120
+    runtime_minutes: 240
     docker_user: "root"
   }
   output {
